@@ -292,7 +292,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
       if (n) n.className = v === 'plain' ? 'gnote' : 'gnote on';
       if (lg) lg.className = v === 'all' ? 'glegend on' : 'glegend';
       var orbit = mv.getCameraOrbit ? mv.getCameraOrbit().toString() : null;
-      if (mv.getAttribute('src') !== src[v]) {
+      if (mv.src !== src[v]) {
         mv.src = src[v];
         if (orbit) mv.addEventListener('load', function keep() { mv.cameraOrbit = orbit; mv.removeEventListener('load', keep); });
       }
