@@ -25,6 +25,16 @@ model-viewer{display:block;width:100%;height:min(92vw,460px);background:#eef1f4;
 .gbtn:active{transform:translateY(2px);box-shadow:0 0 0 #CFD3D9,0 1px 3px rgba(26,28,32,.1)}
 .gbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent-dark);color:#fff;box-shadow:0 2px 0 var(--accent-dark),0 3px 8px rgba(168,72,26,.3)}
 .gbtn svg{flex:none}
+.gbtn[data-v="plain"][aria-pressed="true"]{background:#EEF0F2;border-color:#CFD3D9;color:var(--ink);box-shadow:inset 0 2px 3px rgba(26,28,32,.12)}
+.gbtn.cta{position:relative;font-size:16px;padding:11px 20px;background:linear-gradient(180deg,#C65A22,#A8481A);border-color:#7E3511;color:#fff;box-shadow:0 3px 0 #7E3511,0 6px 16px rgba(168,72,26,.35)}
+.gbtn.cta:hover{background:linear-gradient(180deg,#D0652B,#B04C1C)}
+.gbtn.cta:active{transform:translateY(3px);box-shadow:0 0 0 #7E3511,0 2px 6px rgba(168,72,26,.3)}
+.gbtn.cta.fresh{animation:ctapulse 1.8s ease-out infinite}
+.gbtn.cta .tap{position:absolute;top:-10px;right:-10px;padding:2px 8px;border-radius:999px;background:#1A1C20;color:#fff;font-size:11px;font-weight:700;letter-spacing:.3px;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.gbtn.cta:not(.fresh) .tap{display:none}
+.gbtn.cta[aria-pressed="true"]{background:#7E3511;box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}
+@keyframes ctapulse{0%{box-shadow:0 3px 0 #7E3511,0 0 0 0 rgba(198,90,34,.6)}70%{box-shadow:0 3px 0 #7E3511,0 0 0 14px rgba(198,90,34,0)}100%{box-shadow:0 3px 0 #7E3511,0 0 0 0 rgba(198,90,34,0)}}
+@media (prefers-reduced-motion:reduce){.gbtn.cta.fresh{animation:none}}
 .gnote{display:none;font-size:13px;color:var(--ink3);margin-top:6px}
 .gnote.on{display:block}
 .legend3d i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
@@ -146,7 +156,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="legend3d"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9A9A9A"></i>fittings</span></div>
 <div class="gseg" role="group" aria-label="What the 3-D view shows">
 <button type="button" class="gbtn" data-v="plain" aria-pressed="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 C8 17 8 7 13 7 C17 7 18 11 21 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Tubes only</button>
-<button type="button" class="gbtn" data-v="ok" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 8 M6 8 L18 8 M6 8 L6 15 M18 8 L18 15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19 L20 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Grasp candidates</button>
+<button type="button" class="gbtn cta fresh" data-v="ok" aria-pressed="false"><span class="tap">Tap me</span><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 8 M6 8 L18 8 M6 8 L6 15 M18 8 L18 15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19 L20 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Show grasp candidates</button>
 </div>
 <div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from.</div>
 </section>
@@ -296,6 +306,8 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
   for (var i = 0; i < btns.length; i++) {
     btns[i].addEventListener('click', function (ev) {
       var v = ev.currentTarget.getAttribute('data-v');
+      var cta = document.querySelector('.gbtn.cta');
+      if (cta && v === 'ok') cta.classList.remove('fresh');
       for (var k = 0; k < btns.length; k++) btns[k].setAttribute('aria-pressed', btns[k] === ev.currentTarget ? 'true' : 'false');
       if (n) n.className = v === 'plain' ? 'gnote' : 'gnote on';
       var orbit = mv.getCameraOrbit ? mv.getCameraOrbit().toString() : null;
