@@ -13,3 +13,5 @@ This repository holds only the web page and its images. No code or data of the r
 QR code for the page: `qr/pipefit-poster-qr-styled.png` (2000 × 2934, for print) and `qr/pipefit-poster-qr-styled.svg`: round dots, orange corner marks, a tube in the middle and a light orange caption band; error correction level H. Variant in the UR robot colours: `qr/pipefit-poster-qr-ur.png` / `.svg`. The plain version is `qr/pipefit-poster-qr.png` / `.svg`.
 
 The tube in the middle of the QR code, large (3000 × 3000, for printed signs): `qr/pipefit-tube-logo.png` / `.svg` (transparent background) and `qr/pipefit-tube-logo-tile.png` / `.svg` (on a white rounded tile).
+
+The 3-D view has a "Show grasp candidates" button: `assets/bin3d_grasp.glb` is the same scene with 6 grasp candidates drawn as two-finger grippers (colour = rank). They come from pipeFit's rule-based pick hints on this reconstruction, with the hand allowed to tilt up to 30 deg about the tube axis; the poses are in `assets/grasp_candidates_s08_full.json` (robot base frame, mm).
