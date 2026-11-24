@@ -14,4 +14,4 @@ QR code for the page: `qr/pipefit-poster-qr-styled.png` (2000 × 2934, for print
 
 The tube in the middle of the QR code, large (3000 × 3000, for printed signs): `qr/pipefit-tube-logo.png` / `.svg` (transparent background) and `qr/pipefit-tube-logo-tile.png` / `.svg` (on a white rounded tile).
 
-The 3-D view has a "Show grasp candidates" button: `assets/bin3d_grasp.glb` is the same scene with 6 grasp candidates drawn as two-finger grippers (colour = rank). They come from pipeFit's rule-based pick hints on this reconstruction, with the hand allowed to tilt up to 30 deg about the tube axis; the poses are in `assets/grasp_candidates_s08_full.json` (robot base frame, mm).
+The 3-D view has three buttons: tubes only, grasp candidates (`assets/bin3d_grasp.glb`: 6 candidates drawn as two-finger grippers, colour = rank), and candidates + rejected points (`assets/bin3d_grasp_all.glb`: one small ball every 20 mm of tube, coloured by the rule that rejected it). They come from pipeFit's rule-based pick hints on this reconstruction, with the hand allowed to tilt up to 30 deg about the tube axis; the poses are in `assets/grasp_candidates_s08_full.json` (robot base frame, mm).

@@ -17,8 +17,12 @@
 model-viewer{display:block;width:100%;height:min(92vw,460px);background:#eef1f4;border-radius:14px;--poster-color:transparent;--progress-bar-color:#4C78A8}
 .hint3d{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);margin-top:6px}
 .legend3d{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink3);margin-top:4px}
-.gbtn{margin-top:10px;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:8px 14px;border-radius:10px;border:1.5px solid var(--accent);background:#fff;color:var(--accent-dark);font-weight:700;font-size:15px;cursor:pointer;font-family:inherit}
+.gseg{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.gbtn{display:inline-flex;align-items:center;min-height:40px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--accent);background:#fff;color:var(--accent-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
 .gbtn[aria-pressed="true"]{background:var(--accent);color:#fff}
+.glegend{display:none;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink3);margin-top:4px}
+.glegend.on{display:flex}
+.glegend i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
 .gnote{display:none;font-size:13px;color:var(--ink3);margin-top:6px}
 .gnote.on{display:block}
 .legend3d i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
@@ -152,8 +156,13 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <model-viewer id="bin3d" src="assets/bin3d.glb?v=4" poster="assets/copy3d.jpg" alt="A 3‑D model of the bin with all seven reconstructed tubes inside; drag to turn it" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" touch-action="pan-y" camera-orbit="-25deg 52deg 88%" shadow-intensity="0.7" exposure="1.05" environment-image="neutral" loading="lazy"><div slot="progress-bar"></div></model-viewer>
 <div class="hint3d"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 A8 8 0 1 1 8 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 15 L4 11 L8 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live 3‑D: drag to turn, pinch to zoom. Real reconstruction of our lab bin, 7 tubes.</div>
 <div class="legend3d"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9A9A9A"></i>fittings</span></div>
-<button type="button" class="gbtn" id="gbtn" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 9 M7 9 L17 9 L17 13 M7 9 L7 13 M7 13 L7 19 M17 13 L17 19" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Show grasp candidates</span></button>
-<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from. Only tubes that are free on top get candidates; the others are covered by tubes above them.</div>
+<div class="gseg" role="group" aria-label="What the 3-D view shows">
+<button type="button" class="gbtn" data-v="plain" aria-pressed="true">Tubes only</button>
+<button type="button" class="gbtn" data-v="ok" aria-pressed="false">Grasp candidates</button>
+<button type="button" class="gbtn" data-v="all" aria-pressed="false">Candidates + rejected points</button>
+</div>
+<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from. Only short stretches of two tubes pass every rule, so the candidates sit close together.</div>
+<div class="glegend" id="glegend"><span><i style="background:#C62828"></i>another tube may lie on it</span><span><i style="background:#212121"></i>too close to an end or a fitting</span><span><i style="background:#9E9E9E"></i>too steep or not seen</span><span><i style="background:#6D4C41"></i>gripper would hit a tube or the wall</span></div>
 <div class="stephead"><span class="num">4</span><span class="t">A 3‑D copy for the robot</span></div>
 <p class="muted">Every tube's shape and position, ready for safe motion planning. After each pick the robot looks again.</p>
 </div>
@@ -272,18 +281,23 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 </main>
 <script>
 (function () {
-  var mv = document.getElementById('bin3d'), b = document.getElementById('gbtn'), n = document.getElementById('gnote');
-  if (!mv || !b) return;
-  var plain = 'assets/bin3d.glb?v=4', grasp = 'assets/bin3d_grasp.glb?v=1';
-  b.addEventListener('click', function () {
-    var on = b.getAttribute('aria-pressed') !== 'true';
-    b.setAttribute('aria-pressed', on ? 'true' : 'false');
-    b.querySelector('span').textContent = on ? 'Hide grasp candidates' : 'Show grasp candidates';
-    if (n) n.className = on ? 'gnote on' : 'gnote';
-    var orbit = mv.getCameraOrbit ? mv.getCameraOrbit().toString() : null;
-    mv.src = on ? grasp : plain;
-    if (orbit) mv.addEventListener('load', function keep() { mv.cameraOrbit = orbit; mv.removeEventListener('load', keep); });
-  });
+  var mv = document.getElementById('bin3d'), n = document.getElementById('gnote'), lg = document.getElementById('glegend');
+  var btns = document.querySelectorAll('.gseg .gbtn');
+  if (!mv || !btns.length) return;
+  var src = { plain: 'assets/bin3d.glb?v=4', ok: 'assets/bin3d_grasp.glb?v=1', all: 'assets/bin3d_grasp_all.glb?v=1' };
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function (ev) {
+      var v = ev.currentTarget.getAttribute('data-v');
+      for (var k = 0; k < btns.length; k++) btns[k].setAttribute('aria-pressed', btns[k] === ev.currentTarget ? 'true' : 'false');
+      if (n) n.className = v === 'plain' ? 'gnote' : 'gnote on';
+      if (lg) lg.className = v === 'all' ? 'glegend on' : 'glegend';
+      var orbit = mv.getCameraOrbit ? mv.getCameraOrbit().toString() : null;
+      if (mv.getAttribute('src') !== src[v]) {
+        mv.src = src[v];
+        if (orbit) mv.addEventListener('load', function keep() { mv.cameraOrbit = orbit; mv.removeEventListener('load', keep); });
+      }
+    });
+  }
 })();
 </script>
 <script>
