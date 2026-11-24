@@ -10,6 +10,6 @@ Visitors can save the poster from the page: both pages as high-resolution images
 
 This repository holds only the web page and its images. No code or data of the research project.
 
-QR code for the page: `qr/pipefit-poster-qr-styled.png` (2000 × 2400, for print) and `qr/pipefit-poster-qr-styled.svg` (round dots, orange corner marks, a tube in the middle; error correction level H). The plain version is `qr/pipefit-poster-qr.png` / `.svg`.
+QR code for the page: `qr/pipefit-poster-qr-styled.png` (2000 × 2400, for print) and `qr/pipefit-poster-qr-styled.svg` (round dots, corner marks in a dark shade of the UR robot joint-lid blue with orange centres, a tube in the middle, frame and caption band in the UR joint-lid colour RAL 240 70 20; error correction level H). The plain version is `qr/pipefit-poster-qr.png` / `.svg`.
 
 The tube in the middle of the QR code, large (3000 × 3000, for printed signs): `qr/pipefit-tube-logo.png` / `.svg` (transparent background) and `qr/pipefit-tube-logo-tile.png` / `.svg` (on a white rounded tile).
