@@ -23,7 +23,7 @@ model-viewer{display:block;width:100%;height:min(92vw,460px);background:#eef1f4;
   --accent:#A8481A; --accent-dark:#7E3511; --tint:#FBEADF; --blue:#1F5FA8; --blue-tint:#F1F5FA; --blue-icon:#E6EEF8; --img:#EEF0F2;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5}
 a{color:var(--accent)} a:hover{color:var(--accent-dark)}
 img{display:block;max-width:100%;height:auto}
@@ -94,7 +94,16 @@ p{margin:0}
 .shared .s span{font-size:15px;color:var(--ink2)}
 .quote{margin-top:6px;padding:14px 18px;border-radius:14px;background:var(--tint);font-family:"Space Grotesk",Inter,sans-serif;font-size:24px;font-weight:700;color:var(--accent-dark)}
 .posters{display:grid;gap:14px}
-.posters a{display:block;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.posters{gap:22px}
+.pp{margin:0}
+.posters a.pimg{display:block;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:11px 18px;border-radius:12px;font-weight:700;font-size:16px;line-height:1.2;text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff;border:0} .btn.primary:hover{background:var(--accent-dark);color:#fff}
+.btn.ghost{background:#fff;color:var(--accent-dark);border:1.5px solid var(--accent)} .btn.ghost:hover{background:var(--tint);color:var(--accent-dark)}
+.pp .btn{width:100%;margin-top:8px}
+.getposter{margin-top:18px}
+.savebar{margin-top:14px}
+.savebar .btn{width:100%}
 footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 @media (min-width:640px){
   .wrap{padding:44px 24px 56px}
@@ -112,6 +121,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <h1>How a robot learns to see <span>tangled tubes</span></h1>
 <p class="intro">A camera on a robot arm looks into a bin of mixed tubes. pipeFit works out which tube is which, its exact shape and where it lies, so the robot can pick it up.</p>
 <p class="authors"><b>Xiaoxiao Zhang</b> · <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a><br><b>Shiva Tutunchi</b> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026</p>
+<a class="btn primary getposter" href="#poster"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save the poster to your phone</a>
 </header>
 
 <section>
@@ -232,17 +242,68 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 </div>
 </section>
 
-<section>
+<section id="poster">
 <div class="label">The full poster</div>
+<p class="muted" style="margin-bottom:12px">Take the poster with you: save both pages to your phone.</p>
 <div class="posters">
-<a href="assets/poster-1.png?v=4"><img src="assets/poster-1.png?v=4" width="1920" height="1080" alt="Poster page 1: how pipeFit sees and rebuilds tangled tubes" loading="lazy"></a>
-<a href="assets/poster-2.png?v=4"><img src="assets/poster-2.png?v=4" width="1920" height="1080" alt="Poster page 2: grasping, and one robot API for two robot arm systems" loading="lazy"></a>
+<figure class="pp">
+<a class="pimg" href="assets/poster-1.png?v=4"><img src="assets/poster-1.png?v=4" width="1920" height="1080" alt="Poster page 1: how pipeFit sees and rebuilds tangled tubes" loading="lazy"></a>
+<a class="btn primary save" href="assets/pipefit-poster-page1.png?v=1" download="pipefit-poster-page1.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 1</a>
+</figure>
+<figure class="pp">
+<a class="pimg" href="assets/poster-2.png?v=4"><img src="assets/poster-2.png?v=4" width="1920" height="1080" alt="Poster page 2: grasping, and one robot API for two robot arm systems" loading="lazy"></a>
+<a class="btn primary save" href="assets/pipefit-poster-page2.png?v=1" download="pipefit-poster-page2.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 2</a>
+</figure>
 </div>
-<p class="small" style="margin-top:8px">Tap a page to open it full size.</p>
+<div class="savebar"><a class="btn ghost" href="assets/pipefit-poster.pdf?v=1" download="pipefit-poster.pdf"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 L14 3 L19 8 L19 21 L6 21 Z M14 3 L14 8 L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12.5 11 L12.5 17.5 M9.8 15 L12.5 17.5 L15.2 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Both pages as one PDF</a></div>
+<p class="small" id="savehint" style="margin-top:10px">Saved images are high resolution (3840 × 2160). Tap a page to open it full size.</p>
 </section>
 
 <footer>Questions? <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026</footer>
 
 </main>
+<script>
+(function () {
+  var ua = navigator.userAgent || '';
+  var iOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var hint = document.getElementById('savehint');
+  if (hint) {
+    hint.textContent = iOS
+      ? 'Tap Save, then choose “Save Image” to put the page in Photos. Images are high resolution (3840 × 2160).'
+      : 'Save puts the image in your Downloads. Images are high resolution (3840 × 2160).';
+  }
+  // iPhone / iPad: the share sheet has "Save Image" (goes to Photos); a plain download would go to Files.
+  if (!iOS || !navigator.canShare || !window.fetch) return;
+  var files = {};
+  var btns = document.querySelectorAll('a.save');
+  function load(a) {
+    var url = a.getAttribute('href');
+    if (files[url] !== undefined) return;
+    files[url] = null;
+    fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(function (b) { files[url] = new File([b], a.getAttribute('download'), { type: 'image/png' }); })
+      .catch(function () { delete files[url]; });
+  }
+  function preload() { for (var i = 0; i < btns.length; i++) load(btns[i]); }
+  var sec = document.getElementById('poster');
+  if ('IntersectionObserver' in window && sec) {
+    var io = new IntersectionObserver(function (es) {
+      for (var i = 0; i < es.length; i++) if (es[i].isIntersecting) { preload(); io.disconnect(); return; }
+    }, { rootMargin: '800px' });
+    io.observe(sec);
+  } else { preload(); }
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function (ev) {
+      var a = ev.currentTarget, url = a.getAttribute('href'), f = files[url];
+      if (!f || !navigator.canShare({ files: [f] })) { load(a); return; }  // not ready: normal download
+      ev.preventDefault();
+      navigator.share({ files: [f] }).catch(function (e) {
+        if (e && e.name === 'AbortError') return;
+        window.location.href = url;
+      });
+    });
+  }
+})();
+</script>
 </body>
 </html>
