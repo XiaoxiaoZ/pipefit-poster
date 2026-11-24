@@ -17,12 +17,12 @@
 model-viewer{display:block;width:100%;height:min(92vw,460px);background:#eef1f4;border-radius:14px;--poster-color:transparent;--progress-bar-color:#4C78A8}
 .hint3d{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);margin-top:6px}
 .legend3d{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink3);margin-top:4px}
-.gseg{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.gbtn{display:inline-flex;align-items:center;min-height:40px;padding:8px 12px;border-radius:10px;border:1.5px solid var(--accent);background:#fff;color:var(--accent-dark);font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
-.gbtn[aria-pressed="true"]{background:var(--accent);color:#fff}
-.glegend{display:none;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--ink3);margin-top:4px}
-.glegend.on{display:flex}
-.glegend i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
+.gseg{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.gbtn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:10px 18px;border-radius:12px;border:1px solid #CFD3D9;background:#fff;color:var(--ink);font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 2px 0 #CFD3D9,0 3px 8px rgba(26,28,32,.08);transition:transform .05s,box-shadow .05s,background .15s}
+.gbtn:hover{background:#F7F7F5}
+.gbtn:active{transform:translateY(2px);box-shadow:0 0 0 #CFD3D9,0 1px 3px rgba(26,28,32,.1)}
+.gbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent-dark);color:#fff;box-shadow:0 2px 0 var(--accent-dark),0 3px 8px rgba(168,72,26,.3)}
+.gbtn svg{flex:none}
 .gnote{display:none;font-size:13px;color:var(--ink3);margin-top:6px}
 .gnote.on{display:block}
 .legend3d i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
@@ -157,12 +157,10 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="hint3d"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 A8 8 0 1 1 8 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 15 L4 11 L8 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live 3‑D: drag to turn, pinch to zoom. Real reconstruction of our lab bin, 7 tubes.</div>
 <div class="legend3d"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9A9A9A"></i>fittings</span></div>
 <div class="gseg" role="group" aria-label="What the 3-D view shows">
-<button type="button" class="gbtn" data-v="plain" aria-pressed="true">Tubes only</button>
-<button type="button" class="gbtn" data-v="ok" aria-pressed="false">Grasp candidates</button>
-<button type="button" class="gbtn" data-v="all" aria-pressed="false">Candidates + rejected points</button>
+<button type="button" class="gbtn" data-v="plain" aria-pressed="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 C8 17 8 7 13 7 C17 7 18 11 21 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Tubes only</button>
+<button type="button" class="gbtn" data-v="ok" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 8 M6 8 L18 8 M6 8 L6 15 M18 8 L18 15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19 L20 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Grasp candidates</button>
 </div>
-<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from. Only short stretches of two tubes pass every rule, so the candidates sit close together.</div>
-<div class="glegend" id="glegend"><span><i style="background:#C62828"></i>another tube may lie on it</span><span><i style="background:#212121"></i>too close to an end or a fitting</span><span><i style="background:#9E9E9E"></i>too steep or not seen</span><span><i style="background:#6D4C41"></i>gripper would hit a tube or the wall</span></div>
+<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from.</div>
 <div class="stephead"><span class="num">4</span><span class="t">A 3‑D copy for the robot</span></div>
 <p class="muted">Every tube's shape and position, ready for safe motion planning. After each pick the robot looks again.</p>
 </div>
@@ -281,16 +279,15 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 </main>
 <script>
 (function () {
-  var mv = document.getElementById('bin3d'), n = document.getElementById('gnote'), lg = document.getElementById('glegend');
+  var mv = document.getElementById('bin3d'), n = document.getElementById('gnote');
   var btns = document.querySelectorAll('.gseg .gbtn');
   if (!mv || !btns.length) return;
-  var src = { plain: 'assets/bin3d.glb?v=4', ok: 'assets/bin3d_grasp.glb?v=1', all: 'assets/bin3d_grasp_all.glb?v=1' };
+  var src = { plain: 'assets/bin3d.glb?v=4', ok: 'assets/bin3d_grasp.glb?v=1' };
   for (var i = 0; i < btns.length; i++) {
     btns[i].addEventListener('click', function (ev) {
       var v = ev.currentTarget.getAttribute('data-v');
       for (var k = 0; k < btns.length; k++) btns[k].setAttribute('aria-pressed', btns[k] === ev.currentTarget ? 'true' : 'false');
       if (n) n.className = v === 'plain' ? 'gnote' : 'gnote on';
-      if (lg) lg.className = v === 'all' ? 'glegend on' : 'glegend';
       var orbit = mv.getCameraOrbit ? mv.getCameraOrbit().toString() : null;
       if (mv.src !== src[v]) {
         mv.src = src[v];
