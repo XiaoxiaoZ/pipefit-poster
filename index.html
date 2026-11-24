@@ -134,6 +134,18 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <a class="btn primary getposter" href="#poster"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save the poster to your phone</a>
 </header>
 
+<section id="copy3d">
+<div class="label accent">The 3&#8209;D copy &middot; drag to turn</div>
+<model-viewer id="bin3d" src="assets/bin3d.glb?v=4" poster="assets/copy3d.jpg" alt="A 3‑D model of the bin with all seven reconstructed tubes inside; drag to turn it" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" touch-action="pan-y" camera-orbit="-25deg 52deg 88%" shadow-intensity="0.7" exposure="1.05" environment-image="neutral"><div slot="progress-bar"></div></model-viewer>
+<div class="hint3d"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 A8 8 0 1 1 8 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 15 L4 11 L8 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live 3‑D: drag to turn, pinch to zoom. Real reconstruction of our lab bin, 7 tubes.</div>
+<div class="legend3d"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9A9A9A"></i>fittings</span></div>
+<div class="gseg" role="group" aria-label="What the 3-D view shows">
+<button type="button" class="gbtn" data-v="plain" aria-pressed="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 C8 17 8 7 13 7 C17 7 18 11 21 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Tubes only</button>
+<button type="button" class="gbtn" data-v="ok" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 8 M6 8 L18 8 M6 8 L6 15 M18 8 L18 15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19 L20 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Grasp candidates</button>
+</div>
+<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from.</div>
+</section>
+
 <section>
 <div class="label">How it works</div>
 <div class="steps">
@@ -153,16 +165,9 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <p class="muted">Each tube's recipe is tuned until it matches every picture. Its type (AB, X or Y) comes out too.</p>
 </div>
 <div class="step">
-<model-viewer id="bin3d" src="assets/bin3d.glb?v=4" poster="assets/copy3d.jpg" alt="A 3‑D model of the bin with all seven reconstructed tubes inside; drag to turn it" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" touch-action="pan-y" camera-orbit="-25deg 52deg 88%" shadow-intensity="0.7" exposure="1.05" environment-image="neutral" loading="lazy"><div slot="progress-bar"></div></model-viewer>
-<div class="hint3d"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 A8 8 0 1 1 8 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 15 L4 11 L8 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live 3‑D: drag to turn, pinch to zoom. Real reconstruction of our lab bin, 7 tubes.</div>
-<div class="legend3d"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9A9A9A"></i>fittings</span></div>
-<div class="gseg" role="group" aria-label="What the 3-D view shows">
-<button type="button" class="gbtn" data-v="plain" aria-pressed="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 C8 17 8 7 13 7 C17 7 18 11 21 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Tubes only</button>
-<button type="button" class="gbtn" data-v="ok" aria-pressed="false"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 8 M6 8 L18 8 M6 8 L6 15 M18 8 L18 15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19 L20 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Grasp candidates</button>
-</div>
-<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from.</div>
+<div class="pic"><a href="#copy3d"><img src="assets/copy3d_ui.jpg" width="1200" height="860" alt="The 3-D copy of the bin: seven reconstructed tubes in the measured bin" loading="lazy"></a></div>
 <div class="stephead"><span class="num">4</span><span class="t">A 3‑D copy for the robot</span></div>
-<p class="muted">Every tube's shape and position, ready for safe motion planning. After each pick the robot looks again.</p>
+<p class="muted">Every tube's shape and position, ready for safe motion planning. After each pick the robot looks again. <a href="#copy3d">Turn it yourself at the top of the page.</a></p>
 </div>
 </div>
 </section>
