@@ -4,405 +4,103 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>pipeFit examples</title>
-<meta name="description" content="Tested examples of pipeFit: real and simulated bins of tubes and parts, what pipeFit found in each, and how it was checked. Each example opens as a 3-D model.">
-<meta property="og:title" content="pipeFit examples">
-<meta property="og:description" content="Real scans and simulated scenes that pipeFit reconstructed, each with the check it passed.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23A8481A'/%3E%3Cpath d='M5 17 C9 17 9 7 13 7 C16 7 17 11 19 11' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="description" content="Bins that pipeFit reconstructed: real camera scans and simulation. Tap a picture to turn the 3-D result.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap">
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
 <style>
-:root{
-  --bg:#FAFAF7; --card:#FFFFFF; --line:#E3E5E8; --ink:#1A1C20; --ink2:#3D4249; --ink3:#5B6068; --mute:#8A9098;
-  --accent:#A8481A; --accent-dark:#7E3511; --tint:#FBEADF; --blue:#1F5FA8; --blue-tint:#F1F5FA; --blue-icon:#E6EEF8; --img:#EEF0F2;
-  --ok:#2E7D5B; --ok-tint:#E5F2EB; --warn:#8A5A00; --warn-tint:#FBF0D9; --sim:#5B6068;
-}
+:root{--bg:#FAFAF7;--card:#FFFFFF;--line:#E3E5E8;--ink:#1A1C20;--ink2:#3D4249;--ink3:#5B6068;--accent:#A8481A;--blue:#1F5FA8;--img:#EEF0F2}
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5;overflow-x:hidden}
-body.modal-open{overflow:hidden}
-a{color:var(--accent)} a:hover{color:var(--accent-dark)}
-img{display:block;max-width:100%;height:auto}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 40px}
-.back{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:600;text-decoration:none;color:var(--accent-dark);margin:0 0 16px}
-.back:hover{text-decoration:underline}
-.uwlogo{display:block;height:60px;width:auto;margin:0 0 18px}
-.eyebrow{font-size:14px;font-weight:700;letter-spacing:2px;color:var(--accent)}
-h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(32px,8vw,48px);line-height:1.06;letter-spacing:-.4px;margin:8px 0 14px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 48px}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+header img{height:46px;width:auto}
+h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:30px;margin:0;letter-spacing:-.3px}
 h1 span{color:var(--accent)}
-.intro{font-size:19px;color:var(--ink2);margin:0 0 16px;max-width:780px}
-.jump{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
-.jump a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:9px 16px;border-radius:12px;border:1px solid #CFD3D9;background:#fff;color:var(--ink);font-weight:700;font-size:15px;text-decoration:none;box-shadow:0 2px 0 #CFD3D9}
-.jump a:hover{background:#F7F7F5}
-.jump a .n{font-weight:600;color:var(--ink3)}
-.key{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;max-width:780px}
-.key .t{font-weight:700;margin:0 0 8px}
-.keyrow{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14.5px;color:var(--ink2)}
-.sw{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
-.sw.line{height:4px;border-radius:2px;vertical-align:3px;width:16px}
-.sw.alpha{opacity:.45}
-.key p{font-size:14.5px;color:var(--ink3);margin:8px 0 0}
-section.group{margin-top:40px}
-.label{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--ink3);margin:0 0 10px;text-transform:uppercase}
-.label.accent{color:var(--accent)}
-h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(25px,6vw,32px);line-height:1.12;margin:0 0 10px}
-.gintro{color:var(--ink2);margin:0 0 18px;max-width:820px;font-size:16px}
-.simband{border:2px dashed #B9BEC5;border-radius:20px;padding:18px 14px 20px;background:#FCFCFB}
-.simband .label{color:var(--sim)}
-.grid{display:grid;grid-template-columns:1fr;gap:16px}
-@media (min-width:600px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (min-width:960px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-.ex{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;color:inherit;text-decoration:none;transition:box-shadow .15s,transform .15s}
-.ex:hover{box-shadow:0 8px 24px rgba(26,28,32,.12);transform:translateY(-2px);color:inherit}
-@media (prefers-reduced-motion:reduce){.ex,.ex:hover{transition:none;transform:none}}
-.ex.sim{border:1.5px dashed #AEB4BC}
-.thumb{position:relative;background:var(--img);aspect-ratio:16/9;overflow:hidden}
-.thumb img{width:100%;height:100%;object-fit:cover}
-.thumb .kind{position:absolute;left:10px;top:10px;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.3px;background:rgba(255,255,255,.92);color:var(--ink)}
-.thumb .kind.sim{background:#3D4249;color:#fff}
-.thumb .src{position:absolute;right:8px;bottom:8px;padding:2px 8px;border-radius:6px;font-size:11.5px;background:rgba(26,28,32,.66);color:#fff}
-.exb{padding:14px 16px 16px;display:flex;flex-direction:column;gap:7px;flex:1}
-.badges{display:flex;flex-wrap:wrap;gap:6px}
-.b{display:inline-block;padding:3px 9px;border-radius:999px;font-size:12.5px;font-weight:700;line-height:1.35;background:#EEF0F2;color:var(--ink2)}
-.b.real{background:var(--blue-icon);color:var(--blue)}
-.b.sim{background:#3D4249;color:#fff}
-.b.pick{background:var(--accent);color:#fff}
-.b.warn{background:var(--warn-tint);color:var(--warn)}
-.ex h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:20px;line-height:1.2;margin:2px 0 0}
-.ex p{margin:0;font-size:15px;color:var(--ink2)}
-.ex .inbin b,.ex .res b{color:var(--ink)}
-.ex .chk{display:flex;gap:7px;align-items:flex-start;font-size:14px;color:var(--ok)}
-.ex .chk svg{flex:none;margin-top:2px}
-.ex .open{margin-top:auto;padding-top:6px;font-weight:700;font-size:14.5px;color:var(--accent)}
-.context{margin-top:40px;background:var(--blue-tint);border-radius:18px;padding:18px 20px}
-.context h2{font-size:clamp(22px,5vw,27px)}
-.context ul{margin:8px 0 0;padding-left:20px;color:var(--ink2);font-size:15.5px}
-.context li{margin:5px 0}
-.context p{margin:6px 0 0;color:var(--ink2);font-size:15.5px}
-footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
-footer a{color:var(--ink3);text-decoration:underline;text-underline-offset:2px}
-/* viewer */
-dialog#viewer{padding:0;border:0;width:100vw;max-width:100vw;height:100%;max-height:100%;margin:0;background:var(--bg);color:var(--ink)}
-dialog#viewer::backdrop{background:rgba(26,28,32,.55)}
-@media (min-width:900px){dialog#viewer{width:min(1240px,calc(100vw - 48px));height:calc(100vh - 48px);margin:auto;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}}
-.vwrap{display:flex;flex-direction:column;height:100%}
-.vhead{display:flex;align-items:flex-start;gap:12px;padding:14px 16px 10px;border-bottom:1px solid var(--line);background:#fff}
-.vhead .tt{flex:1;min-width:0}
-.vhead h2{font-size:clamp(20px,4.6vw,27px);margin:6px 0 0}
-.vclose{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid #CFD3D9;background:#fff;color:var(--ink);font-size:26px;line-height:1;cursor:pointer;font-family:inherit}
-.vclose:hover{background:#F2F3F5}
-.vbody{flex:1;overflow-y:auto;overscroll-behavior:contain}
-.vgrid{display:grid;grid-template-columns:1fr;gap:16px;padding:14px 16px 24px}
-@media (min-width:900px){.vbody{overflow:hidden}.vgrid{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);height:100%;padding:16px}.vleft{display:flex;flex-direction:column;min-height:0}.vright{overflow-y:auto;min-height:0;padding-right:4px}}
-.mvwrap{position:relative;background:#eef1f4;border-radius:14px;overflow:hidden}
-model-viewer{display:block;width:100%;height:min(92vw,58vh);background:#eef1f4;--poster-color:transparent;--progress-bar-color:#4C78A8}
-@media (min-width:900px){.mvwrap{flex:1;min-height:0}model-viewer{height:100%}}
-.simtag{position:absolute;right:10px;top:10px;padding:5px 11px;border-radius:999px;background:#3D4249;color:#fff;font-size:12.5px;font-weight:700;letter-spacing:.6px;pointer-events:none}
-.legend{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);background:rgba(255,255,255,.9);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.45;color:#1d232b;pointer-events:none}
-.legend div{display:flex;align-items:center;gap:6px}
-.legend .sw{margin:0;width:10px;height:10px;border-radius:2px;flex:none}
-.legend .sw.line{width:14px;height:3px}
-.legend .opt{display:none}
-@media (max-width:899px){.legend{position:static;max-width:none;background:#fff;border-top:1px solid var(--line);border-radius:0;display:flex;flex-wrap:wrap;gap:3px 14px;padding:8px 10px}}
-.legend.ref .opt{display:flex}
-.hs{display:block;padding:0 5px;border-radius:4px;background:rgba(255,255,255,.9);border:1.5px solid var(--c);color:#1d232b;font:600 11px/16px Inter,system-ui,sans-serif;white-space:nowrap;pointer-events:none}
-.hs.ghost{border-style:dashed;border-color:#4A5568;color:#3D4249}
-model-viewer.nolabels .hs{display:none}
-.vtools{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.tbtn{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:8px 14px;border-radius:12px;border:1px solid #CFD3D9;background:#fff;color:var(--ink);font-weight:600;font-size:14.5px;font-family:inherit;cursor:pointer}
-.tbtn:hover{background:#F7F7F5}
-.tbtn .box{width:16px;height:16px;border-radius:4px;border:2px solid #9AA0A8;flex:none;display:inline-flex;align-items:center;justify-content:center}
-.tbtn[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
-.tbtn[aria-pressed="true"] .box::after{content:"";width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
-.hint{font-size:13px;color:var(--ink3);margin:8px 0 0}
-.vright section{margin:0 0 18px}
-.vright h3{font-size:13px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink3);margin:0 0 6px}
-.vright p{margin:0 0 8px;font-size:15.5px;color:var(--ink2)}
-.vresult{background:var(--ok-tint);border-radius:14px;padding:12px 14px}
-.vresult h3{color:var(--ok)}
-.vresult p.big{font-size:16.5px;color:var(--ink);font-weight:600}
-.caveat{background:var(--warn-tint);color:#5A3B00!important;border-radius:10px;padding:9px 12px}
-.limit{background:#F2F3F5;border-radius:10px;padding:9px 12px}
-.tblw{overflow-x:auto}
-table.rows{border-collapse:collapse;width:100%;font-size:14px;margin-top:6px;background:#fff;border-radius:10px;overflow:hidden}
-table.rows th,table.rows td{text-align:left;padding:6px 9px;border-bottom:1px solid var(--line)}
-table.rows th{font-weight:600;color:var(--ink3);font-size:12.5px;background:#F7F8F9}
-table.rows td.num{font-variant-numeric:tabular-nums}
-.tdot{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:6px;vertical-align:0}
-figure{margin:0 0 12px}
-figure img{border-radius:10px;background:var(--img);width:100%}
-figcaption{font-size:13.5px;color:var(--ink3);margin-top:5px}
-dl.det{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:14.5px}
-dl.det dt{color:var(--ink3)}
-dl.det dd{margin:0;color:var(--ink2);overflow-wrap:anywhere}
-.small{font-size:14px;color:var(--ink3)}
+.back{margin-left:auto;font-size:14px;color:var(--ink3)}
+a{color:var(--accent)}
+h2{font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin:26px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.tile{position:relative;display:block;padding:0;border:0;border-radius:12px;overflow:hidden;background:var(--img);cursor:pointer;aspect-ratio:16/9;box-shadow:0 1px 2px rgba(26,28,32,.08);transition:transform .15s,box-shadow .15s}
+.tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile span{position:absolute;left:0;right:0;bottom:0;padding:18px 10px 7px;background:linear-gradient(transparent,rgba(26,28,32,.72));color:#fff;font-size:13px;font-weight:600;text-align:left}
+.tile:hover,.tile:focus-visible{transform:translateY(-2px);box-shadow:0 0 0 3px var(--accent),0 8px 20px rgba(26,28,32,.18);outline:none}
+.tile .d3{position:absolute;top:8px;right:8px;padding:2px 8px;border-radius:999px;background:rgba(26,28,32,.7);color:#fff;font-size:11.5px;font-weight:700;font-style:normal}
+dialog{border:0;padding:0;border-radius:14px;width:min(1100px,96vw);max-height:94vh;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(20,22,26,.6)}
+.dlg{display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.bar b{font-size:15px;margin-right:auto}
+.bar button{font:inherit;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer}
+.bar button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.bar .x{border:0;font-size:22px;line-height:1;padding:2px 8px;background:transparent}
+model-viewer{width:100%;height:min(70vh,640px);background:#eef1f4;--poster-color:transparent;--progress-bar-color:#4C78A8}
+.photo{display:none;width:100%;height:min(70vh,640px);object-fit:contain;background:#111}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--ink3);padding:8px 12px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
 </style>
 </head>
 <body>
 <main class="wrap">
 <header>
-<a class="back" href="../"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 L8 12 L15 19" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to the poster</a>
-<img class="uwlogo" src="../assets/university-west-logo.png" width="700" height="380" alt="University West">
-<div class="eyebrow">PIPEFIT</div>
+<img src="../assets/university-west-logo.png" width="700" height="380" alt="University West">
 <h1>pipeFit <span>examples</span></h1>
-<p class="intro">Scans that worked, each with what was in the bin, what pipeFit found, and how we checked it. Open an example to turn its 3-D result.</p>
-<nav class="jump" aria-label="Sections">
-<a href="#real">Real scans <span class="n">(11)</span></a>
-<a href="#sim">Simulation <span class="n">(5)</span></a>
-<a href="#context">How often it works</a>
-</nav>
-<div class="key">
-<p class="t">How to read the 3-D results</p>
-<div class="keyrow">
-<span><i class="sw" style="background:#4C78A8"></i>AB tube</span>
-<span><i class="sw" style="background:#F58518"></i>X tube</span>
-<span><i class="sw" style="background:#54A24B"></i>Y tube</span>
-<span><i class="sw" style="background:#b7c9dc"></i>Lighter: not seen by any camera</span>
-<span><i class="sw" style="background:#9A9A9A"></i>Fittings</span>
-<span><i class="sw alpha" style="background:#5b8fd6"></i>Bin</span>
-</div>
-<p>AB, X and Y are the three tube types of the lab set. Where no camera saw a tube, its shape comes from the tube's 3-D scan. Each example says what it was checked against: a reference fit, the number of tubes only, or the simulation truth.</p>
-</div>
+<a class="back" href="../">&larr; pipeFit digital poster</a>
 </header>
 
-<section class="group" id="real" aria-labelledby="realh">
-<div class="label accent">Real scans</div>
-<h2 id="realh">Real tubes, real camera pictures</h2>
-<p class="gintro">Pictures from a depth camera (Intel RealSense D435) on the wrist of a Franka robot arm, in two bins: the lab's small blue bin and a larger industrial EMB 780 bin. The lab-bin scenes were scored many times while the method was developed, so they are not a held-out test.</p>
-<div class="grid">
-<a class="ex" href="#lab-s01-single" data-id="lab-s01-single"><div class="thumb"><img src="data/lab-s01-single/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>One tube alone</h3><p class="inbin"><b>In the bin:</b> 1 tube: 1 AB &middot; Lab bin</p><p class="res">Found 1 of 1 tube, with the right type and no extra tube. Mean distance to the reference fit: 1.2 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit from the same pictures (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-s04-crossing" data-id="lab-s04-crossing"><div class="thumb"><img src="data/lab-s04-crossing/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">2 views</span></div><h3>Four tubes lying across each other</h3><p class="inbin"><b>In the bin:</b> 4 tubes: 2 AB, 2 X &middot; Lab bin</p><p class="res">Found 4 of 4 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.8-2.8 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit from the same pictures (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-s08-full" data-id="lab-s08-full"><div class="thumb"><img src="data/lab-s08-full/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>Full pile of seven tubes</h3><p class="inbin"><b>In the bin:</b> 7 tubes: 2 AB, 2 X, 3 Y &middot; Lab bin</p><p class="res">Found 7 of 7 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 1.4-3.7 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit from the same pictures (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-rm2-picking" data-id="lab-rm2-picking"><div class="thumb"><img src="data/lab-rm2-picking/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">2 views</span></div><h3>Five tubes left after two were taken out</h3><p class="inbin"><b>In the bin:</b> 5 tubes: 2 AB, 2 X, 1 Y &middot; Lab bin</p><p class="res">Found 5 of 5 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 1.3-2.8 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit from the same pictures (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-rm4-moved" data-id="lab-rm4-moved"><div class="thumb"><img src="data/lab-rm4-moved/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">2 views</span></div><h3>Three tubes left; one was dragged 47 mm</h3><p class="inbin"><b>In the bin:</b> 3 tubes: 1 AB, 2 X &middot; Lab bin</p><p class="res">Found 3 of 3 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 2.5-3.3 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit from the same pictures (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-r02-moved-bin" data-id="lab-r02-moved-bin"><div class="thumb"><img src="data/lab-r02-moved-bin/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>Bin moved and turned, three Y tubes</h3><p class="inbin"><b>In the bin:</b> 3 tubes: 3 Y &middot; Lab bin</p><p class="res">Found 3 of 3 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.4-1.3 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit from the same pictures (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-r04-over-rim" data-id="lab-r04-over-rim"><div class="thumb"><img src="data/lab-r04-over-rim/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span><span class="b warn">Weak reference</span></div><h3>Two tubes hanging over the rim</h3><p class="inbin"><b>In the bin:</b> 5 tubes: 1 AB, 2 X, 2 Y &middot; Lab bin</p><p class="res">Found 5 of 5 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.3-2.2 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against a reference fit; weak reference for 3 of 5 tubes</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#emb-pile2" data-id="emb-pile2"><div class="thumb"><img src="data/emb-pile2/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">12 views</span></div><h3>Large bin, tangled pile of seven</h3><p class="inbin"><b>In the bin:</b> 7 tubes (operator&#x27;s count) &middot; EMB 780 bin</p><p class="res">Found 7: 2 AB, 2 X, 3 Y. The runs on 2, 3 and 5 views of the same pictures also found 7 with the same types, placed 0.5-4.2 mm from this result.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked: number and types only (positions not checked)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#emb-pile1b-close3" data-id="emb-pile1b-close3"><div class="thumb"><img src="data/emb-pile1b-close3/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b plain">3 views</span></div><h3>Large bin, seven tubes seen from three close views</h3><p class="inbin"><b>In the bin:</b> 7 tubes (operator&#x27;s count) &middot; EMB 780 bin</p><p class="res">Found 7: 2 AB, 2 X, 3 Y. A run on the same 3 views plus one overview also found 7 with the same types, placed 0.3-1.5 mm from this result.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked: number and types only (positions not checked)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#emb-old3-grasp" data-id="emb-old3-grasp"><div class="thumb"><img src="data/emb-old3-grasp/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b pick">Picked by the robot</span><span class="b plain">11 views</span></div><h3>Large bin, three tubes; the robot picked one</h3><p class="inbin"><b>In the bin:</b> 3 tubes (operator&#x27;s count) &middot; EMB 780 bin</p><p class="res">Found 3: 1 AB, 2 X. The robot closed its fingers to 14.72 mm on a tube of model diameter 14.6 mm, held it, lifted it 50 mm and put it back.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked: number of tubes, and a real pick</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex" href="#lab-3y-grasp" data-id="lab-3y-grasp"><div class="thumb"><img src="data/lab-3y-grasp/thumb.webp" width="640" height="360" loading="lazy" alt="Camera picture of this example"><span class="kind">Real scan</span><span class="src">Camera picture</span></div><div class="exb"><div class="badges"><span class="b pick">Picked by the robot</span><span class="b plain">2 views</span></div><h3>Lab bin, three Y tubes; the robot picked one</h3><p class="inbin"><b>In the bin:</b> 3 tubes: 3 Y &middot; Lab bin</p><p class="res">Found 3, all Y. The robot closed its fingers to 15.4 mm (model diameter 15.8 mm) and lifted the tube out of the bin.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked: number and type by eye, and a real pick</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-</div>
-</section>
-
-<section class="group" id="sim" aria-labelledby="simh">
-<div class="simband">
-<div class="label">Simulation</div>
-<h2 id="simh">Simulated scenes, where the truth is known</h2>
-<p class="gintro">These are not real pictures. The scenes are simulated: scanned tube shapes or part drawings are dropped into a model of the lab bin, and depth and colour pictures are rendered with the measured noise of the real camera. They are development scenes, used while the method was tuned.</p>
-<div class="grid">
-<a class="ex sim" href="#sim-tubes-p000-6v" data-id="sim-tubes-p000-6v"><div class="thumb"><img src="data/sim-tubes-p000-6v/thumb.webp" width="640" height="360" loading="lazy" alt="Simulated picture of this example"><span class="kind sim">Simulation</span><span class="src">Simulated picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>Simulated pile of six tubes</h3><p class="inbin"><b>In the bin:</b> 6 tubes: 1 AB, 2 X, 3 Y &middot; Simulated lab bin</p><p class="res">Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.4-1.4 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against the simulation truth (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex sim" href="#sim-tubes-p000-2v" data-id="sim-tubes-p000-2v"><div class="thumb"><img src="data/sim-tubes-p000-2v/thumb.webp" width="640" height="360" loading="lazy" alt="Simulated picture of this example"><span class="kind sim">Simulation</span><span class="src">Simulated picture</span></div><div class="exb"><div class="badges"><span class="b plain">2 views</span></div><h3>The same pile from only two views</h3><p class="inbin"><b>In the bin:</b> 6 tubes: 1 AB, 2 X, 3 Y &middot; Simulated lab bin</p><p class="res">Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.7-3.7 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against the simulation truth (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex sim" href="#sim-tubes-p007-6v" data-id="sim-tubes-p007-6v"><div class="thumb"><img src="data/sim-tubes-p007-6v/thumb.webp" width="640" height="360" loading="lazy" alt="Simulated picture of this example"><span class="kind sim">Simulation</span><span class="src">Simulated picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>Simulated pile, two tubes over the rim</h3><p class="inbin"><b>In the bin:</b> 6 tubes: 1 AB, 2 X, 3 Y &middot; Simulated lab bin, moved</p><p class="res">Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.5-1.2 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against the simulation truth (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex sim" href="#sim-tubes-p015-6v" data-id="sim-tubes-p015-6v"><div class="thumb"><img src="data/sim-tubes-p015-6v/thumb.webp" width="640" height="360" loading="lazy" alt="Simulated picture of this example"><span class="kind sim">Simulation</span><span class="src">Simulated picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>Simulated: three Y tubes on one long AB</h3><p class="inbin"><b>In the bin:</b> 4 tubes: 1 AB, 3 Y &middot; Simulated lab bin, moved</p><p class="res">Found 4 of 4 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.6-1.3 mm.</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against the simulation truth (5 mm rule)</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-<a class="ex sim" href="#sim-parts-dev-c000" data-id="sim-parts-dev-c000"><div class="thumb"><img src="data/sim-parts-dev-c000/thumb.webp" width="640" height="360" loading="lazy" alt="Simulated picture of this example"><span class="kind sim">Simulation</span><span class="src">Simulated picture</span></div><div class="exb"><div class="badges"><span class="b plain">6 views</span></div><h3>Simulated rigid parts: seven listed parts and a stranger</h3><p class="inbin"><b>In the bin:</b> 7 listed parts, 1 part not on the list, 1 small washer &middot; Simulated lab bin</p><p class="res">All 7 listed parts found with the right type and pose (MSSD 0.9-2.0 mm, limit 5.0 mm here). The T-profile was not reported as a listed part, the absent part was not reported, and the washer was counted (1 of 1).</p><p class="chk"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L10 17 L19 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Checked against the simulation truth</span></p><span class="open" aria-hidden="true">Open the 3-D result &rarr;</span></div></a>
-</div>
-</div>
-</section>
-
-<section class="context" id="context" aria-labelledby="ctxh">
-<div class="label">Not only the good cases</div>
-<h2 id="ctxh">How often it works</h2>
-<p>This page shows only examples that passed their check. On the full sets they come from (pipeFit v2, each scene on its own):</p>
-<ul>
-<li><b>Lab bin, all 16 stages</b> of putting the 7 tubes in and taking them out again: 51 of the 56 tubes were found correctly (right type, within 5 mm of the reference fit). 5 tubes were missed, and 3 found tubes matched no reference tube within 5 mm.</li>
-<li><b>Moved lab bin, scenes r02-r04:</b> 12 of 13 tubes correct, 1 missed, 1 found tube without a match.</li>
-<li><b>EMB 780 bin, three piles of 7 tubes (number of tubes only):</b> with 12 views pipeFit found 5 (pile 1), 7 (pile 2), 5 (pile 3) tubes; with 3 views (the close view from above and two overviews) it found 7 (pile 1), 7 (pile 2), 7 (pile 3). More pictures did not always help.</li>
-<li><b>Simulated tube piles (24 piles, 116 visible tubes):</b> with 6 views 116 of 116 were correct, with 0 extra tubes, and 24 of 24 piles were complete. With 2 views 109 of 116 were correct and 18 of 24 piles complete.</li>
-</ul>
-</section>
-
-<footer>Questions? <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026<br>The work was carried out with support from Vinnova (Sweden's Innovation Agency) within the Advanced Digitalization program under the project named AIKIDO (Dnr: 2025-01009).<br>Built from the pipeFit result files as of 2026-11-27. All numbers and the checksums of the files they come from: <a href="data/manifest.json">data/manifest.json</a>.<br><a href="../">Back to the poster</a></footer>
+<h2>Real scans</h2>
+<div class="grid" id="real"></div>
+<h2>Simulation</h2>
+<div class="grid" id="sim"></div>
 </main>
 
-<dialog id="viewer" aria-labelledby="vTitle">
-<div class="vwrap">
-<div class="vhead">
-<div class="tt"><div class="badges" id="vBadges"></div><h2 id="vTitle">Example</h2></div>
-<button class="vclose" id="vClose" type="button" aria-label="Close the example">&times;</button>
-</div>
-<div class="vbody">
-<div class="vgrid">
-<div class="vleft">
-<div class="mvwrap">
-<model-viewer id="mv" camera-controls interaction-prompt="none" touch-action="pan-y" shadow-intensity="0.5" exposure="1.05" environment-image="neutral" max-camera-orbit="auto 88deg auto" alt="3-D model of the result"><div slot="progress-bar"></div></model-viewer>
-<div class="legend" id="vLegend" aria-hidden="true"></div>
-<div class="simtag" id="vSimTag" hidden>SIMULATION</div>
-</div>
-<div class="vtools" id="vTools" role="group" aria-label="3-D view options"></div>
-<p class="hint">Drag to turn, pinch or scroll to zoom. With the keyboard: Tab to the model, then use the arrow keys.</p>
-</div>
-<div class="vright">
-<section><h3>In the bin</h3><p id="vWhat"></p><p class="small" id="vBin"></p></section>
-<section class="vresult"><h3>Result</h3><p class="big" id="vResult"></p><p id="vGrasp"></p><div class="tblw" id="vRows"></div></section>
-<section><h3>How it was checked</h3><p id="vCheck"></p><p class="caveat" id="vCaveat" hidden></p><p class="limit" id="vLimit" hidden></p></section>
-<section><h3 id="vPicsH">Pictures</h3><div id="vPhotos"></div></section>
-<section><h3>Details</h3><dl class="det" id="vDetails"></dl></section>
-</div>
-</div>
-</div>
+<dialog id="dlg" aria-labelledby="dlg-title">
+<div class="dlg">
+<div class="bar"><b id="dlg-title"></b><span id="modes"></span><button class="x" id="close" type="button" aria-label="Close">&times;</button></div>
+<model-viewer id="mv" camera-controls touch-action="pan-y" interaction-prompt="none" shadow-intensity="0.6" exposure="1.05" alt="3-D result"></model-viewer>
+<img class="photo" id="ph" alt="">
+<div class="legend"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9AA0A8"></i>fittings / parts</span><span>Drag to turn, pinch or scroll to zoom</span></div>
 </div>
 </dialog>
 
-<script type="application/json" id="examples-data">{"examples":[{"id":"lab-s01-single","kind":"real","title":"One tube alone","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"1 tube: 1 AB","date":"2026-09-30","views":6,"what":"Stage s01 of the lab sequence: tube A (type AB) alone in the lab's blue bin. Six pictures from the wrist camera of the robot arm.","result":"Found 1 of 1 tube, with the right type and no extra tube. Mean distance to the reference fit: 1.2 mm.","check":"Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"6 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB","ref":"A","d_mm":1.19}],"glb":"data/lab-s01-single/scene.glb","glb_bytes":266540,"triangles":9612,"photos":[{"src":"data/lab-s01-single/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v01 (overview)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[-0.0391,0.1213,-0.0419],"text":"AB 1.2 mm","colour":"#4C78A8"}],"orbit":"-89.5deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-s04-crossing","kind":"real","title":"Four tubes lying across each other","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"4 tubes: 2 AB, 2 X","date":"2026-09-30","views":2,"what":"Stage s04: tubes A, B, X1 and X2 were put in one by one and lie across each other. Two pictures: a high overview and a close view from above.","result":"Found 4 of 4 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.8-2.8 mm.","check":"Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"2 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB","ref":"B","d_mm":1.34},{"tube":1,"type":"X","ref":"X2","d_mm":0.83},{"tube":2,"type":"AB","ref":"A","d_mm":1.55},{"tube":3,"type":"X","ref":"X1","d_mm":2.76}],"glb":"data/lab-s04-crossing/scene.glb","glb_bytes":740628,"triangles":31476,"photos":[{"src":"data/lab-s04-crossing/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[0.0373,0.1108,0.0004],"text":"AB 1.3 mm","colour":"#4C78A8"},{"pos":[-0.0884,0.0352,0.0627],"text":"X 0.8 mm","colour":"#F58518"},{"pos":[-0.043,0.1176,-0.0442],"text":"AB 1.6 mm","colour":"#4C78A8"},{"pos":[-0.0454,0.025,-0.0742],"text":"X 2.8 mm","colour":"#F58518"}],"orbit":"-89.2deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-s08-full","kind":"real","title":"Full pile of seven tubes","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"7 tubes: 2 AB, 2 X, 3 Y","date":"2026-09-30","views":6,"what":"Stage s08: all seven lab tubes piled in the lab bin, crossing and stacked. Six pictures.","result":"Found 7 of 7 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 1.4-3.7 mm.","check":"Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"6 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB","ref":"A","d_mm":2.12},{"tube":1,"type":"AB","ref":"B","d_mm":1.4},{"tube":2,"type":"X","ref":"X2","d_mm":2.92},{"tube":3,"type":"Y","ref":"Y2","d_mm":3.66},{"tube":4,"type":"Y","ref":"Y1","d_mm":2.9},{"tube":5,"type":"Y","ref":"Y3","d_mm":1.39},{"tube":6,"type":"X","ref":"X1","d_mm":2.86}],"glb":"data/lab-s08-full/scene.glb","glb_bytes":1157360,"triangles":51876,"photos":[{"src":"data/lab-s08-full/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v01 (overview)","simulated":false},{"src":"data/lab-s08-full/photo2.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[-0.045,0.1194,-0.0488],"text":"AB 2.1 mm","colour":"#4C78A8"},{"pos":[0.0383,0.1077,-0.0003],"text":"AB 1.4 mm","colour":"#4C78A8"},{"pos":[-0.0854,0.041,0.066],"text":"X 2.9 mm","colour":"#F58518"},{"pos":[-0.1014,0.0961,0.0326],"text":"Y 3.7 mm","colour":"#54A24B"},{"pos":[-0.0465,0.0595,-0.0668],"text":"Y 2.9 mm","colour":"#54A24B"},{"pos":[0.0246,0.142,-0.008],"text":"Y 1.4 mm","colour":"#54A24B"},{"pos":[-0.0553,0.0275,-0.0122],"text":"X 2.9 mm","colour":"#F58518"}],"orbit":"-89.2deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-rm2-picking","kind":"real","title":"Five tubes left after two were taken out","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"5 tubes: 2 AB, 2 X, 1 Y","date":"2026-09-30","views":2,"what":"Stage rm2 of the removal sequence: two Y tubes were taken out of the full pile by hand; the other five still lie across each other. Two pictures: a high overview and a close view from above.","result":"Found 5 of 5 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 1.3-2.8 mm.","check":"Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"2 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB","ref":"B","d_mm":2.52},{"tube":1,"type":"AB","ref":"A","d_mm":2.16},{"tube":2,"type":"X","ref":"X2","d_mm":2.78},{"tube":3,"type":"X","ref":"X1","d_mm":1.27},{"tube":4,"type":"Y","ref":"Y1","d_mm":2.13}],"glb":"data/lab-rm2-picking/scene.glb","glb_bytes":880444,"triangles":38308,"photos":[{"src":"data/lab-rm2-picking/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[0.0363,0.1096,-0.0009],"text":"AB 2.5 mm","colour":"#4C78A8"},{"pos":[-0.0444,0.1175,-0.0476],"text":"AB 2.2 mm","colour":"#4C78A8"},{"pos":[-0.0843,0.0402,0.0709],"text":"X 2.8 mm","colour":"#F58518"},{"pos":[-0.056,0.0251,-0.0243],"text":"X 1.3 mm","colour":"#F58518"},{"pos":[-0.0931,0.0529,-0.0223],"text":"Y 2.1 mm","colour":"#54A24B"}],"orbit":"-89.5deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-rm4-moved","kind":"real","title":"Three tubes left; one was dragged 47 mm","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"3 tubes: 1 AB, 2 X","date":"2026-09-30","views":2,"what":"Stage rm4: tubes B, X1 and X2 are left. Taking out tube A dragged tube B about 47 mm into A's old place. Each scene is reconstructed on its own, so B is simply found where it now lies. Two pictures.","result":"Found 3 of 3 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 2.5-3.3 mm.","check":"Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"2 views","cls":"plain"}],"rows":[{"tube":0,"type":"X","ref":"X1","d_mm":2.46},{"tube":1,"type":"X","ref":"X2","d_mm":3.29},{"tube":2,"type":"AB","ref":"B","d_mm":2.69}],"glb":"data/lab-rm4-moved/scene.glb","glb_bytes":550412,"triangles":22772,"photos":[{"src":"data/lab-rm4-moved/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#fbcea3","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[-0.0371,0.0272,-0.082],"text":"X 2.5 mm","colour":"#F58518"},{"pos":[-0.0871,0.038,0.0674],"text":"X 3.3 mm","colour":"#F58518"},{"pos":[0.003,0.0896,0.007],"text":"AB 2.7 mm","colour":"#4C78A8"}],"orbit":"-89.5deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-r02-moved-bin","kind":"real","title":"Bin moved and turned, three Y tubes","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"3 tubes: 3 Y","date":"2026-09-30","views":6,"what":"A separate random scene in the same lab bin: Y1, Y2 and Y3 placed at random, crossing. The bin had been moved about 1-2.4 cm and turned slightly. Six pictures: an overview, four at an angle from the sides and a close view from above.","result":"Found 3 of 3 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.4-1.3 mm.","check":"Compared with a reference fit made from the same six pictures: the scanned tube models fitted to every mask edge and the depth of all views, with the pieces identified by eye. That reference is good to about 2-5 mm. Same rule as for the stages: right type and within 5 mm on average over the seen part, one to one, no extra tubes.","caveat":"One reference tube (Y1) was started by hand, and two different reference methods differ by 4.9-8.7 mm on it.","limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"6 views","cls":"plain"}],"rows":[{"tube":0,"type":"Y","ref":"Y1","d_mm":0.51},{"tube":1,"type":"Y","ref":"Y3","d_mm":0.4},{"tube":2,"type":"Y","ref":"Y2","d_mm":1.29}],"glb":"data/lab-r02-moved-bin/scene.glb","glb_bytes":492248,"triangles":21364,"photos":[{"src":"data/lab-r02-moved-bin/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v01 (overview)","simulated":false}],"legend":[{"colour":"#54A24B","label":"Y tube"},{"colour":"#bbdab7","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[-0.0812,0.0642,-0.0438],"text":"Y 0.5 mm","colour":"#54A24B"},{"pos":[0.0796,0.0241,-0.0762],"text":"Y 0.4 mm","colour":"#54A24B"},{"pos":[-0.0728,0.0232,0.0664],"text":"Y 1.3 mm","colour":"#54A24B"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-r04-over-rim","kind":"real","title":"Two tubes hanging over the rim","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"5 tubes: 1 AB, 2 X, 2 Y","date":"2026-09-30","views":6,"what":"A random scene in the lab bin: A, X1, X2, Y1 and Y3 placed at random; two tubes hang over the near rim. Six pictures.","result":"Found 5 of 5 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.3-2.2 mm.","check":"Compared with a reference fit made from the same six pictures: the scanned tube models fitted to every mask edge and the depth of all views, with the pieces identified by eye. That reference is good to about 2-5 mm. Same rule as for the stages: right type and within 5 mm on average over the seen part, one to one, no extra tubes.","caveat":"Weak check: two different reference methods disagree here by 24 mm on X1 and by 4.9-8.7 mm on A and X2, so the reference itself is uncertain for three of the five tubes.","limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"6 views","cls":"plain"},{"text":"Weak reference","cls":"warn"}],"rows":[{"tube":0,"type":"AB","ref":"A","d_mm":2.21},{"tube":1,"type":"X","ref":"X1","d_mm":0.64},{"tube":2,"type":"Y","ref":"Y3","d_mm":0.67},{"tube":3,"type":"Y","ref":"Y1","d_mm":0.35},{"tube":4,"type":"X","ref":"X2","d_mm":0.75}],"glb":"data/lab-r04-over-rim/scene.glb","glb_bytes":829868,"triangles":36436,"photos":[{"src":"data/lab-r04-over-rim/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v01 (overview)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"Reference fit centreline"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the reference fit","on":false}],"hotspots":[{"pos":[-0.0562,0.1366,0.0824],"text":"AB 2.2 mm","colour":"#4C78A8"},{"pos":[0.0777,0.1014,-0.0233],"text":"X 0.6 mm","colour":"#F58518"},{"pos":[0.0737,0.0246,-0.0735],"text":"Y 0.7 mm","colour":"#54A24B"},{"pos":[0.0144,0.1252,0.0076],"text":"Y 0.3 mm","colour":"#54A24B"},{"pos":[0.0521,0.0432,0.0217],"text":"X 0.8 mm","colour":"#F58518"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"emb-pile2","kind":"real","title":"Large bin, tangled pile of seven","bin":"EMB 780 bin (blue, industrial, inner size at the rim 54.0 x 36.7 cm)","contents":"7 tubes (operator's count)","date":"2026-11-09","views":12,"what":"The operator put 7 tubes in a tangled pile in the EMB 780 bin. Twelve pictures from the wrist camera (overviews from several sides and one close view from above).","result":"Found 7: 2 AB, 2 X, 3 Y. The runs on 2, 3 and 5 views of the same pictures also found 7 with the same types, placed 0.5-4.2 mm from this result.","check":"Only the number of tubes and how many of each type. The operator put 7 tubes in the bin; the split into 2 AB, 2 X and 3 Y is assumed (it is the lab set), it was not written down for this pile. Positions were not checked: there is no reference fit for this bin. The runs with fewer pictures of the same capture show that the result is stable, not that it is accurate.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"12 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB"},{"tube":1,"type":"AB"},{"tube":2,"type":"X"},{"tube":3,"type":"Y"},{"tube":4,"type":"X"},{"tube":5,"type":"Y"},{"tube":6,"type":"Y"}],"glb":"data/emb-pile2/scene.glb","glb_bytes":1061004,"triangles":46704,"photos":[{"src":"data/emb-pile2/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v01m (overview from the middle)","simulated":false},{"src":"data/emb-pile2/photo2.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false}],"hotspots":[{"pos":[0.0349,0.0444,0.0661],"text":"AB","colour":"#4C78A8"},{"pos":[0.0768,0.1251,-0.0541],"text":"AB","colour":"#4C78A8"},{"pos":[0.0272,0.0731,-0.0459],"text":"X","colour":"#F58518"},{"pos":[0.1237,0.0778,0.1017],"text":"Y","colour":"#54A24B"},{"pos":[0.0277,0.037,0.0426],"text":"X","colour":"#F58518"},{"pos":[0.1393,0.0298,-0.0608],"text":"Y","colour":"#54A24B"},{"pos":[0.162,0.0505,-0.0722],"text":"Y","colour":"#54A24B"}],"orbit":"-89.9deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"emb-pile1b-close3","kind":"real","title":"Large bin, seven tubes seen from three close views","bin":"EMB 780 bin (blue, industrial, inner size at the rim 54.0 x 36.7 cm)","contents":"7 tubes (operator's count)","date":"2026-11-09","views":3,"what":"Pile 1 laid out again (the same seven tubes, so not an independent pile), reconstructed from three close pictures from above only.","result":"Found 7: 2 AB, 2 X, 3 Y. A run on the same 3 views plus one overview also found 7 with the same types, placed 0.3-1.5 mm from this result.","check":"Only the number of tubes and how many of each type. The operator put 7 tubes in the bin; the split into 2 AB, 2 X and 3 Y is assumed (it is the lab set), it was not written down for this pile. Positions were not checked: there is no reference fit for this bin. The runs with fewer pictures of the same capture show that the result is stable, not that it is accurate.","caveat":null,"limit":"Not every route works: with 12 views and 14 views of this pile pipeFit found only 6 (it missed one AB tube).","grasp_note":null,"badges":[{"text":"Real scan","cls":"real"},{"text":"3 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB"},{"tube":1,"type":"AB"},{"tube":2,"type":"X"},{"tube":3,"type":"Y"},{"tube":4,"type":"Y"},{"tube":5,"type":"Y"},{"tube":6,"type":"X"}],"glb":"data/emb-pile1b-close3/scene.glb","glb_bytes":1063364,"triangles":46760,"photos":[{"src":"data/emb-pile1b-close3/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above; the pile is larger than this picture)","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false}],"hotspots":[{"pos":[0.0285,0.0366,0.0155],"text":"AB","colour":"#4C78A8"},{"pos":[-0.0875,0.07,-0.052],"text":"AB","colour":"#4C78A8"},{"pos":[0.0704,0.0481,0.0041],"text":"X","colour":"#F58518"},{"pos":[0.0183,0.0947,0.0509],"text":"Y","colour":"#54A24B"},{"pos":[0.165,0.0351,-0.0151],"text":"Y","colour":"#54A24B"},{"pos":[0.0028,0.106,0.0109],"text":"Y","colour":"#54A24B"},{"pos":[-0.1074,0.0536,-0.1529],"text":"X","colour":"#F58518"}],"orbit":"-90.1deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"emb-old3-grasp","kind":"real","title":"Large bin, three tubes; the robot picked one","bin":"EMB 780 bin (blue, industrial, inner size at the rim 54.0 x 36.7 cm)","contents":"3 tubes (operator's count)","date":"2026-11-09","views":11,"what":"Three older tubes, scattered and crossing, in the EMB 780 bin; eleven pictures. After the scan the Franka robot arm picked tube 1 (found as type X) at the grasp point pipeFit computed for it.","result":"Found 3: 1 AB, 2 X. The robot closed its fingers to 14.72 mm on a tube of model diameter 14.6 mm, held it, lifted it 50 mm and put it back.","check":"Number of tubes only: the operator put 3 tubes in the bin and did not note their types. Positions were not compared with a reference fit. Instead the real arm went to the computed grasp point, closed its fingers and held the tube.","caveat":null,"limit":null,"grasp_note":"The grasp point lies on tube 1's centreline in this result (0.1 mm away). A run on 2 views of the same scene found the same 3 tubes, 1.5-2.5 mm from this result.","badges":[{"text":"Real scan","cls":"real"},{"text":"Picked by the robot","cls":"pick"},{"text":"11 views","cls":"plain"}],"rows":[{"tube":0,"type":"AB"},{"tube":1,"type":"X"},{"tube":2,"type":"X"}],"glb":"data/emb-old3-grasp/scene.glb","glb_bytes":510900,"triangles":20648,"photos":[{"src":"data/emb-old3-grasp/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v06 (close view from above)","simulated":false},{"src":"data/emb-old3-grasp/photo2.webp","w":1280,"h":720,"caption":"The planned grasp drawn on the overview picture before the arm moved: fingertips at the red mark, fingers closing along the yellow line, hand outline in magenta","simulated":false}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#b7c9dc","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false}],"hotspots":[{"pos":[0.0068,0.0498,0.0334],"text":"AB","colour":"#4C78A8"},{"pos":[0.0413,0.0334,-0.004],"text":"X - picked","colour":"#F58518"},{"pos":[-0.1483,0.0442,-0.1453],"text":"X","colour":"#F58518"}],"orbit":"-90.0deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"lab-3y-grasp","kind":"real","title":"Lab bin, three Y tubes; the robot picked one","bin":"Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)","contents":"3 tubes: 3 Y","date":"2026-10-19","views":2,"what":"Three Y tubes crossing in the lab bin, two pictures (overview and close view from above). The Franka robot arm then picked tube 1 at the grasp point pipeFit computed for it.","result":"Found 3, all Y. The robot closed its fingers to 15.4 mm (model diameter 15.8 mm) and lifted the tube out of the bin.","check":"Number and type checked by eye on the photo: three tubes, each with a hex nut at one end and a green-tagged eye fitting at the other, which is how the Y type looks. Positions were not compared with a reference fit. Instead the real arm went to the computed grasp point, closed its fingers and lifted the tube out. Grip width and lift are from the project log of that day.","caveat":null,"limit":null,"grasp_note":"The grasp point lies on tube 1's centreline in this result (0.1 mm away), so the target came from this result.","badges":[{"text":"Real scan","cls":"real"},{"text":"Picked by the robot","cls":"pick"},{"text":"2 views","cls":"plain"}],"rows":[{"tube":0,"type":"Y"},{"tube":1,"type":"Y"},{"tube":2,"type":"Y"}],"glb":"data/lab-3y-grasp/scene.glb","glb_bytes":453252,"triangles":19144,"photos":[{"src":"data/lab-3y-grasp/photo1.webp","w":1280,"h":720,"caption":"Camera picture, view v01 (overview)","simulated":false},{"src":"data/lab-3y-grasp/photo2.webp","w":1280,"h":720,"caption":"The planned grasp drawn on the overview picture before the arm moved: fingers closing along the yellow line, hand outline in magenta","simulated":false},{"src":"data/lab-3y-grasp/photo3.webp","w":848,"h":480,"caption":"Wrist camera at the grasp point, just before the fingers closed","simulated":false}],"legend":[{"colour":"#54A24B","label":"Y tube"},{"colour":"#bbdab7","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false}],"hotspots":[{"pos":[-0.0561,0.0406,0.0882],"text":"Y","colour":"#54A24B"},{"pos":[0.0562,0.0883,0.0397],"text":"Y - picked","colour":"#54A24B"},{"pos":[0.0739,0.048,0.0485],"text":"Y","colour":"#54A24B"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"sim-tubes-p000-6v","kind":"simulation","title":"Simulated pile of six tubes","bin":"Simulated lab bin","contents":"6 tubes: 1 AB, 2 X, 3 Y","date":null,"views":6,"what":"Six of the seven scanned lab tubes dropped into the measured lab bin by a physics simulation (pile p000): stacked up to 3 levels, two partly over the rim, 6 tube-tube contacts. Rendered depth and colour pictures with the camera's measured noise, six views; the pictures are segmented by SAM, as real ones.","result":"Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.4-1.4 mm.","check":"Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Simulation","cls":"sim"},{"text":"6 views","cls":"plain"}],"rows":[{"tube":0,"type":"Y","ref":"Y1","d_mm":0.82},{"tube":1,"type":"AB","ref":"A","d_mm":0.76},{"tube":2,"type":"Y","ref":"Y3","d_mm":0.68},{"tube":3,"type":"Y","ref":"Y2","d_mm":1.37},{"tube":4,"type":"X","ref":"X2","d_mm":0.49},{"tube":5,"type":"X","ref":"X1","d_mm":0.44}],"glb":"data/sim-tubes-p000-6v/scene.glb","glb_bytes":919920,"triangles":40524,"photos":[{"src":"data/sim-tubes-p000-6v/photo1.webp","w":1280,"h":720,"caption":"Simulated camera picture, view v01 (overview)","simulated":true}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#bbdab7","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"True centreline (simulation)"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the simulation truth","on":false}],"hotspots":[{"pos":[-0.019,0.1163,0.0025],"text":"Y 0.8 mm","colour":"#54A24B"},{"pos":[-0.014,0.1453,0.062],"text":"AB 0.8 mm","colour":"#4C78A8"},{"pos":[0.1002,0.0231,-0.0421],"text":"Y 0.7 mm","colour":"#54A24B"},{"pos":[0.0579,0.02,-0.0563],"text":"Y 1.4 mm","colour":"#54A24B"},{"pos":[0.0508,0.1048,-0.0575],"text":"X 0.5 mm","colour":"#F58518"},{"pos":[-0.044,0.0952,-0.0022],"text":"X 0.4 mm","colour":"#F58518"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"sim-tubes-p000-2v","kind":"simulation","title":"The same pile from only two views","bin":"Simulated lab bin","contents":"6 tubes: 1 AB, 2 X, 3 Y","date":null,"views":2,"what":"Pile p000 again, reconstructed from only two of its pictures: the overview v01 and the close view from above v06.","result":"Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.7-3.7 mm.","check":"Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Simulation","cls":"sim"},{"text":"2 views","cls":"plain"}],"rows":[{"tube":0,"type":"Y","ref":"Y1","d_mm":1.44},{"tube":1,"type":"AB","ref":"A","d_mm":3.72},{"tube":2,"type":"Y","ref":"Y3","d_mm":1.73},{"tube":3,"type":"X","ref":"X2","d_mm":0.95},{"tube":4,"type":"Y","ref":"Y2","d_mm":0.74},{"tube":5,"type":"X","ref":"X1","d_mm":1.93}],"glb":"data/sim-tubes-p000-2v/scene.glb","glb_bytes":918236,"triangles":40580,"photos":[{"src":"data/sim-tubes-p000-2v/photo1.webp","w":1280,"h":720,"caption":"Simulated camera picture, view v06 (close view from above)","simulated":true},{"src":"data/sim-tubes-p000-2v/photo2.webp","w":1280,"h":720,"caption":"Simulated camera picture, view v01 (overview)","simulated":true}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#bbdab7","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true},{"colour":"#2B323C","line":true,"optional":true,"label":"True centreline (simulation)"}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false},{"key":"ref","label":"Show the simulation truth","on":false}],"hotspots":[{"pos":[-0.0193,0.1191,0.0045],"text":"Y 1.4 mm","colour":"#54A24B"},{"pos":[-0.0519,0.198,0.1474],"text":"AB 3.7 mm","colour":"#4C78A8"},{"pos":[0.1113,0.0589,0.0225],"text":"Y 1.7 mm","colour":"#54A24B"},{"pos":[0.0522,0.1033,-0.0549],"text":"X 1.0 mm","colour":"#F58518"},{"pos":[0.0905,0.0451,0.0503],"text":"Y 0.7 mm","colour":"#54A24B"},{"pos":[0.0383,0.1254,0.0819],"text":"X 1.9 mm","colour":"#F58518"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"sim-tubes-p007-6v","kind":"simulation","title":"Simulated pile, two tubes over the rim","bin":"Simulated lab bin, moved","contents":"6 tubes: 1 AB, 2 X, 3 Y","date":null,"views":6,"what":"Pile p007: six tubes stacked up to 3 levels, two partly over the rim, 7 tube-tube contacts. The bin stands 2.5 cm away from the lab position and is turned by 3.8 degrees. Six views, SAM segmentation.","result":"Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.5-1.2 mm.","check":"Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Simulation","cls":"sim"},{"text":"6 views","cls":"plain"}],"rows":[{"tube":0,"type":"X","ref":"X1","d_mm":0.69},{"tube":1,"type":"Y","ref":"Y2","d_mm":0.55},{"tube":2,"type":"Y","ref":"Y3","d_mm":0.66},{"tube":3,"type":"X","ref":"X2","d_mm":0.97},{"tube":4,"type":"Y","ref":"Y1","d_mm":0.76},{"tube":5,"type":"AB","ref":"B","d_mm":1.19}],"glb":"data/sim-tubes-p007-6v/scene.glb","glb_bytes":887596,"triangles":38800,"photos":[{"src":"data/sim-tubes-p007-6v/photo1.webp","w":1280,"h":720,"caption":"Simulated camera picture, view v01 (overview)","simulated":true}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#F58518","label":"X tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#fbcea3","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false}],"hotspots":[{"pos":[0.0701,0.11,0.0452],"text":"X 0.7 mm","colour":"#F58518"},{"pos":[0.1008,0.1185,0.1342],"text":"Y 0.5 mm","colour":"#54A24B"},{"pos":[0.0596,0.0902,0.0504],"text":"Y 0.7 mm","colour":"#54A24B"},{"pos":[-0.1117,0.0341,0.0125],"text":"X 1.0 mm","colour":"#F58518"},{"pos":[-0.1151,0.1363,0.0075],"text":"Y 0.8 mm","colour":"#54A24B"},{"pos":[-0.0084,0.1039,-0.0398],"text":"AB 1.2 mm","colour":"#4C78A8"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"sim-tubes-p015-6v","kind":"simulation","title":"Simulated: three Y tubes on one long AB","bin":"Simulated lab bin, moved","contents":"4 tubes: 1 AB, 3 Y","date":null,"views":6,"what":"Pile p015: two Y tubes lie on one long AB tube and the third Y lies on one of them (3 levels); the AB hangs partly over the rim. Six views, SAM segmentation.","result":"Found 4 of 4 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.6-1.3 mm.","check":"Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Simulation","cls":"sim"},{"text":"6 views","cls":"plain"}],"rows":[{"tube":0,"type":"Y","ref":"Y2","d_mm":0.61},{"tube":1,"type":"AB","ref":"B","d_mm":1.3},{"tube":2,"type":"Y","ref":"Y1","d_mm":0.8},{"tube":3,"type":"Y","ref":"Y3","d_mm":1.14}],"glb":"data/sim-tubes-p015-6v/scene.glb","glb_bytes":629260,"triangles":27088,"photos":[{"src":"data/sim-tubes-p015-6v/photo1.webp","w":1280,"h":720,"caption":"Simulated camera picture, view v01 (overview)","simulated":true}],"legend":[{"colour":"#4C78A8","label":"AB tube"},{"colour":"#54A24B","label":"Y tube"},{"colour":"#bbdab7","label":"Lighter: no camera saw it"},{"colour":"#9A9A9A","label":"Fittings and connectors"},{"colour":"#B9A3D6","label":"Loose parts (clips, tape)"},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[{"key":"labels","label":"Labels","on":true},{"key":"unobs","label":"Hide parts no camera saw","on":false}],"hotspots":[{"pos":[0.0984,0.0984,0.0142],"text":"Y 0.6 mm","colour":"#54A24B"},{"pos":[0.0381,0.0989,-0.001],"text":"AB 1.3 mm","colour":"#4C78A8"},{"pos":[0.0769,0.0883,0.0255],"text":"Y 0.8 mm","colour":"#54A24B"},{"pos":[0.0936,0.0211,0.0522],"text":"Y 1.1 mm","colour":"#54A24B"}],"orbit":"-89.4deg 40deg 100%","version":"pipeFit v2, each scene on its own (single frame)"},{"id":"sim-parts-dev-c000","kind":"simulation","title":"Simulated rigid parts: seven listed parts and a stranger","bin":"Simulated lab bin","contents":"7 listed parts, 1 part not on the list, 1 small washer","date":null,"views":6,"what":"A simulated bin with rigid parts made from part drawings (synthetic test parts): L block with holes, L block with holes (mirror), L sheet bracket, mouse (freeform), pocket block B, stepped shaft, tube with sleeves. A T-profile that is not on the job list lies among them, and a small M8 washer. The job list also named a part that was not in the bin: S rod (solid). Six views, SAM segmentation.","result":"All 7 listed parts found with the right type and pose (MSSD 0.9-2.0 mm, limit 5.0 mm here). The T-profile was not reported as a listed part, the absent part was not reported, and the washer was counted (1 of 1).","check":"Compared with the simulation truth. A listed part counts as correct when its type is right and its surface error MSSD (the largest distance between matching surface points of the found and the true part, taking the part's symmetry into account) is at most max(min(10 % of the part's size, 5 mm), 2 mm). A part that is not on the list must not be reported as a listed part. Small flat parts such as the washer are only counted. Development scene: the segmentation settings were tuned on it. Shown is the run of 2026-10-11; a later version of the code gives the same poses (checked: largest difference 0.00 mm, 0.000 degrees).","caveat":null,"limit":null,"grasp_note":null,"badges":[{"text":"Simulation","cls":"sim"},{"text":"6 views","cls":"plain"}],"rows":[{"object":0,"type":"g2_pocket_b","name":"Pocket block B","mssd_mm":1.15,"threshold_mm":5.0},{"object":1,"type":"g2_sheet_L","name":"L sheet bracket","mssd_mm":1.55,"threshold_mm":5.0},{"object":2,"type":"g2_Lblock_m","name":"L block with holes (mirror)","mssd_mm":1.2,"threshold_mm":5.0},{"object":3,"type":"g2_Lblock","name":"L block with holes","mssd_mm":1.57,"threshold_mm":5.0},{"object":4,"type":"g2_mouse","name":"Mouse (freeform)","mssd_mm":1.39,"threshold_mm":5.0},{"object":5,"type":"g2_tube_fittings","name":"Tube with sleeves","mssd_mm":0.95,"threshold_mm":5.0},{"object":6,"type":"g2_shaft","name":"Stepped shaft","mssd_mm":2.05,"threshold_mm":5.0}],"glb":"data/sim-parts-dev-c000/scene.glb","glb_bytes":918476,"triangles":36338,"photos":[{"src":"data/sim-parts-dev-c000/photo1.webp","w":1280,"h":720,"caption":"Simulated camera picture, view v01 (overview)","simulated":true}],"legend":[{"colour":"#bcbd22","label":"Pocket block B"},{"colour":"#d62728","label":"L sheet bracket"},{"colour":"#e377c2","label":"L block with holes (mirror)"},{"colour":"#008080","label":"L block with holes"},{"colour":"#17becf","label":"Mouse (freeform)"},{"colour":"#7b4173","label":"Tube with sleeves"},{"colour":"#8c6d31","label":"Stepped shaft"},{"colour":"#4A5568","label":"Simulation truth (grey lines)","line":true},{"colour":"#5b8fd6","label":"Bin","alpha":true}],"layers":[],"hotspots":[{"pos":[0.0698,0.0262,-0.0201],"text":"Pocket block B 1.1 mm","colour":"#bcbd22"},{"pos":[-0.0836,0.0319,0.0975],"text":"L sheet bracket 1.6 mm","colour":"#d62728"},{"pos":[0.0168,0.0322,-0.1028],"text":"L block with holes (mirror) 1.2 mm","colour":"#e377c2"},{"pos":[-0.0313,0.0304,0.1139],"text":"L block with holes 1.6 mm","colour":"#008080"},{"pos":[0.0727,0.025,-0.0876],"text":"Mouse (freeform) 1.4 mm","colour":"#17becf"},{"pos":[-0.0439,0.0446,-0.051],"text":"Tube with sleeves 0.9 mm","colour":"#7b4173"},{"pos":[0.0527,0.0245,0.0998],"text":"Stepped shaft 2.0 mm","colour":"#8c6d31"},{"pos":[-0.0072,0.0416,0.0479],"text":"T profile: not on the list, not reported","colour":"#4A5568","ghost":true},{"pos":[-0.1127,0.0098,0.1186],"text":"Washer M8: counted only","colour":"#4A5568","ghost":true}],"orbit":"-89.2deg 40deg 100%","version":"pipeFit generic reconstruction (mesh plug-in), SAM masks"}]}</script>
 <script>
-(function () {
-  'use strict';
-  var DATA = JSON.parse(document.getElementById('examples-data').textContent);
-  var byId = {};
-  DATA.examples.forEach(function (e) { byId[e.id] = e; });
-  var dlg = document.getElementById('viewer'), mv = document.getElementById('mv');
-  var $ = function (id) { return document.getElementById(id); };
-  var state = { labels: true, unobs: false, ref: false };
-  var orig = null, current = null, pushed = false, opener = null;
-  var REF = /^(reference|truth)$/, UNOBS = /_unobserved$/, TUBE = /^(tube_|part)/;
-
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function el(tag, attrs, html) { var x = document.createElement(tag); for (var k in attrs || {}) x.setAttribute(k, attrs[k]); if (html != null) x.innerHTML = html; return x; }
-
-  function applyLayers() {
-    mv.classList.toggle('nolabels', !state.labels);
-    $('vLegend').classList.toggle('ref', state.ref);
-    if (!mv.model || !orig) return;
-    var mats = mv.model.materials.filter(function (m) { return REF.test(m.name || '') || TUBE.test(m.name || ''); });
-    var waiting = mats.filter(function (m) { return m.isLoaded === false; });
-    if (waiting.length) {
-      Promise.all(waiting.map(function (m) { return m.ensureLoaded(); })).then(applyLayers, function () {});
-      return;
+(async function () {
+  const m = await fetch('data/manifest.json').then(r => r.json());
+  const dlg = document.getElementById('dlg'), mv = document.getElementById('mv'), ph = document.getElementById('ph'),
+        modes = document.getElementById('modes'), title = document.getElementById('dlg-title');
+  function short(e) { return (e.bin_short || '') + ' · ' + String(e.contents || '').split(':')[0].split(',')[0].replace(/\s*\(.*\)/, ''); }
+  function show(which, e) {
+    for (const b of modes.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.k === which));
+    if (which === '3d') { mv.style.display = 'block'; ph.style.display = 'none'; }
+    else { const p = e.photos[+which]; ph.src = p.src; ph.alt = p.caption || ''; ph.style.display = 'block'; mv.style.display = 'none'; }
+  }
+  function open(e) {
+    title.textContent = e.title;
+    mv.src = e.glb;
+    modes.innerHTML = '';
+    const opts = [['3d', '3-D']].concat((e.photos || []).map((p, i) => [String(i), (e.kind === 'real' ? 'Photo ' : 'Picture ') + (i + 1)]));
+    for (const [k, label] of opts) {
+      const b = document.createElement('button'); b.type = 'button'; b.dataset.k = k; b.textContent = label;
+      b.addEventListener('click', () => show(k, e)); modes.appendChild(b);
     }
-    mats.forEach(function (m) {
-      var name = m.name || '';
-      if (!orig.has(m)) orig.set(m, m.pbrMetallicRoughness.baseColorFactor.slice());
-      var o = orig.get(m), a = o[3];
-      if (REF.test(name)) a = state.ref ? 1 : 0;
-      else if (UNOBS.test(name) && state.unobs) a = 0;
-      else if (state.ref) a = 0.35;
-      m.setAlphaMode(a >= 0.999 ? 'OPAQUE' : 'BLEND');
-      m.pbrMetallicRoughness.setBaseColorFactor([o[0], o[1], o[2], a]);
-    });
+    show('3d', e);
+    dlg.showModal();
   }
-  mv.addEventListener('load', function () { orig = new Map(); applyLayers(); });
-
-  function tools(e) {
-    var box = $('vTools'); box.innerHTML = '';
-    (e.layers || []).forEach(function (L) {
-      var b = el('button', { type: 'button', 'class': 'tbtn', 'aria-pressed': String(!!state[L.key]) }, '<span class="box" aria-hidden="true"></span>' + esc(L.label));
-      b.addEventListener('click', function () {
-        state[L.key] = !state[L.key];
-        b.setAttribute('aria-pressed', String(state[L.key]));
-        applyLayers();
-      });
-      box.appendChild(b);
-    });
-    box.hidden = !(e.layers || []).length;
+  for (const e of m.examples) {
+    const t = document.createElement('button');
+    t.type = 'button'; t.className = 'tile'; t.setAttribute('aria-label', e.title + ' (open the 3-D result)');
+    const img = document.createElement('img');
+    img.src = (e.photos && e.photos[0] ? e.photos[0].src : e.thumb); img.alt = e.title; img.loading = 'lazy';
+    const cap = document.createElement('span'); cap.textContent = short(e);
+    const d3 = document.createElement('em'); d3.className = 'd3'; d3.textContent = '3-D';
+    t.append(img, cap, d3);
+    t.addEventListener('click', () => open(e));
+    document.getElementById(e.kind === 'real' ? 'real' : 'sim').appendChild(t);
   }
-
-  function legend(e) {
-    var h = '';
-    e.legend.forEach(function (g) {
-      var cls = 'sw' + (g.line ? ' line' : '') + (g.alpha ? ' alpha' : '');
-      h += '<div' + (g.optional ? ' class="opt"' : '') + '><i class="' + cls + '" style="background:' + esc(g.colour) + '"></i>' + esc(g.label) + '</div>';
-    });
-    $('vLegend').innerHTML = h;
-  }
-
-  function hotspots(e) {
-    Array.prototype.slice.call(mv.querySelectorAll('.hs')).forEach(function (x) { x.remove(); });
-    e.hotspots.forEach(function (h, i) {
-      var d = el('div', { slot: 'hotspot-' + i, 'class': 'hs' + (h.ghost ? ' ghost' : ''), 'data-position': h.pos[0] + 'm ' + h.pos[1] + 'm ' + h.pos[2] + 'm', 'data-normal': '0m 1m 0m', 'aria-hidden': 'true' });
-      d.style.setProperty('--c', h.colour);
-      d.textContent = h.text;
-      mv.appendChild(d);
-    });
-  }
-
-  function rowsTable(e) {
-    var r = e.rows || [];
-    if (!r.length) return '';
-    var TC = { AB: '#4C78A8', X: '#F58518', Y: '#54A24B' };
-    var dot = function (t) { return '<i class="tdot" style="background:' + (TC[t] || '#999') + '"></i>'; };
-    var h = '<table class="rows"><thead><tr>';
-    if (r[0].object !== undefined) {
-      h += '<th scope="col">Part</th><th scope="col">Surface error (MSSD)</th><th scope="col">Limit</th></tr></thead><tbody>';
-      r.forEach(function (x) { h += '<tr><td>' + esc(x.name) + '</td><td class="num">' + x.mssd_mm.toFixed(2) + ' mm</td><td class="num">' + x.threshold_mm.toFixed(1) + ' mm</td></tr>'; });
-    } else if (r[0].d_mm !== undefined) {
-      var sim = e.kind === 'simulation';
-      h += '<th scope="col">Found tube</th><th scope="col">Type</th><th scope="col">' + (sim ? 'True piece' : 'Reference piece') + '</th><th scope="col">Mean distance</th></tr></thead><tbody>';
-      r.forEach(function (x) { h += '<tr><td>' + x.tube + '</td><td>' + dot(x.type) + x.type + '</td><td>' + esc(x.ref) + '</td><td class="num">' + x.d_mm.toFixed(2) + ' mm</td></tr>'; });
-    } else {
-      h += '<th scope="col">Found tube</th><th scope="col">Type</th></tr></thead><tbody>';
-      r.forEach(function (x) { h += '<tr><td>' + x.tube + '</td><td>' + dot(x.type) + x.type + '</td></tr>'; });
-    }
-    return h + '</tbody></table>';
-  }
-
-  function fill(e) {
-    current = e;
-    $('vTitle').textContent = e.title;
-    $('vBadges').innerHTML = e.badges.map(function (b) { return '<span class="b ' + esc(b.cls) + '">' + esc(b.text) + '</span>'; }).join('');
-    $('vSimTag').hidden = e.kind !== 'simulation';
-    $('vWhat').textContent = e.what;
-    $('vBin').textContent = e.bin + ' · ' + e.contents;
-    $('vResult').textContent = e.result;
-    $('vGrasp').textContent = e.grasp_note || '';
-    $('vGrasp').hidden = !e.grasp_note;
-    $('vRows').innerHTML = rowsTable(e);
-    $('vCheck').textContent = e.check;
-    $('vCaveat').textContent = e.caveat || ''; $('vCaveat').hidden = !e.caveat;
-    $('vLimit').textContent = e.limit || ''; $('vLimit').hidden = !e.limit;
-    $('vPicsH').textContent = e.kind === 'simulation' ? 'Simulated pictures' : 'Pictures';
-    $('vPhotos').innerHTML = e.photos.map(function (p) {
-      return '<figure><img src="' + esc(p.src) + '" width="' + p.w + '" height="' + p.h + '" loading="lazy" alt="' + esc(p.caption) + '"><figcaption>' + esc(p.caption) + '</figcaption></figure>';
-    }).join('');
-    var det = [['Bin', e.bin], ['Date', e.date || 'simulated'], ['Camera views', e.views], ['Reconstruction', e.version],
-      ['3-D model', (e.glb_bytes / 1e6).toFixed(2) + ' MB, ' + e.triangles.toLocaleString('en') + ' triangles']];
-    $('vDetails').innerHTML = det.map(function (d) { return '<dt>' + esc(d[0]) + '</dt><dd>' + esc(d[1]) + '</dd>'; }).join('');
-    state = { labels: true, unobs: false, ref: false };
-    tools(e); legend(e); hotspots(e);
-    orig = null;
-    mv.setAttribute('alt', '3-D model of the result: ' + e.title);
-    mv.setAttribute('camera-orbit', e.orbit);
-    mv.setAttribute('src', e.glb);
-    applyLayers();
-  }
-
-  function openEx(id, push) {
-    var e = byId[id];
-    if (!e) return;
-    if (!dlg.open) opener = document.activeElement;
-    fill(e);
-    if (!dlg.open) { dlg.showModal(); document.body.classList.add('modal-open'); }
-    $('vClose').focus();
-    $('vClose').closest('.vwrap').querySelector('.vbody').scrollTop = 0;
-    if (push) { history.pushState({ ex: id }, '', '#' + id); pushed = true; }
-  }
-
-  dlg.addEventListener('close', function () {
-    document.body.classList.remove('modal-open');
-    if (byId[location.hash.slice(1)]) {
-      if (pushed) history.back(); else history.replaceState(null, '', location.pathname + location.search);
-    }
-    pushed = false;
-    if (opener && opener.focus) opener.focus();
-  });
-  $('vClose').addEventListener('click', function () { dlg.close(); });
-  dlg.addEventListener('click', function (ev) { if (ev.target === dlg) dlg.close(); });
-  window.addEventListener('popstate', function () {
-    var id = location.hash.slice(1);
-    if (byId[id]) openEx(id, false);
-    else if (dlg.open) { pushed = false; dlg.close(); }
-  });
-  Array.prototype.forEach.call(document.querySelectorAll('a.ex'), function (a) {
-    a.addEventListener('click', function (ev) {
-      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button === 1) return;
-      ev.preventDefault();
-      openEx(a.getAttribute('data-id'), true);
-    });
-  });
-  var start = location.hash.slice(1);
-  if (byId[start]) openEx(start, false);
+  document.getElementById('close').addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', ev => { if (ev.target === dlg) dlg.close(); });
+  dlg.addEventListener('close', () => { mv.removeAttribute('src'); });
 })();
 </script>
 </body>
