@@ -71,6 +71,14 @@ tr.click { cursor: pointer } tr.sel td { background: color-mix(in srgb, var(--mo
 .bar { height: 8px; border-radius: 4px; background: var(--grid); position: relative; overflow: hidden }
 .bar i { position: absolute; top: 0; bottom: 0; background: var(--model) }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+details.step { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px }
+details.step > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px }
+details.step > summary::-webkit-details-marker { display: none }
+details.step > summary::before { content: ""; width: 10px; height: 10px; border-right: 3px solid var(--obs); border-bottom: 3px solid var(--obs); transform: rotate(-45deg); flex: none; margin: 0 6px 0 4px; transition: transform .15s }
+details.step[open] > summary::before { transform: rotate(45deg) translate(-2px, -2px) }
+details.step > summary h2 { flex: 1 }
+details.step:not([open]) > summary h2 { color: var(--fg) }
+details.step > .stepbody { display: flex; flex-direction: column; gap: 14px; margin-top: 14px }
 body { margin: 0 }
 html.embed { overflow: hidden }
 html.embed body { background: transparent; padding: 0 }
@@ -84,8 +92,9 @@ html.embed header h1 { display: none }
     <p class="lead">A simplified demo in a plane. A bin contains a type-X tube. Two objects lie on top of it, so the camera sees only three pieces of it (S1, S2, S3). A fourth piece, S4, belongs to another tube. The real tube's two bend angles differ from the type's standard recipe (its straight lengths, bend angles and bend radii) by amounts the algorithm does not know, so the visible points do not lie on the standard shape either. Step 1 slides one piece at a time along the tube's standard shape (the model) and collects many candidates. Step 2 checks every candidate, still unrefined, against the other pieces; most are filtered out. Step 3 refines the kept candidates with Levenberg–Marquardt (LM), using all points near each candidate, from every piece: a candidate's start pose fits only near its own piece, and only the refinement makes it fit the other pieces too. Step 4 refines two crossing tubes together, in one more LM run. The data are randomly generated, not a real scan.</p>
   </header>
 
-  <section class="step" aria-labelledby="h1s">
-    <h2 id="h1s">Step 1 · Slide and compare: find candidates (start poses)</h2>
+  <details class="step stepd" open>
+    <summary><h2 id="h1s">Step 1 · Slide and compare: find candidates (start poses)</h2></summary>
+    <div class="stepbody">
     <p class="note">Pick a piece. Place it along the model centreline at positions 2 mm apart, once with the piece facing forward and once reversed. For this search the centreline is extended straight by 45 mm past both ends; the position is where the stretch of model matched to the piece starts, so it runs from −45 mm. At each position, the Kabsch algorithm (a standard best-fit alignment) gives the rotation and shift that fit best, and the fit error is the RMS distance between the piece's points and the model points they are matched to. A position is a start pose if its error is within the tolerance and no position within 6 mm on either side, in the same direction, has a lower error. <b>Drag the slider, or drag across the chart below</b>: every start pose you stop on, in the selected direction (Forward or Reverse), is drawn in the picture (green) and kept. A fast drag can skip positions; “Sweep automatically” visits every position in both directions. Pick another piece and do it again: the candidates add up.</p>
     <div class="row">
       <div class="ctrl">
@@ -106,10 +115,12 @@ html.embed header h1 { display: none }
     <canvas id="plot" aria-label="Fit error against the position on the model"></canvas>
     <div class="legend"><span style="--c: var(--model)">Forward</span><span style="--c: var(--obs)">Reverse</span><span style="--c: var(--good)" id="tolLegend">Tolerance</span><span style="--c: var(--fg)">● start pose found  ○ not found yet</span></div>
     <p class="note">The straight pieces (S2, S3, S4) give a long, flat valley in the error curve: a straight piece fits about equally well anywhere along a straight part of the tube, so they produce very many candidates.</p>
-  </section>
+    </div>
+  </details>
 
-  <section class="step" aria-labelledby="h2s">
-    <h2 id="h2s">Step 2 · Check against the other pieces (not refined yet): most candidates are filtered out</h2>
+  <details class="step stepd">
+    <summary><h2 id="h2s">Step 2 · Check against the other pieces (not refined yet): most candidates are filtered out</h2></summary>
+    <div class="stepbody">
     <p class="note">For each candidate, draw the whole tube from the type's recipe at the candidate's pose (the <b>prediction</b>; still the standard shape, not refined) and look for points of the other pieces within 20 mm of it. If at least 60 % of a piece's points lie that close, the candidate has <b>found that piece</b>. Every 2 mm sample along the predicted tube gets the first of these labels that applies: near a point (some point within 20 mm, green), outside the bin (purple), under an object on top (grey), otherwise empty (red). A candidate is kept only if it found at least one other piece, has at most 10 mm outside the bin and at most 40 mm empty. So a candidate that finds no piece other than its own, or has a long empty stretch, is filtered out. Click a row in the table to see that candidate coloured this way along the whole tube; yellow marks every point within 20 mm of it (from any piece, its own included), and the pale band shows the 20 mm range.</p>
     <div class="row">
       <div class="ctrl">
@@ -124,10 +135,12 @@ html.embed header h1 { display: none }
       </div>
     </div>
     <div class="table-wrap"><table><thead><tr><th class="l">#</th><th class="l">From (piece, direction, mm)</th><th>Start error</th><th class="l">Other pieces found (share of points nearby)</th><th>Empty mm</th><th>Outside bin mm</th><th>To true tube mm (demo only)</th><th class="l">Result</th></tr></thead><tbody id="candRows"></tbody></table></div>
-  </section>
+    </div>
+  </details>
 
-  <section class="step" aria-labelledby="h3s">
-    <h2 id="h3s">Step 3 · LM refinement with all the points nearby</h2>
+  <details class="step stepd">
+    <summary><h2 id="h3s">Step 3 · LM refinement with all the points nearby</h2></summary>
+    <div class="stepbody">
     <p class="note">Only the candidates kept in step 2 are refined. LM tunes 5 numbers: the rotation θ, the shifts x and y, and the changes δ1, δ2 of the two bend angles. Refinement runs in rounds; each round first collects every point within the collection radius of the current model (20 → 12 → 6 mm). The residuals are the distances from <b>all points collected in this round</b> to the model (the points of every piece within the radius count, not only those of the piece the candidate came from), plus two weak prior terms that keep δ1 and δ2 small (σ 10°). Each iteration nudges each number a little to see how the cost changes (the slope), assumes the cost is shaped like a bowl near the current values, and works out how much to change all 5 numbers together. If the cost (the sum of squared point distances plus the squares of the two prior terms) goes down, the change is accepted and the brake λ is eased; otherwise it is discarded and the brake is tightened. “Error (RMS)” shows the point distances only, without the prior terms. When a round has converged (or used its 15 iterations), the next round collects the points again with the smaller radius. The dashed line is the start pose before refinement, the line kept in step 2.</p>
     <div class="row">
       <div class="ctrl">
@@ -153,10 +166,12 @@ html.embed header h1 { display: none }
         <p class="note">In the animation each kept candidate is refined on its own; the picture shows them side by side after the same number of accepted LM iterations, from their step-2 position to where LM stops. When it has finished, click a row in the table below: the picture colours that candidate along the whole tube. Red marks places where the tube should be visible but no point was seen nearby; purple marks places outside the bin.</p></div></div>
     <div class="table-wrap"><table><thead><tr><th class="l">#</th><th class="l">From (piece, direction, mm)</th><th>To true tube before</th><th>To true tube after</th><th>Explained mm</th><th>Hidden mm</th><th>Unexplained mm</th><th>Outside bin mm</th><th class="l">Result</th></tr></thead><tbody id="refRows"></tbody></table></div>
     <p class="note">Judging after refinement (the rules of this demo). Every 2 mm sample along the refined tube gets the first of these labels that applies: explained (some point lies within the larger of 4 mm and 2.5 × the noise); outside the bin; hidden (under an object on top); otherwise unexplained (the tube should be visible there, but no point was seen). A candidate with fewer than 6 collected points in any of the three rounds, more than 20 mm unexplained, or any sample outside the bin is rejected. The others are taken in order of score (explained length − 2 × unexplained length; equal scores in the order found in step 1): a candidate whose centreline, sampled every 4 mm, lies on average less than 5 mm from the centreline of a tube already kept is merged into that tube, so only one of them is kept.</p>
-  </section>
+    </div>
+  </details>
 
-  <section class="step" aria-labelledby="h4s">
-    <h2 id="h4s">Step 4 · Two crossing tubes: joint refinement (one more LM run)</h2>
+  <details class="step stepd">
+    <summary><h2 id="h4s">Step 4 · Two crossing tubes: joint refinement (one more LM run)</h2></summary>
+    <div class="stepbody">
     <p class="note">After the real program has chosen a set of tubes, it refines them together in <b>one LM run</b>. Two crossing tubes show why. A lies on top of B and crosses it at an angle; at the crossing, B is hidden under A. The depth camera measures the 12 mm height step at the crossing as a slope, so B's depth points close to the crossing come out too high. Each tube has 6 numbers to tune: the rotation, two shifts, two bend changes, and its <b>height z</b> (the tube lies flat; z is the height of its axis above the bin floor).</p>
     <div class="row">
       <div class="ctrl">
@@ -174,7 +189,8 @@ html.embed header h1 { display: none }
       </div>
     </div>
     <p class="note">How joint refinement differs from refining each tube on its own: <b>each point goes to one tube only</b>. A point within 8 mm of both tubes goes to the upper one, because the camera, looking down, sees the upper tube; otherwise it goes to the nearer tube, and points farther than the collection radius from both tubes are not used. At the crossing there is a one-sided constraint: <b>the upper tube's axis must be at least 12 mm above the lower one's</b> (the sum of the two radii; the tubes are soft, so 0.5 mm of squeeze is allowed). For every 2 mm of B's axis that lies within 12 mm of A's axis in the top view there is one residual row (σ 0.5 mm): it grows with the shortfall and is 0 when the gap is large enough. The 12 numbers of the two tubes are tuned together in one LM run, in three rounds with collection radii 12, 8 and 6 mm. Both ① and ② use a Huber loss on the data residuals (each divided by its σ of 1.5 mm; with k = 2 the loss grows only linearly beyond 3 mm), which reduces the pull of points with large residuals in position or height, such as B's depth points measured too high. As in the real program, each point is used by one tube only, and the non-penetration rule is one row per 2 mm with σ 0.5 mm and 0.5 mm allowed; the 8 mm rule is a simplification of this demo. The real program's joint refinement also has a camera correction per view, a constraint that tubes cannot penetrate the bin walls or floor, and a correction of the bin's position; they are left out here.</p>
-  </section>
+    </div>
+  </details>
 
   <p class="note">Simplifications: the real program works in 3-D with the outline edges and the depth from several views. Each tube has 12 to 24 recipe numbers. Every residual is weighted by a calibrated noise model of the camera, and a robust loss reduces the effect of outliers (in this demo only step 4 uses one). When collecting, outline edges use a collection radius in pixels and depth points one in millimetres. This demo keeps only the idea, in a plane.</p>
 </div>
@@ -789,6 +805,7 @@ html.embed header h1 { display: none }
   let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { drawScene(); drawPlot(); render2(); draw3(); draw4(); draw5(); }, 120); });
   try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawScene(); drawPlot(); render2(); draw3(); }); } catch (e) {}
   new MutationObserver(() => { drawScene(); drawPlot(); render2(); draw3(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  document.querySelectorAll('details.stepd').forEach(d => d.addEventListener('toggle', () => { if (d.open) { drawScene(); drawPlot(); render2(); draw3(); draw4(); draw5(); } }));
 })();
 </script>
 <script>
