@@ -161,6 +161,7 @@ html.embed header h1 { display: none }
     <div class="row">
       <div class="ctrl">
         <canvas id="scene5" aria-label="Two crossing tubes"></canvas>
+        <canvas id="j4bar" aria-label="Heights of the two tubes at the crossing"></canvas>
         <div class="legend"><span style="--c: var(--model)">A (on top)</span><span style="--c: var(--ob)">B (underneath)</span><span style="--c: #8FB8E8">Points used by A</span><span style="--c: #C6A9EE">Points used by B</span><span style="--c: var(--bad)">Points used by both</span><span style="--c: var(--obs)">Points not used</span><span style="--c: var(--muted)">- - Start pose (before ①)</span><span style="--c: var(--truth)">True tubes (unknown to the algorithm)</span></div>
       </div>
       <div class="panel">
@@ -170,7 +171,6 @@ html.embed header h1 { display: none }
         <p class="note" id="j4hint" aria-live="polite" style="font-weight:600;color:var(--fg)"></p>
         <div class="table-wrap"><table style="min-width:0"><thead><tr><th class="l"></th><th>To true tube mm</th><th>Height z (true)</th><th>Points used</th></tr></thead><tbody id="j4rows"></tbody></table></div>
         <dl class="kv"><dt>A above B at the crossing</dt><dd id="j4gap"></dd><dt>Points used by both</dt><dd id="j4shared"></dd><dt>Joint refinement</dt><dd id="j4round"></dd></dl>
-        <canvas id="j4bar" aria-label="Heights of the two tubes at the crossing"></canvas>
       </div>
     </div>
     <p class="note">How joint refinement differs from refining each tube on its own: <b>each point goes to one tube only</b>. A point within 8 mm of both tubes goes to the upper one, because the camera, looking down, sees the upper tube; otherwise it goes to the nearer tube, and points farther than the collection radius from both tubes are not used. At the crossing there is a one-sided constraint: <b>the upper tube's axis must be at least 12 mm above the lower one's</b> (the sum of the two radii; the tubes are soft, so 0.5 mm of squeeze is allowed). For every 2 mm of B's axis that lies within 12 mm of A's axis in the top view there is one residual row (σ 0.5 mm): it grows with the shortfall and is 0 when the gap is large enough. The 12 numbers of the two tubes are tuned together in one LM run, in three rounds with collection radii 12, 8 and 6 mm. Both ① and ② use a Huber loss on the data residuals (each divided by its σ of 1.5 mm; with k = 2 the loss grows only linearly beyond 3 mm), which reduces the pull of points with large residuals in position or height, such as B's depth points measured too high. As in the real program, each point is used by one tube only, and the non-penetration rule is one row per 2 mm with σ 0.5 mm and 0.5 mm allowed; the 8 mm rule is a simplification of this demo. The real program's joint refinement also has a camera correction per view, a constraint that tubes cannot penetrate the bin walls or floor, and a correction of the bin's position; they are left out here.</p>
