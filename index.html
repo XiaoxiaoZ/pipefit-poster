@@ -152,6 +152,22 @@ p{margin:0}
 .spd p{margin:0;font-size:16px;color:var(--ink2)}
 .spd p b{color:var(--ink)}
 .spdnote{margin-top:16px;padding:13px 16px;border-radius:14px;background:var(--blue-tint);font-size:15.5px;color:var(--ink2)}
+.pmband{border-radius:14px;padding:12px 14px 14px}
+.pmband.k{background:var(--blue-tint)} .pmband.u{background:var(--tint)} .pmband.o{background:#fff;border:1.5px solid var(--accent)}
+.pmband .bl{font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 10px}
+.pmband.k .bl{color:var(--blue)} .pmband.u .bl,.pmband.o .bl{color:var(--accent)}
+.pmgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pmbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.pmband.o .pmbox{background:var(--tint);border-color:#E9B48F}
+.pmbox b{display:block;font-size:15.5px;color:var(--ink)} .pmbox span{display:block;font-size:13.5px;color:var(--ink3);line-height:1.35}
+.pmarrow{text-align:center;color:var(--mute);font-size:20px;line-height:1;margin:6px 0}
+.pmadv{border:1px solid var(--line);border-radius:12px;background:#fff;margin:0 0 8px}
+.pmadv summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;padding:12px 14px;font-size:16.5px;font-weight:700}
+.pmadv summary::-webkit-details-marker{display:none}
+.pmadv summary::before{content:"";width:8px;height:8px;border-right:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(-45deg);flex:none;margin:0 4px 0 2px;transition:transform .15s}
+.pmadv[open] summary::before{transform:rotate(45deg) translate(-2px,-2px)}
+.pmadv div{padding:0 16px 13px 38px;font-size:15.5px;color:var(--ink2)}
+@media (min-width:640px){.pmband.u .pmgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.pmband.k .pmgrid,.pmband.o .pmgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 @media (min-width:640px){
   .wrap{padding:44px 24px 56px}
@@ -269,6 +285,43 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <p class="small" style="margin-top:8px"><a href="theory/">Open the demo on its own page</a> (more room on a computer).</p>
 </section>
 
+<section class="card" id="probability">
+<div class="label accent">The probabilistic model</div>
+<h2>How pipeFit decides what to trust</h2>
+<p class="muted" style="margin-bottom:14px">We measured how the camera errs: how far off it is, how noisy, and over what distance its errors move together. This one model is used all along the way.</p>
+<div class="pmband k"><div class="bl">What the model knows (calibrated once)</div><div class="pmgrid">
+<div class="pmbox"><b>Camera position</b><span>how uncertain each view's camera pose is</span></div>
+<div class="pmbox"><b>Depth noise</b><span>offset, spread, and how errors move together</span></div>
+<div class="pmbox"><b>Edge noise</b><span>spread along the outlines</span></div>
+<div class="pmbox"><b>Prior knowledge</b><span>how much tubes bend; no tube passes through another</span></div>
+</div></div>
+<div class="pmarrow" aria-hidden="true">&darr;</div>
+<div class="pmband u"><div class="bl">Where the fit uses it</div><div class="pmgrid">
+<div class="pmbox"><b>3&#8209;D pieces</b><span>how likely each tube type is</span></div>
+<div class="pmbox"><b>Collecting points</b><span>how far a point may lie from a tube</span></div>
+<div class="pmbox"><b>Fitting one tube</b><span>each measurement weighted by how much it can be trusted</span></div>
+<div class="pmbox"><b>Choosing the scene</b><span>which tubes explain the pictures best</span></div>
+<div class="pmbox"><b>Fitting all tubes together</b><span>one best estimate, camera positions corrected</span></div>
+</div></div>
+<div class="pmarrow" aria-hidden="true">&darr;</div>
+<div class="pmband o"><div class="bl">What comes out</div><div class="pmgrid">
+<div class="pmbox"><b>Error bars</b><span>along every tube</span></div>
+<div class="pmbox"><b>Alternatives</b><span>with the chance that one is better</span></div>
+<div class="pmbox"><b>Grasp choice</b><span>uses confidence and error bars</span></div>
+<div class="pmbox"><b>Next view</b><span>where two explanations differ most</span></div>
+</div></div>
+<div class="label accent" style="margin:22px 0 10px">Why it helps (tap to open)</div>
+<details class="pmadv"><summary>One scale for all the evidence</summary><div>Outline edges are measured in pixels, depth in millimetres, and there are several views and prior knowledge. Each is expressed as "how far off, compared with its expected noise" before they are added up, so the weights come from the calibrated noise, not from hand tuning.</div></details>
+<details class="pmadv"><summary>Data and prior knowledge balance themselves</summary><div>Where the camera sees clearly, the measurements decide. Where it cannot, for example under another tube or where depth is noisy, prior knowledge holds: how much a tube may bend, and that tubes cannot pass through each other.</div></details>
+<details class="pmadv"><summary>The same error is not counted twice</summary><div>Neighbouring points along a tube tend to err together, so a stretch of tube counts as one piece of evidence rather than hundreds. An offset that a whole view shares cannot be averaged away, so it is estimated on its own.</div></details>
+<details class="pmadv"><summary>Results come with error bars</summary><div>Every tube's position comes with an uncertainty along its whole length, including the camera's own position errors. The grasp choice uses it, so the robot can prefer the places it is sure about.</div></details>
+<details class="pmadv"><summary>Choosing between explanations</summary><div>Two tubes or three? Type X or type Y? Explanations are compared by how well they explain the pictures, with a penalty for needless complexity, and each alternative gets a chance of being the better one. This score is an approximation with weights we set ourselves.</div></details>
+<details class="pmadv"><summary>Knowing where to look next</summary><div>For each alternative, the program finds the view in which the two explanations differ most: that is the most useful next picture.</div></details>
+<details class="pmadv"><summary>Spotting outliers</summary><div>Knowing what normal noise looks like, the fit gives less weight to points far outside it, so a few bad points cannot pull the result away.</div></details>
+<details class="pmadv"><summary>The model can check itself</summary><div>An error bar can be checked against the truth. On real bins our error bars are still a little optimistic, which tells us where the noise model is not complete yet.</div></details>
+</section>
+
+
 <section class="card">
 <div class="label blue">The sensors</div>
 <div class="stack">
@@ -336,23 +389,6 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 </div>
 </section>
 
-<section id="poster">
-<div class="label">The full poster</div>
-<p class="muted" style="margin-bottom:12px">Take the poster with you: save both pages to your phone.</p>
-<div class="posters">
-<figure class="pp">
-<a class="pimg" href="assets/poster-1.png?v=6"><img src="assets/poster-1.png?v=6" width="1920" height="1080" alt="Poster page 1: how pipeFit sees and rebuilds tangled tubes" loading="lazy"></a>
-<a class="btn primary save" href="assets/pipefit-poster-page1.png?v=3" download="pipefit-poster-page1.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 1</a>
-</figure>
-<figure class="pp">
-<a class="pimg" href="assets/poster-2.png?v=9"><img src="assets/poster-2.png?v=9" width="1920" height="1080" alt="Poster page 2: grasping, and one robot API for two robot arm systems" loading="lazy"></a>
-<a class="btn primary save" href="assets/pipefit-poster-page2.png?v=6" download="pipefit-poster-page2.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 2</a>
-</figure>
-</div>
-<div class="savebar"><a class="btn ghost" href="assets/pipefit-poster.pdf?v=6" download="pipefit-poster.pdf"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 L14 3 L19 8 L19 21 L6 21 Z M14 3 L14 8 L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12.5 11 L12.5 17.5 M9.8 15 L12.5 17.5 L15.2 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Both pages as one PDF</a></div>
-<p class="small" id="savehint" style="margin-top:10px">Saved images are high resolution (3840 × 2160). Tap a page to open it full size.</p>
-</section>
-
 <section class="card" id="faster">
 <div class="label accent">Next: faster</div>
 <h2>How we will make pipeFit faster</h2>
@@ -372,6 +408,23 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="spd"><span class="n">6</span><p><b>Fixed cameras:</b> several cameras around the bin take all views at once. The arm no longer moves to look, the camera positions are calibrated once, and the arm can pick while the cameras look.</p></div>
 </div>
 <p class="spdnote">Every speed-up must keep the results the same: we check each one against our reference scenes before it goes in.</p>
+</section>
+
+<section id="poster">
+<div class="label">The full poster</div>
+<p class="muted" style="margin-bottom:12px">Take the poster with you: save both pages to your phone.</p>
+<div class="posters">
+<figure class="pp">
+<a class="pimg" href="assets/poster-1.png?v=6"><img src="assets/poster-1.png?v=6" width="1920" height="1080" alt="Poster page 1: how pipeFit sees and rebuilds tangled tubes" loading="lazy"></a>
+<a class="btn primary save" href="assets/pipefit-poster-page1.png?v=3" download="pipefit-poster-page1.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 1</a>
+</figure>
+<figure class="pp">
+<a class="pimg" href="assets/poster-2.png?v=9"><img src="assets/poster-2.png?v=9" width="1920" height="1080" alt="Poster page 2: grasping, and one robot API for two robot arm systems" loading="lazy"></a>
+<a class="btn primary save" href="assets/pipefit-poster-page2.png?v=6" download="pipefit-poster-page2.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 2</a>
+</figure>
+</div>
+<div class="savebar"><a class="btn ghost" href="assets/pipefit-poster.pdf?v=6" download="pipefit-poster.pdf"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 L14 3 L19 8 L19 21 L6 21 Z M14 3 L14 8 L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12.5 11 L12.5 17.5 M9.8 15 L12.5 17.5 L15.2 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Both pages as one PDF</a></div>
+<p class="small" id="savehint" style="margin-top:10px">Saved images are high resolution (3840 × 2160). Tap a page to open it full size.</p>
 </section>
 
 <footer>Questions? <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026<br>The work was carried out with support from Vinnova (Sweden's Innovation Agency) within the Advanced Digitalization program under the project named AIKIDO (Dnr: 2025-01009).<br>Thanks to David Coronado Ecos and Vivek Dani Issac for contributing features and tests.</footer>
