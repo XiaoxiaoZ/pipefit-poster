@@ -126,6 +126,24 @@ p{margin:0}
 .savebar{margin-top:14px}
 .savebar .btn{width:100%}
 .theory{display:block;width:100%;height:3200px;border:0;margin:16px 0 0;background:transparent}
+.cmpcard{border:2px solid var(--accent);box-shadow:0 6px 22px rgba(168,72,26,.12)}
+.cmpcard h2{font-size:clamp(27px,6.6vw,36px)}
+.cmp3{display:grid;gap:14px;margin-top:6px}
+.cmp{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;display:flex;flex-direction:column}
+.cmp.ours{background:var(--tint);border:2px solid var(--accent)}
+.verdict{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:14px;letter-spacing:.3px;padding:5px 12px;border-radius:999px;margin-bottom:12px}
+.verdict.no{background:#FBE3E3;color:#9B2C2C}
+@media (min-width:640px){.verdict{font-size:13px;white-space:nowrap;padding:4px 10px}}
+.verdict.yes{background:var(--accent);color:#fff}
+.cmp .h{display:flex;align-items:center;gap:10px;font-family:"Space Grotesk",Inter,sans-serif;font-size:21px;font-weight:700;line-height:1.15;margin-bottom:8px}
+.cmp .h svg{flex:none}
+.cmp p{font-size:15.5px;color:var(--ink2);margin:0 0 8px}
+.cmp p b{color:var(--ink)}
+.cmpban{margin-top:16px;border-radius:16px;background:var(--accent);color:#fff;padding:18px 20px}
+.cmpban .t{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(21px,5.2vw,26px);font-weight:700;line-height:1.2}
+.cmpban p{font-size:15.5px;opacity:.96;margin:8px 0 0}
+.getcompare{margin-top:10px}
+@media (min-width:640px){.cmp3{grid-template-columns:repeat(3,1fr)}}
 footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 @media (min-width:640px){
   .wrap{padding:44px 24px 56px}
@@ -147,6 +165,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <p class="authors" style="margin-top:6px;font-size:0.9em;opacity:0.85">The work was carried out with support from <b>Vinnova</b> (Sweden's Innovation Agency) within the Advanced Digitalization program under the project named <b>AIKIDO</b> (Dnr: 2025-01009).</p>
 <p class="authors" style="margin-top:6px;font-size:0.9em;opacity:0.85">Thanks to <b>David Coronado Ecos</b> and <b>Vivek Dani Issac</b> for contributing features and tests.</p>
 <a class="btn primary getposter" href="#poster"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save the poster to your phone</a>
+<a class="btn ghost getcompare" href="#compare">Why not just use CAD or keypoints? &darr;</a>
 </header>
 
 <section id="copy3d">
@@ -211,6 +230,27 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L12 21 M8 3 L16 3 M8 21 L16 21" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#A8481A"/></svg>Knows how sure it is</div><p>Every number comes with an error bar, so the robot can skip a pick it is unsure about.</p></div>
 <div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#A8481A" stroke-width="2"/><circle cx="12" cy="12" r="3.5" fill="none" stroke="#A8481A" stroke-width="2"/><path d="M12 1 L12 5 M12 19 L12 23 M1 12 L5 12 M19 12 L23 12" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/></svg>Ready for the robot</div><p>An exact shape gives safe paths around the other tubes, grasp points and the centre of gravity.</p></div>
 </div>
+</section>
+
+<section class="card cmpcard" id="compare">
+<div class="label accent">Why not CAD or keypoints?</div>
+<h2>Why not just match the CAD model, or use keypoints?</h2>
+<div class="cmp3">
+<div class="cmp"><span class="verdict no">&#10007; Not for our tubes</span>
+<div class="h"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3 L15 3 L19 7 L19 21 L5 21 Z M15 3 L15 7 L19 7" fill="none" stroke="#5B6068" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 16 C10 16 10 11 12 11 C14 11 14 14 16 14" fill="none" stroke="#5B6068" stroke-width="1.8" stroke-linecap="round"/></svg>Match the CAD model</div>
+<p><b>Needs</b> an exact drawing of every tube. The shape stays fixed; only its position is found.</p>
+<p><b>Our tubes:</b> the drawings we have do not match the real tubes, and two of our three tube types have no drawing at all. Bendy tubes also differ from piece to piece. In a test, the fixed model of one tube rejected a real tube of the same type.</p></div>
+<div class="cmp"><span class="verdict no">&#10007; Nothing to hold on to</span>
+<div class="h"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="7" r="2" fill="#5B6068"/><circle cx="17" cy="6" r="2" fill="#5B6068"/><circle cx="12" cy="17" r="2" fill="#5B6068"/><path d="M6 7 L17 6 L12 17 Z" fill="none" stroke="#5B6068" stroke-width="1.4" stroke-dasharray="2 2.5"/></svg>Use keypoints</div>
+<p><b>Needs</b> corners or texture that can be found again in every view.</p>
+<p><b>Our tubes</b> are black, round and texture-less. A straight stretch looks the same all along and all around, so a short piece fits in many places. We did not use keypoints for these reasons.</p></div>
+<div class="cmp ours"><span class="verdict yes">&#10003; What pipeFit does</span>
+<div class="h"><svg width="34" height="34" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 C8 17 8 7 13 7 C17 7 18 11 21 11" fill="none" stroke="#A8481A" stroke-width="3" stroke-linecap="round"/></svg>A recipe from scans</div>
+<p>The robot scans real tubes, and each recipe comes from such a scan, not from a drawing.</p>
+<p>In the bin, the fit moves the recipe and bends it slightly until it matches all views at once. For our stiffest tube type, a fixed shape works just as well.</p></div>
+</div>
+<div class="cmpban"><div class="t">Neither method handles bending by itself.</div>
+<p>Both assume one fixed shape and only find where it lies. Methods that do allow bending either give every point its own displacement, learn a shape model from many examples, or, like pipeFit, let a few meaningful numbers change: here the recipe's straight lengths, bend angles and turns.</p></div>
 </section>
 
 <section id="theory">
