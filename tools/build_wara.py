@@ -50,7 +50,8 @@ def build():
     n0 = w.count("assets/")
     for a, b in [('src="assets/', 'src="../assets/'), ('href="assets/', 'href="../assets/'),
                  ('poster="assets/', 'poster="../assets/'), ('content="assets/', 'content="../assets/'),
-                 ("'assets/", "'../assets/"), ('src="theory/', 'src="../theory/'), ('href="theory/', 'href="../theory/')]:
+                 ("'assets/", "'../assets/"), ('src="theory/', 'src="../theory/'), ('href="theory/', 'href="../theory/'),
+                 ('href="examples/', 'href="../examples/')]:
         w = w.replace(a, b)
     assert w.count("../assets/") == n0
     assert w.count("theory/") == w.count("../theory/") == 2
