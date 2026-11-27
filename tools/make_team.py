@@ -97,7 +97,10 @@ def person_card(p: dict, cls: str = "pcard", photo: bool = True) -> str:
     title = f'<div class="ptitle">{e(p["title"])}</div>' if p.get("title") else ""
     pic = (f'<img class="pphoto" src="{img_src(p["img"])}" width="648" height="648" alt="{e(p["name"])}" '
            f'loading="lazy" referrerpolicy="no-referrer">') if photo and p.get("img") else ""
-    return (f'<div class="{cls}">{pic}<div class="pbody">{badge}<div class="pname">{e(p["name"])}</div>{title}'
+    name = f'<div class="pname">{e(p["name"])}</div>'
+    if p.get("note"):                       # a short note to the right of the name (user 2026-11-27: the AIKIDO note)
+        name = f'<div class="pnamerow">{name}<div class="pnote">{e(p["note"])}</div></div>'
+    return (f'<div class="{cls}">{pic}<div class="pbody">{badge}{name}{title}'
             f'<div class="pmail"><a href="mailto:{e(p["email"])}">{e(p["email"])}</a>{page}</div></div></div>')
 
 
@@ -143,6 +146,8 @@ CSS = """/* team:css */
 .ptitle{font-size:14.5px;color:var(--ink2);margin-top:2px}
 .pmail{font-size:15px;margin-top:6px;overflow-wrap:anywhere}
 .contactbox{margin-top:26px;padding-top:18px;border-top:1px solid #E4E6EA}
+.pnamerow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
+.pnote{flex:1 1 240px;font-size:13.5px;line-height:1.45;color:var(--ink2);background:#FBEADF;border-radius:10px;padding:7px 12px}
 @media (max-width:420px){.pphoto,.pcard.lead .pphoto{width:92px;height:92px}.pname{font-size:18px}.pcard{gap:12px;padding:12px}}
 /* team:css-end */"""
 
