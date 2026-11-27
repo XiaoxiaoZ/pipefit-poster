@@ -27,6 +27,7 @@ def build():
     # user 2026-11-27: the WARA page drops the thank-you line for the two students; their photos are in its team section
     w = sub1(w, '<p class="authors" style="margin-top:6px;font-size:0.9em;opacity:0.85">Thanks to <b>David Coronado Ecos</b> '
                 'and <b>Vivek Dani Issac</b> for contributing features and tests.</p>\n', "")
+    w = sub1(w, "<br>Thanks to David Coronado Ecos and Vivek Dani Issac for contributing features and tests.", "")   # footer
     w = make_team.wara_extras(w, make_team.load_team())
     w = sub1(w, "<title>pipeFit: how a robot learns to see tangled tubes</title>", "<title>" + TITLE + "</title>")
     w = sub1(w, '<meta property="og:title" content="pipeFit: how a robot learns to see tangled tubes">',
