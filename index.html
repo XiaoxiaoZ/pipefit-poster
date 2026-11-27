@@ -144,6 +144,14 @@ p{margin:0}
 .cmpban p{font-size:15.5px;opacity:.96;margin:8px 0 0}
 .getcompare{margin-top:10px}
 @media (min-width:640px){.cmp3{grid-template-columns:repeat(3,1fr)}}
+.spdh{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;font-weight:700;margin:16px 0 10px}
+.spdlist{display:grid;gap:12px}
+.spd{display:flex;gap:12px;align-items:flex-start}
+.spd .n{flex:none;width:30px;height:30px;border-radius:15px;background:var(--accent);color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+.spd .n.done{background:#2E7D5B}
+.spd p{margin:0;font-size:16px;color:var(--ink2)}
+.spd p b{color:var(--ink)}
+.spdnote{margin-top:16px;padding:13px 16px;border-radius:14px;background:var(--blue-tint);font-size:15.5px;color:var(--ink2)}
 footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 @media (min-width:640px){
   .wrap{padding:44px 24px 56px}
@@ -343,6 +351,27 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 </div>
 <div class="savebar"><a class="btn ghost" href="assets/pipefit-poster.pdf?v=6" download="pipefit-poster.pdf"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 L14 3 L19 8 L19 21 L6 21 Z M14 3 L14 8 L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12.5 11 L12.5 17.5 M9.8 15 L12.5 17.5 L15.2 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Both pages as one PDF</a></div>
 <p class="small" id="savehint" style="margin-top:10px">Saved images are high resolution (3840 × 2160). Tap a page to open it full size.</p>
+</section>
+
+<section class="card" id="faster">
+<div class="label accent">Next: faster</div>
+<h2>How we will make pipeFit faster</h2>
+<p class="muted">Most of the time goes into fitting the tube recipes and into the AI segmentation.</p>
+<div class="spdh">Already faster</div>
+<div class="spdlist">
+<div class="spd"><span class="n done" aria-hidden="true">&#10003;</span><p>The AI segmentation models stay loaded between scans instead of starting again for every scan; the masks are the same.</p></div>
+<div class="spd"><span class="n done" aria-hidden="true">&#10003;</span><p>Faster inner calculations in the fitting step; the same tubes are found on our reference scenes.</p></div>
+</div>
+<div class="spdh">Next steps</div>
+<div class="spdlist">
+<div class="spd"><span class="n">1</span><p><b>Process the views in parallel:</b> each view is handled on its own until the views are combined, so several processor cores can work at the same time.</p></div>
+<div class="spd"><span class="n">2</span><p><b>Several GPU threads:</b> segment several views at once, and later move the heaviest parts of the fit, such as rendering and residuals, to the GPU.</p></div>
+<div class="spd"><span class="n">3</span><p><b>Run independent steps side by side:</b> for example, one AI model starts while the bin is still being located.</p></div>
+<div class="spd"><span class="n">4</span><p><b>Cache intermediate results:</b> reuse what did not change, such as the segmentation of an unchanged view; the cache is keyed by the input, so the result stays the same.</p></div>
+<div class="spd"><span class="n">5</span><p><b>Update instead of rebuild:</b> after a pick, start from the last 3&#8209;D copy and re-check only what changed; the full search runs only when something new appears.</p></div>
+<div class="spd"><span class="n">6</span><p><b>Fixed cameras:</b> several cameras around the bin take all views at once. The arm no longer moves to look, the camera positions are calibrated once, and the arm can pick while the cameras look.</p></div>
+</div>
+<p class="spdnote">Every speed-up must keep the results the same: we check each one against our reference scenes before it goes in.</p>
 </section>
 
 <footer>Questions? <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026<br>The work was carried out with support from Vinnova (Sweden's Innovation Agency) within the Advanced Digitalization program under the project named AIKIDO (Dnr: 2025-01009).<br>Thanks to David Coronado Ecos and Vivek Dani Issac for contributing features and tests.</footer>
