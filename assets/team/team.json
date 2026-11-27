@@ -1,12 +1,31 @@
-[
- {
-  "name": "David Coronado Ecos",
-  "email": "davicoecos@gmail.com",
-  "img": "david-coronado-ecos.webp"
+{
+ "leaders": [
+  {
+   "name": "Shiva Tutunchi",
+   "email": "shiva.tutunchi@hv.se",
+   "role": "Team leader",
+   "title": "PhD student, University West",
+   "img": "https://www.hv.se/images/18.1b0b54c41a1f898a228b7fc/1795615232589/profileImage.jpg",
+   "page": "https://www.hv.se/sok-medarbetare/personal/shiva-tutunchi"
+  }
+ ],
+ "contact": {
+  "name": "Xiaoxiao Zhang",
+  "email": "xiaoxiao.zhang@hv.se",
+  "title": "Research engineer, University West",
+  "img": "https://www.hv.se/images/18.1c6764c01a1d44309433228/1794927611959/profileImage.jpg",
+  "page": "https://www.hv.se/sok-medarbetare/personal/xiaoxiao-zhang"
  },
- {
-  "name": "Evelin Bergvall",
-  "email": "evelin.bergvall@volvo.com",
-  "img": "evelin-bergvall.webp"
- }
-]
+ "students": [
+  {
+   "name": "David Coronado Ecos",
+   "email": "davicoecos@gmail.com",
+   "img": "david-coronado-ecos.webp"
+  },
+  {
+   "name": "Evelin Bergvall",
+   "email": "evelin.bergvall@volvo.com",
+   "img": "evelin-bergvall.webp"
+  }
+ ]
+}
