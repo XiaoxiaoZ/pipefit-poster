@@ -1,0 +1,809 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tube fitting, step by step</title>
+<meta name="description" content="Interactive demo, simplified to a plane: how pipeFit gets from a few visible pieces of a tube to the whole tube (candidates, checks, Levenberg–Marquardt refinement, joint refinement of crossing tubes).">
+<script>
+// embedded in the poster page (?embed=1 or inside a frame): light theme, no own title, the frame follows the page height
+(function () {
+  var embed = /[?&]embed=1(&|$)/.test(location.search) || window.self !== window.top;
+  if (!embed) return;
+  var de = document.documentElement; de.setAttribute('data-theme', 'light'); de.classList.add('embed');
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* layout: three stacked steps; each = drawing on the left, controls + readouts on the right (stacks on phones) */
+:root {
+  --bg: #F5F5F2; --surface: #FFFFFF; --fg: #1B1D21; --muted: #5C616A; --line: #E1E0DA; --grid: #ECEBE6;
+  --model: #2F6FB3; --obs: #C2561F; --truth: #9AA0A8; --good: #2E7D5B; --bad: #B23B3B; --occ: #B9B4A8; --cand: #2E7D5B; --col: #C99100; --ob: #7F4FC9;
+  --f-display: "Space Grotesk", Inter, system-ui, sans-serif;
+  --f-body: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15171A; --surface: #1E2024; --fg: #ECEBE7; --muted: #A2A6AD; --line: #32353B; --grid: #26292E;
+  --model: #6FA8E8; --obs: #F0925C; --truth: #6B717A; --good: #6CC79F; --bad: #E77B7B; --occ: #4A4842; --cand: #6CC79F; --col: #F2C14E; --ob: #B595F0; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15171A; --surface: #1E2024; --fg: #ECEBE7; --muted: #A2A6AD; --line: #32353B; --grid: #26292E;
+  --model: #6FA8E8; --obs: #F0925C; --truth: #6B717A; --good: #6CC79F; --bad: #E77B7B; --occ: #4A4842; --cand: #6CC79F; --col: #F2C14E; --ob: #B595F0; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 15px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 26px 48px }
+.wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 26px }
+h1 { font-family: var(--f-display); font-size: 28px; line-height: 1.2; margin: 0; text-wrap: balance }
+h2 { font-family: var(--f-display); font-size: 20px; margin: 0; text-wrap: balance }
+p { margin: 0; max-width: 74ch }
+.lead { color: var(--muted); margin-top: 6px }
+section.step { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px }
+.row { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 18px; align-items: start }
+@media (max-width: 760px) { .row { grid-template-columns: minmax(0, 1fr) } }
+canvas { width: 100%; display: block; border-radius: 10px; background: var(--bg); touch-action: manipulation }
+.panel { display: flex; flex-direction: column; gap: 12px; min-width: 0 }
+.label { font-size: 12.5px; font-weight: 600; letter-spacing: 0.6px; color: var(--muted) }
+.ctrl { display: flex; flex-direction: column; gap: 6px }
+.btns { display: flex; flex-wrap: wrap; gap: 8px }
+button { font: 600 14px var(--f-body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 7px 12px; cursor: pointer }
+button:hover { border-color: var(--model) }
+button.on { background: var(--model); border-color: var(--model); color: var(--surface) }
+button.primary { background: var(--obs); border-color: var(--obs); color: var(--surface) }
+button:disabled { opacity: .45; cursor: default }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--model); outline-offset: 2px }
+input[type=range] { width: 100% }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 14px; margin: 0 }
+.kv dt { color: var(--muted) } .kv dd { margin: 0; font-family: var(--f-mono); font-variant-numeric: tabular-nums }
+.chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; border: 1px solid currentColor; font-family: var(--f-body) }
+.chip.good { color: var(--good) } .chip.bad { color: var(--bad) } .chip.quiet { color: var(--muted) }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted) }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 6px; vertical-align: middle; background: var(--c) }
+.note { font-size: 14px; color: var(--muted) }
+.table-wrap { overflow-x: auto }
+table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 13px }
+th, td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; font-family: var(--f-mono) }
+th { font-family: var(--f-body); color: var(--muted); font-weight: 600; font-size: 12px }
+td.l, th.l { text-align: left; font-family: var(--f-body) }
+tr.click { cursor: pointer } tr.sel td { background: color-mix(in srgb, var(--model) 14%, transparent) }
+.grad { display: grid; grid-template-columns: 8.6em minmax(0,1fr) 6.5em; gap: 4px 8px; align-items: center; font-size: 13px }
+.bar { height: 8px; border-radius: 4px; background: var(--grid); position: relative; overflow: hidden }
+.bar i { position: absolute; top: 0; bottom: 0; background: var(--model) }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important } }
+body { margin: 0 }
+html.embed { overflow: hidden }
+html.embed body { background: transparent; padding: 0 }
+html.embed header h1 { display: none }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>From a few visible pieces to the whole tube</h1>
+    <p class="lead">A simplified demo in a plane. A bin contains a type-X tube. Two objects lie on top of it, so the camera sees only three pieces of it (S1, S2, S3). A fourth piece, S4, belongs to another tube. The real tube's two bend angles differ from the type's standard recipe (its straight lengths, bend angles and bend radii) by amounts the algorithm does not know, so the visible points do not lie on the standard shape either. Step 1 slides one piece at a time along the tube's standard shape (the model) and collects many candidates. Step 2 checks every candidate, still unrefined, against the other pieces; most are filtered out. Step 3 refines the kept candidates with Levenberg–Marquardt (LM), using all points near each candidate, from every piece: a candidate's start pose fits only near its own piece, and only the refinement makes it fit the other pieces too. Step 4 refines two crossing tubes together, in one more LM run. The data are randomly generated, not a real scan.</p>
+  </header>
+
+  <section class="step" aria-labelledby="h1s">
+    <h2 id="h1s">Step 1 · Slide and compare: find candidates (start poses)</h2>
+    <p class="note">Pick a piece. Place it along the model centreline at positions 2 mm apart, once with the piece facing forward and once reversed. For this search the centreline is extended straight by 45 mm past both ends; the position is where the stretch of model matched to the piece starts, so it runs from −45 mm. At each position, the Kabsch algorithm (a standard best-fit alignment) gives the rotation and shift that fit best, and the fit error is the RMS distance between the piece's points and the model points they are matched to. A position is a start pose if its error is within the tolerance and no position within 6 mm on either side, in the same direction, has a lower error. <b>Drag the slider, or drag across the chart below</b>: every start pose you stop on, in the selected direction (Forward or Reverse), is drawn in the picture (green) and kept. A fast drag can skip positions; “Sweep automatically” visits every position in both directions. Pick another piece and do it again: the candidates add up.</p>
+    <div class="row">
+      <div class="ctrl">
+        <canvas id="scene" aria-label="The visible pieces and the model placed on them"></canvas>
+        <div class="legend"><span style="--c: var(--obs)">Visible points</span><span style="--c: var(--model)">Model (current position)</span><span style="--c: var(--cand)">Candidates found</span><span style="--c: var(--occ)">Objects on top</span><span style="--c: var(--truth)">True tube (unknown to the algorithm)</span></div>
+      </div>
+      <div class="panel">
+        <div class="ctrl"><span class="label">Piece to compare</span><div class="btns" id="segBtns" role="group" aria-label="Pick a piece"></div></div>
+        <div class="ctrl"><label class="label" for="noise">Noise on the points (σ) <span id="noiseV"></span></label><input id="noise" type="range" min="0" max="3" step="0.1" value="1.5"></div>
+        <div class="btns"><button id="reshuffle">New layout</button><label style="display:flex;align-items:center;gap:6px;font-size:14px"><input id="showTruth" type="checkbox"> Show the true tube</label></div>
+        <div class="ctrl"><label class="label" for="offset">Where on the model (mm along the centreline)</label><input id="offset" type="range" min="0" max="1" step="2" value="0">
+          <div class="btns" role="group" aria-label="Direction"><button id="dirF" class="on">Forward</button><button id="dirB">Reverse</button><button id="sweep" class="primary">Sweep automatically</button></div></div>
+        <dl class="kv"><dt>Position</dt><dd id="oV"></dd><dt>Fit error</dt><dd id="rmsV"></dd><dt>Verdict</dt><dd id="judge"></dd></dl>
+        <div class="ctrl"><span class="label">Candidates found</span><p class="note" id="foundInfo" aria-live="polite"></p>
+          <div class="btns"><button id="clearFound">Clear and start again</button></div></div>
+      </div>
+    </div>
+    <canvas id="plot" aria-label="Fit error against the position on the model"></canvas>
+    <div class="legend"><span style="--c: var(--model)">Forward</span><span style="--c: var(--obs)">Reverse</span><span style="--c: var(--good)" id="tolLegend">Tolerance</span><span style="--c: var(--fg)">● start pose found  ○ not found yet</span></div>
+    <p class="note">The straight pieces (S2, S3, S4) give a long, flat valley in the error curve: a straight piece fits about equally well anywhere along a straight part of the tube, so they produce very many candidates.</p>
+  </section>
+
+  <section class="step" aria-labelledby="h2s">
+    <h2 id="h2s">Step 2 · Check against the other pieces (not refined yet): most candidates are filtered out</h2>
+    <p class="note">For each candidate, draw the whole tube from the type's recipe at the candidate's pose (the <b>prediction</b>; still the standard shape, not refined) and look for points of the other pieces within 20 mm of it. If at least 60 % of a piece's points lie that close, the candidate has <b>found that piece</b>. Every 2 mm sample along the predicted tube gets the first of these labels that applies: near a point (some point within 20 mm, green), outside the bin (purple), under an object on top (grey), otherwise empty (red). A candidate is kept only if it found at least one other piece, has at most 10 mm outside the bin and at most 40 mm empty. So a candidate that finds no piece other than its own, or has a long empty stretch, is filtered out. Click a row in the table to see that candidate coloured this way along the whole tube; yellow marks every point within 20 mm of it (from any piece, its own included), and the pale band shows the 20 mm range.</p>
+    <div class="row">
+      <div class="ctrl">
+        <canvas id="scene2" aria-label="Checking the candidates at their start poses"></canvas>
+        <div class="legend"><span style="--c: var(--good)">Kept (start pose, not refined) / near a point</span><span style="--c: var(--bad)">Filtered out / empty</span><span style="--c: var(--ob)">Outside the bin</span><span style="--c: var(--col)">Points within 20 mm of the selected candidate</span><span style="--c: var(--occ)">Objects on top</span><span style="--c: var(--truth)">True tube (thick, when shown)</span></div>
+      </div>
+      <div class="panel">
+        <div class="btns"><button id="check" class="primary">Check all candidates</button><label style="display:flex;align-items:center;gap:6px;font-size:14px"><input id="showOut" type="checkbox"> Show the filtered-out ones</label></div>
+        <p class="note" id="checkInfo" aria-live="polite"></p>
+        <p class="note" id="outInfo"></p>
+        <p class="note">Note: far from its own piece a kept line is often still off, because the real tube's bends differ from the standard shape. Step 3 fixes that by refinement. A simplification of this demo: the real program first runs prediction, collection and refinement on every candidate, then scores the candidates by their explained and unexplained lengths and drops the losers; here, to make it easier to follow, the candidates are filtered by the three rules above before any refinement.</p>
+      </div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th class="l">#</th><th class="l">From (piece, direction, mm)</th><th>Start error</th><th class="l">Other pieces found (share of points nearby)</th><th>Empty mm</th><th>Outside bin mm</th><th>To true tube mm (demo only)</th><th class="l">Result</th></tr></thead><tbody id="candRows"></tbody></table></div>
+  </section>
+
+  <section class="step" aria-labelledby="h3s">
+    <h2 id="h3s">Step 3 · LM refinement with all the points nearby</h2>
+    <p class="note">Only the candidates kept in step 2 are refined. LM tunes 5 numbers: the rotation θ, the shifts x and y, and the changes δ1, δ2 of the two bend angles. Refinement runs in rounds; each round first collects every point within the collection radius of the current model (20 → 12 → 6 mm). The residuals are the distances from <b>all points collected in this round</b> to the model (the points of every piece within the radius count, not only those of the piece the candidate came from), plus two weak prior terms that keep δ1 and δ2 small (σ 10°). Each iteration nudges each number a little to see how the cost changes (the slope), assumes the cost is shaped like a bowl near the current values, and works out how much to change all 5 numbers together. If the cost (the sum of squared point distances plus the squares of the two prior terms) goes down, the change is accepted and the brake λ is eased; otherwise it is discarded and the brake is tightened. “Error (RMS)” shows the point distances only, without the prior terms. When a round has converged (or used its 15 iterations), the next round collects the points again with the smaller radius. The dashed line is the start pose before refinement, the line kept in step 2.</p>
+    <div class="row">
+      <div class="ctrl">
+        <canvas id="scene3" aria-label="The LM refinement"></canvas>
+        <div class="legend"><span style="--c: var(--obs)">Points not collected</span><span style="--c: var(--col)">Points collected in this round</span><span style="--c: var(--model)">Current LM model; pale band = collection radius</span><span style="--c: var(--muted)">- - Before refinement (start pose from step 2)</span><span style="--c: var(--truth)">Residuals (thin: point-to-model distance); true tube (thick, when shown)</span></div>
+      </div>
+      <div class="panel">
+        <div class="ctrl"><span class="label">Candidate to refine (kept in step 2)</span><div class="btns" id="lmPick"></div></div>
+        <div class="btns"><button id="lmStep" class="primary">One iteration</button><button id="lmRun">Run to the end</button><button id="lmReset">Restart</button></div>
+        <p class="note" id="lmHint" aria-live="polite" style="font-weight:600;color:var(--fg)"></p>
+        <dl class="kv"><dt>Round</dt><dd id="rdV"></dd><dt>Collection radius</dt><dd id="gtV"></dd><dt>Points collected</dt><dd id="ncV"></dd><dt>Iterations in total</dt><dd id="itV"></dd><dt>Error (RMS)</dt><dd id="lmRms"></dd><dt>Brake λ (after the last iteration; reset to 1.0e-3 at each new round)</dt><dd id="lamV"></dd><dt>Last iteration</dt><dd id="accV"></dd><dt>Estimated bend change δ1 / δ2</dt><dd id="dV"></dd><dt>True value in this demo</dt><dd id="dTrue"></dd><dt>To true tube, before refinement</dt><dd id="befV"></dd><dt>To true tube, now</dt><dd id="nowV"></dd></dl>
+        <p class="note" style="font-size:12.5px">"To true tube" = the mean distance from points every 2 mm along the model centreline to the true tube's centreline. Only the demo knows it; the algorithm cannot see it.</p>
+        <div class="ctrl"><span class="label">This iteration: slope and change</span><div class="grad" id="gradBox" aria-live="polite"></div>
+          <p class="note" style="font-size:12.5px">Slope = how fast the cost changes when this number is nudged (shown relative to the largest of the five; per radian for θ, δ1, δ2 and per mm for x, y, so angle bars and shift bars cannot be compared with each other). Change = the step this iteration proposed for each of the 5 numbers (applied only if the cost went down).</p></div>
+      </div>
+    </div>
+    <div class="table-wrap"><table><thead><tr><th>Round</th><th>Iter. (total)</th><th>Points</th><th>Error before</th><th>Error after</th><th>λ used</th><th class="l">Result</th><th>θ</th><th>x</th><th>y</th><th>δ1</th><th>δ2</th></tr></thead><tbody id="log"></tbody></table></div>
+    <div class="btns"><button id="refineAll">Refine all kept candidates, then compare</button><button id="replay" disabled>Replay</button><label style="display:flex;align-items:center;gap:8px;font-size:14px;flex:1;min-width:240px">Refinement progress <input id="prog" type="range" min="0" max="1" step="1" value="0" disabled style="flex:1"></label></div>
+    <p class="note" id="refInfo" aria-live="polite"></p>
+    <div class="row"><div class="ctrl"><canvas id="scene4" aria-label="All kept candidates: the refinement and the result"></canvas>
+      <div class="legend"><span style="--c: var(--model)">Candidate being refined</span><span style="--c: var(--good)">Kept / explained</span><span style="--c: var(--truth)">Merged into a kept tube (thin); true tube (thick, when shown)</span><span style="--c: var(--bad)">Rejected / unexplained</span><span style="--c: var(--occ)">Hidden (under an object on top)</span><span style="--c: var(--ob)">Outside the bin</span></div></div>
+      <div class="panel"><p class="note" id="whyInfo" aria-live="polite" style="font-weight:600;color:var(--fg)"></p>
+        <p class="note">In the animation each kept candidate is refined on its own; the picture shows them side by side after the same number of accepted LM iterations, from their step-2 position to where LM stops. When it has finished, click a row in the table below: the picture colours that candidate along the whole tube. Red marks places where the tube should be visible but no point was seen nearby; purple marks places outside the bin.</p></div></div>
+    <div class="table-wrap"><table><thead><tr><th class="l">#</th><th class="l">From (piece, direction, mm)</th><th>To true tube before</th><th>To true tube after</th><th>Explained mm</th><th>Hidden mm</th><th>Unexplained mm</th><th>Outside bin mm</th><th class="l">Result</th></tr></thead><tbody id="refRows"></tbody></table></div>
+    <p class="note">Judging after refinement (the rules of this demo). Every 2 mm sample along the refined tube gets the first of these labels that applies: explained (some point lies within the larger of 4 mm and 2.5 × the noise); outside the bin; hidden (under an object on top); otherwise unexplained (the tube should be visible there, but no point was seen). A candidate with fewer than 6 collected points in any of the three rounds, more than 20 mm unexplained, or any sample outside the bin is rejected. The others are taken in order of score (explained length − 2 × unexplained length; equal scores in the order found in step 1): a candidate whose centreline, sampled every 4 mm, lies on average less than 5 mm from the centreline of a tube already kept is merged into that tube, so only one of them is kept.</p>
+  </section>
+
+  <section class="step" aria-labelledby="h4s">
+    <h2 id="h4s">Step 4 · Two crossing tubes: joint refinement (one more LM run)</h2>
+    <p class="note">After the real program has chosen a set of tubes, it refines them together in <b>one LM run</b>. Two crossing tubes show why. A lies on top of B and crosses it at an angle; at the crossing, B is hidden under A. The depth camera measures the 12 mm height step at the crossing as a slope, so B's depth points close to the crossing come out too high. Each tube has 6 numbers to tune: the rotation, two shifts, two bend changes, and its <b>height z</b> (the tube lies flat; z is the height of its axis above the bin floor).</p>
+    <div class="row">
+      <div class="ctrl">
+        <canvas id="scene5" aria-label="Two crossing tubes"></canvas>
+        <div class="legend"><span style="--c: var(--model)">A (on top)</span><span style="--c: var(--ob)">B (underneath)</span><span style="--c: #8FB8E8">Points used by A</span><span style="--c: #C6A9EE">Points used by B</span><span style="--c: var(--bad)">Points used by both</span><span style="--c: var(--obs)">Points not used</span><span style="--c: var(--muted)">- - Start pose (before ①)</span><span style="--c: var(--truth)">True tubes (unknown to the algorithm)</span></div>
+      </div>
+      <div class="panel">
+        <div class="btns"><button id="j4new">New layout</button><label style="display:flex;align-items:center;gap:6px;font-size:14px"><input id="j4truth" type="checkbox"> Show the true tubes</label></div>
+        <div class="btns"><button id="j4ind" class="primary">① Refine each tube on its own</button></div>
+        <div class="btns"><button id="j4step">② Joint refinement: one iteration</button><button id="j4run">Run to the end</button><button id="j4reset">Restart</button></div>
+        <p class="note" id="j4hint" aria-live="polite" style="font-weight:600;color:var(--fg)"></p>
+        <div class="table-wrap"><table style="min-width:0"><thead><tr><th class="l"></th><th>To true tube mm</th><th>Height z (true)</th><th>Points used</th></tr></thead><tbody id="j4rows"></tbody></table></div>
+        <dl class="kv"><dt>A above B at the crossing</dt><dd id="j4gap"></dd><dt>Points used by both</dt><dd id="j4shared"></dd><dt>Joint refinement</dt><dd id="j4round"></dd></dl>
+        <canvas id="j4bar" aria-label="Heights of the two tubes at the crossing"></canvas>
+      </div>
+    </div>
+    <p class="note">How joint refinement differs from refining each tube on its own: <b>each point goes to one tube only</b>. A point within 8 mm of both tubes goes to the upper one, because the camera, looking down, sees the upper tube; otherwise it goes to the nearer tube, and points farther than the collection radius from both tubes are not used. At the crossing there is a one-sided constraint: <b>the upper tube's axis must be at least 12 mm above the lower one's</b> (the sum of the two radii; the tubes are soft, so 0.5 mm of squeeze is allowed). For every 2 mm of B's axis that lies within 12 mm of A's axis in the top view there is one residual row (σ 0.5 mm): it grows with the shortfall and is 0 when the gap is large enough. The 12 numbers of the two tubes are tuned together in one LM run, in three rounds with collection radii 12, 8 and 6 mm. Both ① and ② use a Huber loss on the data residuals (each divided by its σ of 1.5 mm; with k = 2 the loss grows only linearly beyond 3 mm), which reduces the pull of points with large residuals in position or height, such as B's depth points measured too high. As in the real program, each point is used by one tube only, and the non-penetration rule is one row per 2 mm with σ 0.5 mm and 0.5 mm allowed; the 8 mm rule is a simplification of this demo. The real program's joint refinement also has a camera correction per view, a constraint that tubes cannot penetrate the bin walls or floor, and a correction of the bin's position; they are left out here.</p>
+  </section>
+
+  <p class="note">Simplifications: the real program works in 3-D with the outline edges and the depth from several views. Each tube has 12 to 24 recipe numbers. Every residual is weighted by a calibrated noise model of the camera, and a robust loss reduces the effect of outliers (in this demo only step 4 uses one). When collecting, outline edges use a collection radius in pixels and depth points one in millimetres. This demo keeps only the idea, in a plane.</p>
+</div>
+
+<script>
+(function () {
+  const DEG = Math.PI / 180, DS = 0.5, EXT = 45, STEP = 2, TOL0 = 3.5, GATES = [20, 12, 6], EXPL = 4, BIN = { w: 320, h: 240 };
+  const STEPS = [{ L: 60 }, { A: 90, r: 30 }, { L: 70 }, { A: -60, r: 30 }, { L: 50 }];
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const $ = id => document.getElementById(id);
+  // ---------- random (seeded) ----------
+  let seed = 7;
+  function rnd() { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }
+  function gauss() { const u = Math.max(1e-9, rnd()), v = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v); }
+  // ---------- model centreline: dense polyline every DS mm, s from -EXT to L+EXT ----------
+  const cache = new Map();
+  function build(d1, d2) {   // d1, d2 = change of the first / second bend (rad); the arc length of a bend is kept
+    d2 = d2 || 0; const key = d1.toFixed(9) + '|' + d2.toFixed(9); if (cache.has(key)) return cache.get(key);
+    const pts = []; let x = 0, y = 0, h = 0;
+    for (let s = -EXT; s < 0; s += DS) pts.push([s, 0]);
+    let bend = 0;
+    for (const st of STEPS) {
+      if (st.L) { const n = Math.round(st.L / DS); for (let i = 0; i < n; i++) { pts.push([x, y]); x += DS * Math.cos(h); y += DS * Math.sin(h); } }
+      else {
+        const A0 = st.A * DEG, arc = st.r * Math.abs(A0), A = A0 + (bend === 0 ? d1 : bend === 1 ? d2 : 0), n = Math.round(arc / DS), dh = A / n;
+        for (let i = 0; i < n; i++) { pts.push([x, y]); x += DS * Math.cos(h + dh / 2); y += DS * Math.sin(h + dh / 2); h += dh; }
+        bend++;
+      }
+    }
+    const L = pts.length * DS - EXT;
+    for (let s = 0; s <= EXT + 1e-9; s += DS) { pts.push([x, y]); x += DS * Math.cos(h); y += DS * Math.sin(h); }
+    const m = { pts, L }; if (cache.size > 400) cache.clear(); cache.set(key, m); return m;
+  }
+  function at(model, s) {
+    const f = (s + EXT) / DS, i = Math.max(0, Math.min(model.pts.length - 2, Math.floor(f))), u = Math.min(1, Math.max(0, f - i));
+    const a = model.pts[i], b = model.pts[i + 1]; return [a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1])];
+  }
+  const tf = (p, th, tx, ty) => [Math.cos(th) * p[0] - Math.sin(th) * p[1] + tx, Math.sin(th) * p[0] + Math.cos(th) * p[1] + ty];
+  const NOM = build(0, 0);
+  const tol = () => Math.max(TOL0, 1.8 * S.noise);   // 3.5 mm (X type); widened with the demo noise
+  function body(p, step) { const m = build(p[3], p[4]), out = []; for (let s = 0; s <= m.L + 1e-9; s += step) out.push(tf(at(m, s), p[0], p[1], p[2])); return out; }
+  function nearestDist(q, poly) {
+    let bi = 0, bd = Infinity;
+    for (let i = 0; i < poly.length; i++) { const d = (poly[i][0] - q[0]) ** 2 + (poly[i][1] - q[1]) ** 2; if (d < bd) { bd = d; bi = i; } }
+    let best = Math.sqrt(bd);
+    for (const j of [bi - 1, bi]) { if (j < 0 || j + 1 >= poly.length) continue;
+      const a = poly[j], b = poly[j + 1], ex = b[0] - a[0], ey = b[1] - a[1], L2 = ex * ex + ey * ey; if (!L2) continue;
+      const u = Math.max(0, Math.min(1, ((q[0] - a[0]) * ex + (q[1] - a[1]) * ey) / L2)); const d = Math.hypot(a[0] + u * ex - q[0], a[1] + u * ey - q[1]); if (d < best) best = d; }
+    return best;
+  }
+  // ---------- the scene: one X tube seen in three pieces (two occluders), plus a piece of another tube ----------
+  const RANGES = { S1: [4, 118], S2: [140, 172], S3: [212, 254] }, OCC = [{ s: 129, r: 14 }, { s: 192, r: 22 }];
+  const S = { seg: 'S1', noise: 1.5, truth: null, segs: {}, occ: [], dir: 1, off: 0, curves: null, showTruth: false, found: [], checked: null, selCand: null };
+  function makeScene() {
+    for (let tries = 0; tries < 200; tries++) {
+      const d1 = 12 * DEG, d2 = -10 * DEG, th = rnd() * 2 * Math.PI, m = build(d1, d2);
+      const raw = []; for (let s = 0; s <= m.L; s += 2) raw.push(tf(at(m, s), th, 0, 0));
+      const xs = raw.map(p => p[0]), ys = raw.map(p => p[1]);
+      const tx = BIN.w / 2 - (Math.min(...xs) + Math.max(...xs)) / 2 + (rnd() - 0.5) * 30, ty = BIN.h / 2 - (Math.min(...ys) + Math.max(...ys)) / 2 + (rnd() - 0.5) * 20;
+      const P = raw.map(p => [p[0] + tx, p[1] + ty]);
+      if (!P.every(p => p[0] > 12 && p[0] < BIN.w - 12 && p[1] > 12 && p[1] < BIN.h - 12)) continue;
+      // another tube's straight piece, away from this tube
+      let s4 = null;
+      for (let k = 0; k < 200 && !s4; k++) {
+        const a = rnd() * Math.PI, cx = 30 + rnd() * (BIN.w - 60), cy = 30 + rnd() * (BIN.h - 60), half = 22;
+        const e = [[cx - half * Math.cos(a), cy - half * Math.sin(a)], [cx + half * Math.cos(a), cy + half * Math.sin(a)]];
+        const line = []; for (let t = 0; t <= 1.0001; t += STEP / 44) line.push([e[0][0] + t * (e[1][0] - e[0][0]), e[0][1] + t * (e[1][1] - e[0][1])]);
+        if (line.every(q => P.every(p => Math.hypot(p[0] - q[0], p[1] - q[1]) > 28))) s4 = line;
+      }
+      if (!s4) continue;
+      S.truth = { th, tx, ty, d1, d2, model: m, P };
+      S.s4line = s4;
+      S.occ = OCC.map(o => ({ c: tf(at(m, o.s), th, tx, ty), r: o.r }));
+      makeObs();
+      return;
+    }
+  }
+  function makeObs() {
+    const T = S.truth; S.segs = {}; S.all = [];
+    for (const [id, [a, b]] of Object.entries(RANGES)) {
+      const pts = []; for (let s = a; s <= b + 1e-9; s += STEP) { const p = tf(at(T.model, s), T.th, T.tx, T.ty); pts.push([p[0] + S.noise * gauss(), p[1] + S.noise * gauss()]); }
+      S.segs[id] = pts;
+    }
+    S.segs.S4 = S.s4line.map(p => [p[0] + S.noise * gauss(), p[1] + S.noise * gauss()]);
+    for (const [id, pts] of Object.entries(S.segs)) pts.forEach(p => S.all.push({ p, seg: id }));
+    S.found = []; S.checked = null; S.selCand = null; S.refined = null;
+    computeCurves();
+  }
+  // ---------- Kabsch in the plane ----------
+  function kabsch(M, Q) {
+    const n = M.length; let mx = 0, my = 0, qx = 0, qy = 0;
+    for (let k = 0; k < n; k++) { mx += M[k][0]; my += M[k][1]; qx += Q[k][0]; qy += Q[k][1]; }
+    mx /= n; my /= n; qx /= n; qy /= n;
+    let a = 0, b = 0;
+    for (let k = 0; k < n; k++) { const ux = M[k][0] - mx, uy = M[k][1] - my, vx = Q[k][0] - qx, vy = Q[k][1] - qy; a += ux * vx + uy * vy; b += ux * vy - uy * vx; }
+    const th = Math.atan2(b, a), c = Math.cos(th), s = Math.sin(th), tx = qx - (c * mx - s * my), ty = qy - (s * mx + c * my);
+    let e = 0; for (let k = 0; k < n; k++) { const p = [c * M[k][0] - s * M[k][1] + tx, s * M[k][0] + c * M[k][1] + ty]; e += (p[0] - Q[k][0]) ** 2 + (p[1] - Q[k][1]) ** 2; }
+    return { th, tx, ty, rms: Math.sqrt(e / n) };
+  }
+  const obs = () => S.segs[S.seg], segLen = () => (obs().length - 1) * STEP;
+  function placeAt(off, dir) { const len = segLen(); const M = obs().map((_, k) => at(NOM, dir > 0 ? off + k * STEP : off + len - k * STEP)); return kabsch(M, obs()); }
+  function computeCurves() {
+    const lo = -EXT, hi = NOM.L + EXT - segLen(), offs = [];
+    for (let o = lo; o <= hi + 1e-9; o += STEP) offs.push(o);
+    const F = offs.map(o => placeAt(o, 1)), B = offs.map(o => placeAt(o, -1));
+    const seeds = [];
+    [[F, 1], [B, -1]].forEach(([arr, dir]) => arr.forEach((r, i) => {
+      if (r.rms >= tol()) return;
+      for (let j = Math.max(0, i - 3); j <= Math.min(arr.length - 1, i + 3); j++) if (j !== i && arr[j].rms < r.rms) return;
+      seeds.push({ key: `${S.seg}:${dir}:${offs[i]}`, seg: S.seg, dir, off: offs[i], th: r.th, tx: r.tx, ty: r.ty, rms: r.rms });
+    }));
+    seeds.sort((p, q) => p.rms - q.rms);
+    S.curves = { offs, F, B, seeds, lo, hi };
+    const sl = $('offset'); sl.min = lo; sl.max = hi; sl.step = STEP;
+    if (S.off < lo || S.off > hi) S.off = lo;
+    sl.value = S.off;
+  }
+  const isFound = sd => S.found.some(f => f.key === sd.key);
+  function collect() { const sd = S.curves.seeds.find(s => s.off === S.off && s.dir === S.dir); if (sd && !isFound(sd)) { S.found.push(sd); S.checked = null; } }
+  // ---------- drawing helpers ----------
+  function setup(cv, aspect) {
+    const w = cv.clientWidth || cv.parentElement.clientWidth, h = Math.round(w * aspect), r = window.devicePixelRatio || 1;
+    cv.width = Math.round(w * r); cv.height = Math.round(h * r); cv.style.height = h + 'px';
+    const g = cv.getContext('2d'); g.setTransform(r, 0, 0, r, 0, 0); return { g, w, h };
+  }
+  function view(w, h) { const sc = Math.min(w / BIN.w, h / BIN.h); const ox = (w - BIN.w * sc) / 2, oy = (h - BIN.h * sc) / 2; const V = p => [ox + p[0] * sc, oy + (BIN.h - p[1]) * sc]; V.sc = sc; return V; }
+  function base(g, w, h, V) {
+    g.strokeStyle = css('--grid'); g.lineWidth = 1;
+    for (let x = 0; x <= BIN.w; x += 20) { const a = V([x, 0]), b = V([x, BIN.h]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+    for (let y = 0; y <= BIN.h; y += 20) { const a = V([0, y]), b = V([BIN.w, y]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+    const c0 = V([0, BIN.h]), c1 = V([BIN.w, 0]); g.strokeStyle = css('--muted'); g.lineWidth = 1.5; g.strokeRect(c0[0], c0[1], c1[0] - c0[0], c1[1] - c0[1]);
+    g.fillStyle = css('--occ'); S.occ.forEach(o => { const c = V(o.c); g.beginPath(); g.arc(c[0], c[1], o.r * V.sc, 0, 2 * Math.PI); g.fill(); });
+    if (S.showTruth) path(g, S.truth.P, V, css('--truth'), 6, []);
+  }
+  function path(g, pts, V, color, width, dash) {
+    g.strokeStyle = color; g.lineWidth = width; g.setLineDash(dash || []); g.beginPath();
+    pts.forEach((p, i) => { const q = V(p); i ? g.lineTo(q[0], q[1]) : g.moveTo(q[0], q[1]); }); g.stroke(); g.setLineDash([]);
+  }
+  function modelPts(model, th, tx, ty, a, b) { const out = []; for (let s = a; s <= b; s += 1) out.push(tf(at(model, s), th, tx, ty)); return out; }
+  function drawSegs(g, V, hilite, collectedSet) {
+    for (const [id, pts] of Object.entries(S.segs)) {
+      pts.forEach(p => { const q = V(p); g.fillStyle = collectedSet && collectedSet.has(p) ? css('--col') : css('--obs'); g.beginPath(); g.arc(q[0], q[1], id === hilite ? 3.2 : 2.4, 0, 2 * Math.PI); g.fill(); });
+      const m = pts[Math.floor(pts.length / 2)], q = V(m); g.fillStyle = css('--fg'); g.font = '600 12px ' + css('--f-body'); g.fillText(id, q[0] + 7, q[1] - 7);
+    }
+  }
+  // ---------- step 1 ----------
+  function drawScene() {
+    const cv = $('scene'), { g, w, h } = setup(cv, 0.72), V = view(w, h);
+    g.clearRect(0, 0, w, h); base(g, w, h, V);
+    S.found.forEach((sd, k) => {
+      g.globalAlpha = 0.5; path(g, modelPts(NOM, sd.th, sd.tx, sd.ty, 0, NOM.L), V, css('--cand'), 1.5, []); g.globalAlpha = 1;
+    });
+    const r = placeAt(S.off, S.dir), a = S.off, b = S.off + segLen();
+    path(g, modelPts(NOM, r.th, r.tx, r.ty, 0, NOM.L), V, css('--model'), 1.6, []);
+    path(g, modelPts(NOM, r.th, r.tx, r.ty, Math.max(0, a), Math.min(NOM.L, b)), V, css('--model'), 4, []);
+    drawSegs(g, V, S.seg, null);
+    $('tolLegend').textContent = `Tolerance ${tol().toFixed(1)} mm (type X: 3.5 mm; widened to 1.8 × the noise when the noise is large)`;
+    $('oV').textContent = `${S.off.toFixed(0)} mm, ${S.dir > 0 ? 'forward' : 'reverse'}`;
+    $('rmsV').textContent = `${r.rms.toFixed(2)} mm`;
+    const isSeed = S.curves.seeds.find(s => s.off === S.off && s.dir === S.dir);
+    $('judge').innerHTML = isSeed ? '<span class="chip good">Local minimum within the tolerance → start pose</span>'
+      : r.rms < tol() ? '<span class="chip quiet">Within the tolerance, but not a local minimum</span>' : '<span class="chip bad">Above the tolerance</span>';
+    const per = {}; S.found.forEach(f => per[f.seg] = (per[f.seg] || 0) + 1);
+    const nHere = S.curves.seeds.length, fHere = S.curves.seeds.filter(isFound).length;
+    $('foundInfo').textContent = `${S.found.length ? S.found.length + ' candidate' + (S.found.length === 1 ? '' : 's') + ' found in total (' + Object.keys(per).sort().map(k => k + ': ' + per[k]).join(', ') + '). ' : 'No candidates found yet. '}` +
+      (nHere ? `${S.seg} has ${nHere} start pose${nHere === 1 ? '' : 's'}; ${fHere} found so far.` : `${S.seg} has no start pose within the tolerance.`);
+  }
+  function drawPlot() {
+    const cv = $('plot'), { g, w, h } = setup(cv, 0.24), C = S.curves;
+    g.clearRect(0, 0, w, h);
+    const L = 44, R = 12, T = 12, B = 26, maxE = 12;
+    const X = o => L + (o - C.lo) / (C.hi - C.lo) * (w - L - R), Y = e => T + (1 - Math.min(e, maxE) / maxE) * (h - T - B);
+    g.strokeStyle = css('--grid'); g.fillStyle = css('--muted'); g.font = '11px ' + css('--f-mono'); g.lineWidth = 1;
+    for (let e = 0; e <= maxE; e += 4) { g.beginPath(); g.moveTo(L, Y(e)); g.lineTo(w - R, Y(e)); g.stroke(); g.fillText(e + ' mm', 4, Y(e) + 4); }
+    for (let o = Math.ceil(C.lo / 50) * 50; o <= C.hi; o += 50) g.fillText(o.toFixed(0), X(o) - 8, h - 8);
+    g.strokeStyle = css('--good'); g.setLineDash([4, 4]); g.beginPath(); g.moveTo(L, Y(tol())); g.lineTo(w - R, Y(tol())); g.stroke(); g.setLineDash([]);
+    [[C.F, '--model'], [C.B, '--obs']].forEach(([arr, col]) => { g.strokeStyle = css(col); g.lineWidth = 1.8; g.beginPath(); arr.forEach((r, i) => { const x = X(C.offs[i]), y = Y(r.rms); i ? g.lineTo(x, y) : g.moveTo(x, y); }); g.stroke(); });
+    C.seeds.forEach(s => { g.beginPath(); g.arc(X(s.off), Y(s.rms), 4, 0, 2 * Math.PI);
+      if (isFound(s)) { g.fillStyle = css('--fg'); g.fill(); } else { g.strokeStyle = css('--fg'); g.lineWidth = 1.5; g.stroke(); } });
+    g.strokeStyle = css('--fg'); g.lineWidth = 1; g.beginPath(); g.moveTo(X(S.off), T); g.lineTo(X(S.off), h - B); g.stroke();
+    cv._X = X; cv._Y = Y;
+  }
+  function draw1() { collect(); drawScene(); drawPlot(); render2(); renderPick(); }
+  // ---------- refit of one candidate: predict -> collect (all segments) -> LM, three rounds ----------
+  const DSIG = 10 * DEG, DMAX = 30 * DEG;
+  const NP = 5, prior = p => (p[3] / DSIG) ** 2 + (p[4] / DSIG) ** 2;
+  function residualsOn(p, pts) { const poly = body(p, 1); const r = pts.map(o => nearestDist(o.p, poly)); r.push(p[3] / DSIG, p[4] / DSIG); return r; }
+  const cost = r => r.reduce((s, v) => s + v * v, 0);
+  function solveN(A, b) {
+    const n = b.length, M = A.map((row, i) => [...row, b[i]]);
+    for (let c = 0; c < n; c++) { let piv = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[piv][c])) piv = r;
+      [M[c], M[piv]] = [M[piv], M[c]]; if (Math.abs(M[c][c]) < 1e-14) return null;
+      for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c] / M[c][c]; for (let k = c; k <= n; k++) M[r][k] -= f * M[c][k]; } }
+    return M.map((row, i) => row[n] / row[i]);
+  }
+  function lmIter(st) {   // one LM iteration on st = {p, lam, pts}; returns a record
+    const p = st.p, r0 = residualsOn(p, st.pts), c0 = cost(r0), eps = [1e-4, 0.01, 0.01, 1e-4, 1e-4], n = r0.length, IX = [...Array(NP).keys()];
+    const J = r0.map(() => new Array(NP).fill(0));
+    for (let j = 0; j < NP; j++) { const q = p.slice(); q[j] += eps[j]; const rj = residualsOn(q, st.pts); for (let k = 0; k < n; k++) J[k][j] = (rj[k] - r0[k]) / eps[j]; }
+    const A = IX.map(i => IX.map(j => J.reduce((s, row) => s + row[i] * row[j], 0)));
+    const g = IX.map(i => J.reduce((s, row, k) => s + row[i] * r0[k], 0));
+    const Ad = A.map((row, i) => row.map((v, j) => i === j ? v * (1 + st.lam) : v));
+    const d = solveN(Ad, g.map(v => -v)) || new Array(NP).fill(0);
+    const p1 = p.map((v, i) => v + d[i]); p1[3] = Math.max(-DMAX, Math.min(DMAX, p1[3])); p1[4] = Math.max(-DMAX, Math.min(DMAX, p1[4]));
+    const c1 = cost(residualsOn(p1, st.pts)), ok = c1 < c0, lam0 = st.lam;
+    if (ok) { st.p = p1; st.lam = Math.max(1e-7, st.lam / 3); } else { st.lam = Math.min(1e7, st.lam * 4); }
+    const m = st.pts.length || 1;
+    const conv = (ok && (c0 - c1) / Math.max(c0, 1e-12) < 1e-6) || Math.hypot(d[0] * 100, d[1], d[2], d[3] * 100, d[4] * 100) < 1e-3;
+    return { g, d, ok, rmsB: Math.sqrt(Math.max(0, c0 - prior(p)) / m), rmsA: Math.sqrt(Math.max(0, (ok ? c1 : c0) - prior(st.p)) / m), lam: lam0, conv };
+  }
+  function collectPts(p, gate) { const poly = body(p, 1); return S.all.filter(o => nearestDist(o.p, poly) < gate); }
+  function refit(c) {
+    const st = { p: [c.th, c.tx, c.ty, 0, 0], lam: 1e-3, pts: [] }, rounds = [], traj = [st.p.slice()];
+    for (const gate of GATES) {
+      st.pts = collectPts(st.p, gate); st.lam = 1e-3;
+      if (st.pts.length < 6) { rounds.push({ gate, n: st.pts.length }); return { p: st.p, rounds, failed: true, pts: st.pts, traj }; }
+      for (let it = 0; it < 15; it++) { const rec = lmIter(st); if (rec.ok) traj.push(st.p.slice()); if (rec.conv) break; }
+      rounds.push({ gate, n: st.pts.length });
+    }
+    return { p: st.p, rounds, failed: false, pts: collectPts(st.p, GATES[GATES.length - 1]), traj };
+  }
+  function insideOcc(q) { return S.occ.some(o => Math.hypot(q[0] - o.c[0], q[1] - o.c[1]) < o.r + 2); }
+  function classify(p) {   // along the whole tube every 2 mm
+    const m = build(p[3], p[4]), cls = []; let ex = 0, oc = 0, un = 0, ob = 0;
+    for (let s = 0; s <= m.L + 1e-9; s += 2) {
+      const q = tf(at(m, s), p[0], p[1], p[2]); let k;
+      if (S.all.some(o => Math.hypot(o.p[0] - q[0], o.p[1] - q[1]) < Math.max(EXPL, 2.5 * S.noise))) { k = 'e'; ex += 2; }
+      else if (q[0] < 0 || q[0] > BIN.w || q[1] < 0 || q[1] > BIN.h) { k = 'b'; ob += 2; }
+      else if (insideOcc(q)) { k = 'o'; oc += 2; }
+      else { k = 'u'; un += 2; }
+      cls.push([q, k]);
+    }
+    return { ex, oc, un, ob, cls };
+  }
+  function truthDist(p) { const A = body(p, 2); return A.reduce((s, q) => s + nearestDist(q, S.truth.P), 0) / A.length; }
+  function meanDist(pa, pb) { const A = body(pa, 4), B = body(pb, 1); return A.reduce((s, q) => s + nearestDist(q, B), 0) / A.length; }
+  const CHECK_GATE = GATES[0], COVER = 0.6, EMPTY_MAX = (window.__EMPTY_MAX__ != null ? window.__EMPTY_MAX__ : 40);
+  function classify20(p) {   // along the unrefined prediction every 2 mm: n = a point within 20 mm, o = under an occluder, b = out of the bin, e = empty
+    const m = build(p[3], p[4]), cls = []; let n = 0, o = 0, b = 0, e = 0;
+    for (let s = 0; s <= m.L + 1e-9; s += 2) {
+      const q = tf(at(m, s), p[0], p[1], p[2]); let k;
+      if (S.all.some(x => Math.hypot(x.p[0] - q[0], x.p[1] - q[1]) < CHECK_GATE)) { k = 'n'; n += 2; }
+      else if (q[0] < 0 || q[0] > BIN.w || q[1] < 0 || q[1] > BIN.h) { k = 'b'; b += 2; }
+      else if (insideOcc(q)) { k = 'o'; o += 2; }
+      else { k = 'e'; e += 2; }
+      cls.push([q, k]);
+    }
+    return { n, o, b, e, cls };
+  }
+  // order of the kept candidates: from the longest own segment first (the most reliable start), then how many other segments were found, how well they line up, the fit of the own segment
+  const meanCov = o => o.found.length ? o.found.reduce((s, id) => s + o.cov[id], 0) / o.found.length : 0;
+  const ownLen = o => S.segs[o.c.seg].length;
+  const rankKeep = (a, b) => ownLen(b) - ownLen(a) || b.found.length - a.found.length || meanCov(b) - meanCov(a) || a.c.rms - b.c.rms;
+  function runCheck() {
+    if (!S.found.length) return;
+    S.checked = S.found.map((c, i) => {
+      const p0 = [c.th, c.tx, c.ty, 0, 0], pts = collectPts(p0, CHECK_GATE), k = classify(p0), cnt = {};
+      pts.forEach(o => cnt[o.seg] = (cnt[o.seg] || 0) + 1);
+      const cov = {}; Object.keys(S.segs).forEach(id => { if (id !== c.seg) cov[id] = (cnt[id] || 0) / S.segs[id].length; });
+      const found = Object.keys(cov).filter(id => cov[id] >= COVER).sort();
+      const z = classify20(p0);
+      const verdict = found.length && z.b <= 10 && z.e <= EMPTY_MAX ? 'keep' : 'out';
+      const why = !found.length ? 'no other piece found' : z.b > 10 ? 'more than 10 mm outside the bin' : z.e > EMPTY_MAX ? `${z.e} mm empty` : '';
+      return { c, idx: i + 1, p0, pts, cov, found, k, z, verdict, why, tdB: truthDist(p0) };
+    });
+    S.refined = null;
+    const keep = S.checked.filter(o => o.verdict === 'keep').sort(rankKeep);
+    S.selCand = keep[0] || null;
+    render2(); renderPick(); render3list();
+    if (S.selCand) startLM(S.selCand.c); else { LMS.c = null; draw3(); }
+  }
+  function render2() {
+    const cv = $('scene2'), { g, w, h } = setup(cv, 0.72), V = view(w, h);
+    g.clearRect(0, 0, w, h); base(g, w, h, V);
+    const C = S.checked;
+    if (!C) {
+      S.found.forEach(sd => { g.globalAlpha = 0.5; path(g, modelPts(NOM, sd.th, sd.tx, sd.ty, 0, NOM.L), V, css('--cand'), 1.5, []); g.globalAlpha = 1; });
+      drawSegs(g, V, null, null);
+      $('checkInfo').textContent = S.found.length ? `Step 1 has found ${S.found.length} candidate${S.found.length === 1 ? '' : 's'}. Press “Check all candidates”.` : 'First drag in step 1 to find some candidates (or press “Sweep automatically”).';
+      $('outInfo').textContent = ''; $('candRows').innerHTML = ''; return;
+    }
+    const showOut = $('showOut').checked, sel = S.selCand;
+    C.filter(o => o.verdict === 'out' && showOut && o !== sel).forEach(o => { g.globalAlpha = 0.4; path(g, body(o.p0, 1), V, css('--bad'), 1.1, [4, 4]); g.globalAlpha = 1; });
+    C.filter(o => o.verdict === 'keep' && o !== sel).forEach(o => path(g, body(o.p0, 1), V, css('--good'), 2.2, []));
+    if (sel) {
+      g.globalAlpha = 0.12; path(g, body(sel.p0, 1), V, css('--model'), 2 * CHECK_GATE * V.sc, []); g.globalAlpha = 1;
+      const cz = { n: css('--good'), o: css('--occ'), b: css('--ob'), e: css('--bad') };
+      sel.z.cls.forEach(([q, k], j, arr) => { if (!j) return; const a = V(arr[j - 1][0]), b = V(q); g.strokeStyle = cz[k]; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+    }
+    drawSegs(g, V, null, sel ? new Set(sel.pts.map(o => o.p)) : null);
+    const nk = C.filter(o => o.verdict === 'keep').length, outs = C.filter(o => o.verdict === 'out');
+    $('checkInfo').textContent = `Checked ${C.length} candidate${C.length === 1 ? '' : 's'}: ${outs.length} filtered out, ${nk} kept (${nk === 1 ? 'green line' : 'green lines'} in the picture, not refined yet).`;
+    const nNo = outs.filter(o => !o.found.length).length, nBin = outs.filter(o => o.found.length && o.z.b > 10).length, nEmp = outs.length - nNo - nBin;
+    $('outInfo').textContent = outs.length ? `Filtered out (each counted once, under the first rule it breaks, in this order): no other piece found (${nNo}), more than 10 mm outside the bin (${nBin}), more than 40 mm empty (${nEmp}). ` + (showOut ? '' : 'Tick “Show the filtered-out ones” to see them in the table and the picture.') : '';
+    const covTxt = o => Object.keys(o.cov).sort().map(id => `${id} ${Math.round(100 * o.cov[id])}%`).join(', ');
+    const order = C.map((o, j) => j).filter(j => C[j].verdict === 'keep' || showOut)
+      .sort((a, b) => (C[a].verdict === 'keep' ? 0 : 1) - (C[b].verdict === 'keep' ? 0 : 1) || rankKeep(C[a], C[b]));
+    $('candRows').innerHTML = order.map(j => [C[j], j]).map(([o, j]) => `<tr class="click ${o === sel ? 'sel' : ''}" data-j="${j}"><td class="l">${o.idx}</td><td class="l">${o.c.seg} ${o.c.dir > 0 ? 'fwd' : 'rev'} ${o.c.off.toFixed(0)}</td><td>${o.c.rms.toFixed(2)}</td><td class="l">${o.found.length ? '<b>' + o.found.join(', ') + '</b> ' : ''}<span style="color:var(--muted)">(${covTxt(o)})</span></td><td>${o.z.e}</td><td>${o.z.b}</td><td>${o.tdB.toFixed(1)}</td><td class="l">${o.verdict === 'keep' ? '<span class="chip good">kept</span>' : '<span class="chip bad">filtered out</span> ' + o.why}</td></tr>`).join('');
+    $('candRows').querySelectorAll('tr').forEach(tr => tr.onclick = () => { S.selCand = C[+tr.dataset.j]; render2(); renderPick(); if (S.selCand.verdict === 'keep') startLM(S.selCand.c); });
+  }
+  function refineAll() {
+    const K = S.checked ? S.checked.filter(o => o.verdict === 'keep') : [];
+    if (!K.length) return;
+    $('refInfo').textContent = 'Refining…';
+    setTimeout(() => {
+      const out = K.map(o => { const f = refit(o.c), k = classify(f.p); return { o, f, k, score: k.ex - 2 * k.un, tdA: truthDist(f.p), verdict: (f.failed || k.un > 20 || k.ob > 0) ? 'out' : 'keep' }; });
+      const kept = out.filter(r => r.verdict === 'keep').sort((a, b) => b.score - a.score), winners = [];
+      kept.forEach(r => { const d = winners.find(w => meanDist(r.f.p, w.f.p) < 5); if (d) { r.verdict = 'dup'; r.dupOf = d.o.idx; } else winners.push(r); });
+      S.refined = out; S.refSel = null; render3list(); animate4();
+    }, 0);
+  }
+  let anim4 = null;
+  function animate4() {
+    if (anim4) { clearInterval(anim4); anim4 = null; }
+    const R = S.refined; if (!R) return;
+    // started by the button on purpose, so it plays even with reduced motion; the slider can stop it at any step
+    const n = Math.max(...R.map(r => r.f.traj.length)); let t = 0;
+    S.anim4n = n; $('prog').max = n; $('prog').value = 0; $('prog').disabled = false; $('replay').disabled = true;
+    S.anim4t = 0; draw4();
+    anim4 = setInterval(() => { t++; if (t >= n + 4) { clearInterval(anim4); anim4 = null; S.anim4t = null; $('prog').value = n; draw4(); $('replay').disabled = false; return; } S.anim4t = Math.min(t, n - 1); $('prog').value = S.anim4t; draw4(); }, 300);
+  }
+  function draw4() {
+    const cv = $('scene4'), { g, w, h } = setup(cv, 0.72), V = view(w, h);
+    g.clearRect(0, 0, w, h); base(g, w, h, V);
+    const R = S.refined;
+    if (!R) { drawSegs(g, V, null, null); $('whyInfo').textContent = ''; return; }
+    if (S.anim4t != null) {   // animation: every kept candidate at the same LM step
+      R.forEach(r => { const tr = r.f.traj, q = tr[Math.min(S.anim4t, tr.length - 1)]; g.globalAlpha = 0.8; path(g, body(q, 1), V, css('--model'), 1.8, []); g.globalAlpha = 1; });
+      drawSegs(g, V, null, null);
+      $('whyInfo').textContent = `Refining: ${S.anim4t ? 'after ' + S.anim4t + ' accepted LM iteration' + (S.anim4t === 1 ? '' : 's') : 'start poses, no LM iteration yet'} (${R.length === 1 ? 'one candidate; it collects' : R.length + ' candidates, each refined on its own and shown side by side; each collects'} points in three rounds, radius 20 → 12 → 6 mm). Drag “Refinement progress” to pause at any iteration; drag it to the far right to see the final result.`;
+      return;
+    }
+    const sel = S.refSel;
+    R.filter(r => r !== sel && r.verdict === 'out').forEach(r => { g.globalAlpha = 0.6; path(g, body(r.f.p, 1), V, css('--bad'), 1.4, [5, 4]); g.globalAlpha = 1; });
+    R.filter(r => r !== sel && r.verdict === 'dup').forEach(r => { g.globalAlpha = 0.7; path(g, body(r.f.p, 1), V, css('--truth'), 1.4, []); g.globalAlpha = 1; });
+    R.filter(r => r !== sel && r.verdict === 'keep').forEach(r => path(g, body(r.f.p, 1), V, css('--good'), 3, []));
+    if (sel) {
+      const cols = { e: css('--good'), o: css('--occ'), u: css('--bad'), b: css('--ob') };
+      sel.k.cls.forEach(([q, k], j, arr) => { if (!j) return; const a = V(arr[j - 1][0]), b = V(q); g.strokeStyle = cols[k]; g.lineWidth = 6; g.lineCap = 'round'; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+    }
+    drawSegs(g, V, null, null);
+    if (!sel) { $('whyInfo').textContent = 'Refinement done. Click a row in the table below to see why that candidate was kept, merged or rejected.'; return; }
+    const why = sel.verdict === 'keep' ? `Kept: every part of the tube is explained (green) or hidden under an object on top (grey)${sel.k.un ? `, except ${sel.k.un} mm unexplained (red; up to 20 mm is allowed)` : ''}; nothing lies outside the bin, and it does not lie on average within 5 mm of a tube kept before it.`
+      : sel.verdict === 'dup' ? `Merged: after refinement it lies on average less than 5 mm from #${sel.dupOf}, which ranks above it (the same or a higher score), so only #${sel.dupOf} is kept.`
+      : sel.f.failed ? 'Rejected: too few points were collected to refine it.'
+      : sel.k.ob > 0 ? `Rejected: after refinement ${sel.k.ob} mm lies outside the bin (purple), which is impossible.`
+      : `Rejected: after refinement ${sel.k.un} mm of the tube is still red (more than the 20 mm allowed); the tube should be visible there, but no point was seen nearby.`;
+    $('whyInfo').textContent = `#${sel.o.idx} (${sel.o.c.seg} ${sel.o.c.dir > 0 ? 'fwd' : 'rev'} ${sel.o.c.off.toFixed(0)}): explained ${sel.k.ex} mm, hidden ${sel.k.oc} mm, unexplained ${sel.k.un} mm, outside the bin ${sel.k.ob} mm. ` + why;
+  }
+  function render3list() {
+    const R = S.refined;
+    if (!R) { $('refInfo').textContent = S.checked ? 'To see all kept candidates after refinement, press the button above.' : ''; $('refRows').innerHTML = ''; $('replay').disabled = true; $('prog').disabled = true; draw4(); return; }
+    const nk = R.filter(r => r.verdict === 'keep').length, nd = R.filter(r => r.verdict === 'dup').length;
+    $('refInfo').textContent = `After refining ${R.length === 1 ? 'the one kept candidate' : 'the ' + R.length + ' kept candidates'}: ${nk} kept as ${nk === 1 ? 'a tube' : 'tubes'}; ${nd} merged into a kept tube; ${R.length - nk - nd} rejected${R.length - nk - nd ? ' (too much unexplained length, outside the bin, or too few points)' : ''}.`;
+    const rank = { keep: 0, dup: 1, out: 2 };
+    const order = R.slice().sort((a, b) => rank[a.verdict] - rank[b.verdict] || b.score - a.score);
+    $('refRows').innerHTML = order.map(r => `<tr class="click ${r === S.refSel ? 'sel' : ''}" data-i="${R.indexOf(r)}"><td class="l">${r.o.idx}</td><td class="l">${r.o.c.seg} ${r.o.c.dir > 0 ? 'fwd' : 'rev'} ${r.o.c.off.toFixed(0)}</td><td>${r.o.tdB.toFixed(1)}</td><td>${r.tdA.toFixed(1)}</td><td>${r.k.ex}</td><td>${r.k.oc}</td><td>${r.k.un}</td><td>${r.k.ob}</td><td class="l">${r.verdict === 'keep' ? '<span class="chip good">kept</span>' : r.verdict === 'dup' ? '<span class="chip quiet">same tube</span> as #' + r.dupOf : '<span class="chip bad">rejected</span>' + (r.f.failed ? ' too few points' : r.k.ob > 0 ? ' outside the bin' : ' too much unexplained length')}</td></tr>`).join('');
+    $('refRows').querySelectorAll('tr').forEach(tr => tr.onclick = () => { if (S.anim4t != null) return; S.refSel = R[+tr.dataset.i]; render3list(); draw4(); });
+  }
+  // ---------- step 3: LM detail of one candidate ----------
+  const LMS = { c: null, st: null, round: 0, it: 0, last: null, roundDone: false, finished: false, log: [], timer: null };
+  function startLM(c) {
+    if (LMS.timer) { clearInterval(LMS.timer); LMS.timer = null; }
+    LMS.c = c; LMS.p0 = [c.th, c.tx, c.ty, 0, 0]; LMS.st = { p: LMS.p0.slice(), lam: 1e-3, pts: [] }; LMS.round = 1; LMS.it = 0; LMS.itR = 0; LMS.last = null; LMS.finished = false; LMS.roundDone = false; LMS.log = [];
+    LMS.st.pts = collectPts(LMS.st.p, GATES[0]); if (LMS.st.pts.length < 6) { LMS.finished = true; LMS.failed = true; } else LMS.failed = false;
+    draw3();
+  }
+  function lmStep() {
+    if (!LMS.c || LMS.finished) return;
+    if (LMS.roundDone) {
+      if (LMS.round >= GATES.length) { LMS.finished = true; draw3(); return; }
+      LMS.round++; LMS.itR = 0; LMS.st.lam = 1e-3; LMS.st.pts = collectPts(LMS.st.p, GATES[LMS.round - 1]); LMS.roundDone = false; LMS.last = null;
+      if (LMS.st.pts.length < 6) { LMS.finished = true; LMS.failed = true; }
+      draw3(); return;
+    }
+    const rec = lmIter(LMS.st); LMS.it++; LMS.itR++; LMS.last = rec;
+    LMS.log.unshift({ round: LMS.round, it: LMS.it, n: LMS.st.pts.length, b: rec.rmsB, a: rec.rmsA, lam: rec.lam, ok: rec.ok, p: LMS.st.p.slice() });
+    if (rec.conv || LMS.itR >= 15) LMS.roundDone = true;   // 15 per round, as in refit()
+    draw3();
+  }
+  function renderPick() {
+    const box = $('lmPick');
+    if (!S.checked) { box.innerHTML = '<span class="note">First run step 2, “Check all candidates”.</span>'; return; }
+    const list = S.checked.filter(o => o.verdict === 'keep').sort(rankKeep);
+    if (!list.length) { box.innerHTML = '<span class="note">Step 2 kept no candidates.</span>'; return; }
+    box.innerHTML = list.map((o, j) => `<button data-j="${j}" class="${LMS.c === o.c ? 'on' : ''}">#${o.idx} (from ${o.c.seg}; found ${o.found.join(', ')})</button>`).join('');
+    box.querySelectorAll('button').forEach(b => b.onclick = () => { const o = list[+b.dataset.j]; S.selCand = o; startLM(o.c); render2(); renderPick(); });
+  }
+  function draw3() {
+    const cv = $('scene3'), { g, w, h } = setup(cv, 0.72), V = view(w, h); g.clearRect(0, 0, w, h); base(g, w, h, V);
+    if (!LMS.c) { drawSegs(g, V, null, null); ['rdV', 'gtV', 'ncV', 'itV', 'lmRms', 'lamV', 'dV', 'befV', 'nowV'].forEach(id => $(id).textContent = '—'); $('accV').textContent = '—'; $('dTrue').textContent = `${(S.truth.d1 / DEG).toFixed(2)}° / ${(S.truth.d2 / DEG).toFixed(2)}° (hidden from the algorithm)`; $('gradBox').innerHTML = ''; $('log').innerHTML = ''; $('lmHint').textContent = ''; return; }
+    const p = LMS.st.p, poly = body(p, 0.5), set = new Set(LMS.st.pts.map(o => o.p));
+    g.strokeStyle = css('--truth'); g.lineWidth = 1;
+    LMS.st.pts.forEach(o => { let bi = 0, bd = Infinity; poly.forEach((pp, i) => { const dd = (pp[0] - o.p[0]) ** 2 + (pp[1] - o.p[1]) ** 2; if (dd < bd) { bd = dd; bi = i; } });
+      const a = V(o.p), b = V(poly[bi]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); });
+    path(g, body(LMS.p0, 1), V, css('--muted'), 1.4, [6, 5]);
+    path(g, poly, V, css('--model'), 2.5, []);
+    const moved = meanDist(p, LMS.p0);
+    $('lmHint').textContent = LMS.it === 0 && LMS.round === 1
+      ? 'Before refinement (the blue line lies on the dashed line): the line does not yet fit the pieces far from the candidate’s own piece. Press “One iteration” or “Run to the end” to watch LM pull it into place with all the points near it.'
+      : LMS.finished ? (LMS.failed ? 'Too few points collected; refinement stopped.' : `Done: ${truthDist(LMS.p0).toFixed(1)} mm from the true tube before refinement, ${truthDist(p).toFixed(1)} mm after (known only to the demo).`)
+      : `Round ${LMS.round}: refining with ${LMS.st.pts.length} points; the line has moved on average ${moved.toFixed(1)} mm from the dashed start line.`;
+    if (!LMS.finished && LMS.round) { g.globalAlpha = 0.12; path(g, poly, V, css('--model'), 2 * GATES[LMS.round - 1] * V.sc, []); g.globalAlpha = 1; }
+    drawSegs(g, V, null, set);
+    const segsC = {}; LMS.st.pts.forEach(o => segsC[o.seg] = (segsC[o.seg] || 0) + 1);
+    const r = residualsOn(p, LMS.st.pts), m = LMS.st.pts.length || 1;
+    $('rdV').textContent = `${LMS.round} / ${GATES.length}` + (LMS.finished ? (LMS.failed ? ' (too few points, failed)' : ' (done)') : LMS.roundDone ? (LMS.round >= GATES.length ? ' (round finished; the next press ends the refinement)' : ' (round finished; the next press collects the points again with a smaller radius)') : '');
+    $('gtV').textContent = GATES[Math.max(0, LMS.round - 1)] + ' mm';
+    $('ncV').textContent = `${LMS.st.pts.length}: ` + (Object.keys(segsC).sort().map(k => `${k} ${segsC[k]}`).join(', ') || '—');
+    $('itV').textContent = String(LMS.it);
+    $('lmRms').textContent = Math.sqrt(Math.max(0, cost(r) - prior(p)) / m).toFixed(2) + ' mm';
+    $('lamV').textContent = LMS.st.lam.toExponential(1);
+    $('accV').innerHTML = !LMS.last ? '—' : LMS.last.ok ? '<span class="chip good">Cost went down → accepted, brake eased</span>' : '<span class="chip bad">Cost did not go down → discarded, brake tightened</span>';
+    $('dV').textContent = `${(p[3] / DEG).toFixed(2)}° / ${(p[4] / DEG).toFixed(2)}°`;
+    $('dTrue').textContent = `${(S.truth.d1 / DEG).toFixed(2)}° / ${(S.truth.d2 / DEG).toFixed(2)}° (hidden from the algorithm)`;
+    $('befV').textContent = truthDist(LMS.p0).toFixed(1) + ' mm'; $('nowV').textContent = truthDist(p).toFixed(1) + ' mm';
+    const box = $('gradBox'), names = ['Rotation θ', 'Shift x', 'Shift y', 'Bend change δ1', 'Bend change δ2'], units = ['°', ' mm', ' mm', '°', '°'], conv = [1 / DEG, 1, 1, 1 / DEG, 1 / DEG];
+    if (!LMS.last) box.innerHTML = '<span style="grid-column:1/-1;color:var(--muted)">Press “One iteration”.</span>';
+    else { const gm = Math.max(...LMS.last.g.map(Math.abs), 1e-12);
+      box.innerHTML = names.map((nm, i) => { const f = LMS.last.g[i] / gm, left = f < 0 ? 50 + 50 * f : 50, wid = 50 * Math.abs(f);
+        return `<span>${nm}</span><div class="bar"><i style="left:${left}%;width:${wid}%"></i></div><span style="font-family:var(--f-mono);text-align:right">${(LMS.last.d[i] * conv[i]).toFixed(2)}${units[i]}</span>`; }).join(''); }
+    $('log').innerHTML = LMS.log.slice(0, 16).map(e => `<tr><td>${e.round}</td><td>${e.it}</td><td>${e.n}</td><td>${e.b.toFixed(2)}</td><td>${e.a.toFixed(2)}</td><td>${e.lam.toExponential(1)}</td><td class="l" style="color:var(${e.ok ? '--good' : '--bad'})">${e.ok ? 'accepted' : 'discarded'}</td><td>${(e.p[0] / DEG).toFixed(1)}°</td><td>${e.p[1].toFixed(1)}</td><td>${e.p[2].toFixed(1)}</td><td>${(e.p[3] / DEG).toFixed(2)}°</td><td>${(e.p[4] / DEG).toFixed(2)}°</td></tr>`).join('');
+  }
+  // ---------- step 4: two crossing tubes, joint refinement ----------
+  const J = { seed: 77, truth: null, pts: [], init: null, ind: null, st: null, round: 0, it: 0, roundDone: false, finished: false, timer: null, mode: 'start' };
+  const R2 = 12, PEN_ALLOW = 0.5, ZSIG = 1.5, XYSIG = 1.5, PENSIG = 0.5, JG = [12, 8, 6];
+  function mk(sv) { let s = sv; return () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+  const line6 = (p, step) => body(p, step || 1);           // the first 5 numbers place the centreline; p[5] is the height z
+  function makeScene4() {
+    const r = mk(J.seed), g = () => Math.sqrt(-2 * Math.log(Math.max(1e-9, r()))) * Math.cos(2 * Math.PI * r());
+    for (let tries = 0; tries < 400; tries++) {
+      const dA = [8 * DEG, -6 * DEG], dB = [-7 * DEG, 9 * DEG], mA = build(dA[0], dA[1]), mB = build(dB[0], dB[1]);
+      const sA = 120 + 40 * r(), sB = 125 + 30 * r(), cx = BIN.w / 2 + (r() - 0.5) * 40, cy = BIN.h / 2 + (r() - 0.5) * 30;
+      const thA = r() * 2 * Math.PI, qa = tf(at(mA, sA), thA, 0, 0), A = [thA, cx - qa[0], cy - qa[1], dA[0], dA[1], 18];
+      const ta = tf(at(mA, sA + 1), thA, 0, 0), dirA = Math.atan2(ta[1] - qa[1], ta[0] - qa[0]);
+      const pb0 = at(mB, sB), pb1 = at(mB, sB + 1), angB = Math.atan2(pb1[1] - pb0[1], pb1[0] - pb0[0]);
+      const thB = dirA + (r() < 0.5 ? 1 : -1) * (24 + 14 * r()) * DEG - angB, qb = tf(pb0, thB, 0, 0), B = [thB, cx - qb[0], cy - qb[1], dB[0], dB[1], 6];
+      const PA = line6(A, 2), PB = line6(B, 2);
+      if (![...PA, ...PB].every(q => q[0] > 10 && q[0] < BIN.w - 10 && q[1] > 10 && q[1] < BIN.h - 10)) continue;
+      // one crossing only: away from the crossing point the two tubes stay apart
+      if (PB.some(q => Math.hypot(q[0] - cx, q[1] - cy) > 60 && nearestDist(q, PA) < 16)) continue;
+      J.truth = { A, B, PA, PB, c: [cx, cy] };
+      J.pts = [];
+      for (let s = 4; s <= mA.L - 4; s += 2) { const q = tf(at(mA, s), A[0], A[1], A[2]); J.pts.push({ p: [q[0] + XYSIG * g(), q[1] + XYSIG * g()], z: 18 + ZSIG * g(), tube: 'A' }); }
+      for (let s = 4; s <= mB.L - 4; s += 2) {
+        const q = tf(at(mB, s), B[0], B[1], B[2]), dAq = nearestDist(q, PA);
+        if (dAq < 13) continue;                                       // under A
+        const smear = dAq < 26 ? 12 * (1 - (dAq - 13) / 13) : 0;       // the 12 mm step measured as a slope
+        J.pts.push({ p: [q[0] + XYSIG * g(), q[1] + XYSIG * g()], z: 6 + smear + ZSIG * g(), tube: 'B' });
+      }
+      J.init = { A: [A[0] + 4 * DEG, A[1] + 5, A[2] - 4, 0, 0, 15], B: [B[0] - 4 * DEG, B[1] - 4, B[2] + 5, 0, 0, 9] };
+      break;
+    }
+    J.ind = null; J.st = null; J.mode = 'start'; if (J.timer) { clearInterval(J.timer); J.timer = null; }
+    draw5();
+  }
+  // one LM iteration on a parameter vector with a residual function (finite-difference Jacobian, Marquardt damping)
+  // one LM iteration (finite-difference Jacobian, Marquardt damping); data rows use the Huber loss (k = 2) as in the real
+  // program, the last nTail rows (priors, the non-penetration row) are plain squares
+  const HK = 2, hub = (x, robust) => { const a = Math.abs(x); return !robust || a <= HK ? 0.5 * x * x : HK * a - 0.5 * HK * HK; };
+  const rcost = (r, nTail) => r.reduce((s, x, k) => s + hub(x, k < r.length - nTail), 0);
+  function lmGen(st, resFn, eps, clampIdx, nTail) {
+    const p = st.p, r0 = resFn(p), nT0 = r0.tail != null ? r0.tail : nTail, c0 = rcost(r0, nT0), n = p.length, IX = [...Array(n).keys()];
+    const w = r0.map((x, k) => (k < r0.length - nT0 && Math.abs(x) > HK) ? HK / Math.abs(x) : 1);
+    const Jm = r0.map(() => new Array(n).fill(0));
+    for (let j = 0; j < n; j++) { const q = p.slice(); q[j] += eps[j]; const rj = resFn(q); for (let k = 0; k < r0.length; k++) Jm[k][j] = k < rj.length ? (rj[k] - r0[k]) / eps[j] : 0; }
+    // the number of non-penetration rows depends on the parameters: a row missing in the nudged vector counts as unchanged (else NaN)
+    const A = IX.map(i => IX.map(j => Jm.reduce((s, row, k) => s + w[k] * row[i] * row[j], 0))), gv = IX.map(i => Jm.reduce((s, row, k) => s + w[k] * row[i] * r0[k], 0));
+    const Ad = A.map((row, i) => row.map((v, j) => i === j ? v * (1 + st.lam) + 1e-12 : v));
+    const d = solveN(Ad, gv.map(v => -v)) || new Array(n).fill(0);
+    const p1 = p.map((v, i) => v + d[i]); clampIdx.forEach(i => { p1[i] = Math.max(-DMAX, Math.min(DMAX, p1[i])); });
+    const r1 = resFn(p1), c1 = rcost(r1, r1.tail != null ? r1.tail : nTail), ok = c1 < c0;
+    if (ok) { st.p = p1; st.lam = Math.max(1e-7, st.lam / 3); } else st.lam = Math.min(1e7, st.lam * 4);
+    return { ok, conv: (ok && (c0 - c1) / Math.max(c0, 1e-12) < 1e-6) || d.every(v => Math.abs(v) < 1e-5) };
+  }
+  const EPS6 = [1e-4, 0.01, 0.01, 1e-4, 1e-4, 0.01];
+  // ① each tube on its own (layer 2): it collects every point near its own prediction, whoever it belongs to
+  function resSingle(p, pts) { const poly = line6(p); const r = []; pts.forEach(o => { r.push(nearestDist(o.p, poly) / XYSIG, (o.z - p[5]) / ZSIG); }); r.push(p[3] / DSIG, p[4] / DSIG); return r; }
+  function fitSingle(p0) {
+    const st = { p: p0.slice(), lam: 1e-3 }; let pts = [];
+    for (const gate of GATES) { const poly = line6(st.p); pts = J.pts.filter(o => nearestDist(o.p, poly) < gate); st.lam = 1e-3;
+      if (pts.length < 6) break; for (let it = 0; it < 15; it++) { if (lmGen(st, p => resSingle(p, pts), EPS6, [3, 4], 2).conv) break; } }
+    const poly = line6(st.p); return { p: st.p, pts: J.pts.filter(o => nearestDist(o.p, poly) < GATES[GATES.length - 1]) };
+  }
+  // ② both tubes together (layer 4): every point to one tube (the upper one where both are close) + non-penetration at the crossing
+  function assign(pA, pB, gate) {
+    const LA = line6(pA), LB = line6(pB), top = pA[5] >= pB[5] ? 'A' : 'B';
+    return J.pts.map(o => { const da = nearestDist(o.p, LA), db = nearestDist(o.p, LB);
+      if (da >= gate && db >= gate) return null;
+      if (da < gate && db < gate) return (da < 8 && db < 8) ? top : (da <= db ? 'A' : 'B');
+      return da < gate ? 'A' : 'B'; });
+  }
+  function overlapN(pA, pB) {   // 2 mm samples of B whose axis is closer than 12 mm to A's axis in the top view: there the two must be stacked
+    const LA = line6(pA, 2), LB = line6(pB, 2); return LB.filter(q => nearestDist(q, LA) < R2).length;
+  }
+  function crossGap(pA, pB) { return overlapN(pA, pB) ? Math.abs(pA[5] - pB[5]) : null; }
+  function resJoint(p, asg) {
+    const pA = p.slice(0, 6), pB = p.slice(6), LA = line6(pA), LB = line6(pB), r = [];
+    J.pts.forEach((o, i) => { const a = asg[i]; if (!a) return; const pp = a === 'A' ? pA : pB, L = a === 'A' ? LA : LB; r.push(nearestDist(o.p, L) / XYSIG, (o.z - pp[5]) / ZSIG); });
+    r.push(pA[3] / DSIG, pA[4] / DSIG, pB[3] / DSIG, pB[4] / DSIG);
+    // non-penetration as in the real program: one one-sided row per 2 mm sample of the overlap, sigma 0.5 mm, 0.5 mm allowed
+    const m = overlapN(pA, pB), gap = Math.abs(pA[5] - pB[5]);
+    for (let k = 0; k < m; k++) r.push(Math.max(0, R2 - PEN_ALLOW - gap) / PENSIG);
+    r.tail = 4 + m; return r;
+  }
+  function startJoint() {
+    if (!J.ind) runInd();
+    J.st = { p: [...J.ind.A.p, ...J.ind.B.p], lam: 1e-3 }; J.round = 1; J.it = 0; J.itR = 0; J.roundDone = false; J.finished = false; J.mode = 'joint';
+    J.asg = assign(J.st.p.slice(0, 6), J.st.p.slice(6), JG[0]); J.p0 = J.st.p.slice();
+  }
+  function jStep() {
+    if (J.mode !== 'joint') startJoint(); else if (J.finished) return;
+    else if (J.roundDone) { if (J.round >= JG.length) { J.finished = true; draw5(); return; }
+      J.round++; J.itR = 0; J.st.lam = 1e-3; J.asg = assign(J.st.p.slice(0, 6), J.st.p.slice(6), JG[J.round - 1]); J.roundDone = false; draw5(); return; }
+    else { const rec = lmGen(J.st, p => resJoint(p, J.asg), [...EPS6, ...EPS6], [3, 4, 9, 10], 5); J.it++; J.itR++; if (rec.conv || J.itR >= 15) J.roundDone = true; }
+    draw5();
+  }
+  function runInd() { J.ind = { A: fitSingle(J.init.A), B: fitSingle(J.init.B) }; J.mode = 'ind'; J.st = null; }
+  function tDist(p, P) { const A = line6(p, 2); return A.reduce((s, q) => s + nearestDist(q, P), 0) / A.length; }
+  function draw5() {
+    const cv = $('scene5'), { g, w, h } = setup(cv, 0.72), V = view(w, h); g.clearRect(0, 0, w, h);
+    g.strokeStyle = css('--grid'); g.lineWidth = 1;
+    for (let x = 0; x <= BIN.w; x += 20) { const a = V([x, 0]), b = V([x, BIN.h]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+    for (let y = 0; y <= BIN.h; y += 20) { const a = V([0, y]), b = V([BIN.w, y]); g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke(); }
+    const c0 = V([0, BIN.h]), c1 = V([BIN.w, 0]); g.strokeStyle = css('--muted'); g.lineWidth = 1.5; g.strokeRect(c0[0], c0[1], c1[0] - c0[0], c1[1] - c0[1]);
+    const T = J.truth; if (!T) return;
+    if ($('j4truth').checked) { path(g, T.PB, V, css('--truth'), 6, []); path(g, T.PA, V, css('--truth'), 6, []); }
+    let pA, pB, usedA = new Set(), usedB = new Set();
+    if (J.mode === 'joint') { pA = J.st.p.slice(0, 6); pB = J.st.p.slice(6); J.pts.forEach((o, i) => { if (J.asg[i] === 'A') usedA.add(o); else if (J.asg[i] === 'B') usedB.add(o); }); }
+    else if (J.mode === 'ind') { pA = J.ind.A.p; pB = J.ind.B.p; J.ind.A.pts.forEach(o => usedA.add(o)); J.ind.B.pts.forEach(o => usedB.add(o)); }
+    else { pA = J.init.A; pB = J.init.B; }
+    path(g, line6(J.init.B), V, css('--muted'), 1.2, [6, 5]); path(g, line6(J.init.A), V, css('--muted'), 1.2, [6, 5]);
+    path(g, line6(pB), V, css('--ob'), 2.6, []); path(g, line6(pA), V, css('--model'), 2.6, []);
+    let shared = 0;
+    J.pts.forEach(o => { const q = V(o.p), a = usedA.has(o), b = usedB.has(o); if (a && b) shared++;
+      g.fillStyle = a && b ? css('--bad') : a ? '#8FB8E8' : b ? '#C6A9EE' : css('--obs'); g.beginPath(); g.arc(q[0], q[1], a && b ? 3.4 : 2.3, 0, 2 * Math.PI); g.fill(); });
+    const lab = (p, t) => { const m = build(p[3], p[4]), q = V(tf(at(m, 20), p[0], p[1], p[2])); g.fillStyle = css('--fg'); g.font = '600 13px ' + css('--f-body'); g.fillText(t, q[0] + 6, q[1] - 6); };
+    lab(pA, 'A'); lab(pB, 'B');
+    // readouts
+    const gap = crossGap(pA, pB), gapTxt = gap == null ? '—' : `${(pA[5] - pB[5]).toFixed(1)} mm`;
+    $('j4rows').innerHTML = [['A (on top)', pA, T.PA, usedA.size, 18], ['B (underneath)', pB, T.PB, usedB.size, 6]].map(([n, p, P, u, zt]) => `<tr><td class="l">${n}</td><td>${tDist(p, P).toFixed(1)}</td><td>${p[5].toFixed(1)} (${zt})</td><td>${J.mode === 'start' ? '—' : u}</td></tr>`).join('');
+    // the constraint is soft (sigma 0.5 mm): call it penetration when more than one sigma below the allowed 11.5 mm
+    const pen = gap != null && pA[5] - pB[5] < R2 - PEN_ALLOW - PENSIG;
+    $('j4gap').innerHTML = `${gapTxt} (required ≥ 11.5 mm: the two radii add up to 12 mm and 0.5 mm of squeeze is allowed; the constraint is soft, σ 0.5 mm, so it is marked as penetrating only below 11.0 mm)` + (gap == null ? '' : pen ? ' <span class="chip bad">penetrating</span>' : ' <span class="chip good">not penetrating</span>');
+    $('j4shared').textContent = J.mode === 'start' ? '—' : `${shared}`;
+    $('j4round').textContent = J.mode === 'joint' ? `round ${J.round} / 3, ${J.it} iteration${J.it === 1 ? '' : 's'} in total` + (J.finished ? ' (done)' : J.roundDone ? (J.round >= JG.length ? ' (round finished; the next press ends the refinement)' : ' (round finished; the next press assigns the points again)') : '') + `, collection radius ${JG[J.round - 1]} mm` : '—';
+    $('j4hint').textContent = J.mode === 'start' ? 'Press ① first to see what happens when each tube is refined on its own.'
+      : J.mode === 'ind' ? `① Each tube on its own: ${shared ? `both tubes used the same points (${shared} red point${shared === 1 ? '' : 's'}), and B also used its own depth points that were measured too high near the crossing` : 'B used its own depth points that were measured too high near the crossing'}, so B's height ended at ${pB[5].toFixed(1)} mm (true value 6 mm)` + (pen ? ', and the two tubes penetrate each other at the crossing. Press ② for the joint refinement.' : '. Press ② for the joint refinement.')
+      : J.finished ? `② Joint refinement done: no point was used by both tubes; at the crossing A is ${(pA[5] - pB[5]).toFixed(1)} mm above B; B is ${tDist(pB, T.PB).toFixed(1)} mm from the true tube, at height ${pB[5].toFixed(1)} mm.`
+      : `② Joint refinement running: the 12 numbers of both tubes are tuned together.`;
+    // height bars at the crossing
+    const bc = $('j4bar'), bw = bc.clientWidth || 300, bh = 130, rr = window.devicePixelRatio || 1;
+    bc.width = bw * rr; bc.height = bh * rr; bc.style.height = bh + 'px'; const b = bc.getContext('2d'); b.setTransform(rr, 0, 0, rr, 0, 0); b.clearRect(0, 0, bw, bh);
+    const Y = z => bh - 14 - z / 30 * (bh - 28);
+    b.fillStyle = css('--muted'); b.font = '11px ' + css('--f-mono'); [0, 10, 20, 30].forEach(z => b.fillText(z + ' mm', 2, Y(z) + 4));
+    b.strokeStyle = css('--grid'); [0, 10, 20, 30].forEach(z => { b.beginPath(); b.moveTo(44, Y(z)); b.lineTo(bw - 6, Y(z)); b.stroke(); });
+    const circ = (x, z, col, lbl) => { b.strokeStyle = col; b.lineWidth = 2.5; b.beginPath(); b.arc(x, Y(z), (bh - 28) * 6 / 30, 0, 2 * Math.PI); b.stroke(); b.fillStyle = col; b.font = '600 12px ' + css('--f-body'); b.fillText(lbl, x + (bh - 28) * 6 / 30 + 4, Y(z) + 4); };
+    const x0 = 44 + (bw - 50) * 0.35;
+    b.setLineDash([3, 3]); circ(x0, 18, css('--truth'), ''); circ(x0, 6, css('--truth'), ''); b.setLineDash([]);
+    circ(x0, pA[5], css('--model'), `A cross-section z=${pA[5].toFixed(1)}`); circ(x0, pB[5], css('--ob'), `B cross-section z=${pB[5].toFixed(1)}`);
+    b.fillStyle = css('--muted'); b.font = '11px ' + css('--f-body'); b.fillText('Side view at the crossing (dashed = true position)', 46, 12);
+  }
+  $('j4new').onclick = () => { J.seed = Math.floor(J.seed * 7.31 + 13) % 100000; makeScene4(); };
+  $('j4truth').onchange = draw5;
+  $('j4ind').onclick = () => { if (J.timer) { clearInterval(J.timer); J.timer = null; } runInd(); draw5(); };
+  $('j4step').onclick = jStep;
+  $('j4run').onclick = () => { if (J.timer) return; if (J.mode !== 'joint') { startJoint(); draw5(); } J.timer = setInterval(() => { if (J.finished) { clearInterval(J.timer); J.timer = null; return; } jStep(); }, 220); };
+  $('j4reset').onclick = () => { if (J.timer) { clearInterval(J.timer); J.timer = null; } J.mode = J.ind ? 'ind' : 'start'; J.st = null; draw5(); };
+  // ---------- controls ----------
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function renderSegBtns() {
+    $('segBtns').innerHTML = Object.keys(S.segs).map(id => `<button data-s="${id}" class="${id === S.seg ? 'on' : ''}">${id} (${(S.segs[id].length - 1) * STEP} mm)</button>`).join('');
+    $('segBtns').querySelectorAll('button').forEach(b => b.onclick = () => { S.seg = b.dataset.s; computeCurves(); toStart(); renderSegBtns(); });
+  }
+  function setDir(d) { S.dir = d; $('dirF').classList.toggle('on', d > 0); $('dirB').classList.toggle('on', d < 0); draw1(); }
+  function toStart() { S.off = S.curves.lo; $('offset').value = S.off; setDir(1); }
+  $('noise').oninput = e => { S.noise = +e.target.value; $('noiseV').textContent = S.noise.toFixed(1) + ' mm'; seed = 1000 + Math.round(S.noise * 10); makeObs(); LMS.c = null; toStart(); draw3(); };
+  $('reshuffle').onclick = () => { makeScene(); LMS.c = null; renderSegBtns(); toStart(); draw3(); };
+  $('showTruth').onchange = e => { S.showTruth = e.target.checked; drawScene(); render2(); draw3(); draw4(); };
+  $('offset').oninput = e => { S.off = +e.target.value; draw1(); };
+  $('dirF').onclick = () => setDir(1); $('dirB').onclick = () => setDir(-1);
+  $('clearFound').onclick = () => { S.found = []; S.checked = null; S.refined = null; LMS.c = null; draw1(); draw3(); render3list(); };
+  let sweepT = null;
+  $('sweep').onclick = () => {
+    if (sweepT) { clearInterval(sweepT); sweepT = null; return; }
+    const run = (dir, next) => { setDir(dir); S.off = S.curves.lo; collect();
+      if (reduce) { for (; S.off <= S.curves.hi; S.off += STEP) collect(); S.off = S.curves.hi; $('offset').value = S.off; draw1(); next(); return; }
+      sweepT = setInterval(() => { S.off += STEP; if (S.off > S.curves.hi) { clearInterval(sweepT); sweepT = null; next(); return; } $('offset').value = S.off; draw1(); }, 18); };
+    run(1, () => run(-1, () => {}));
+  };
+  function scrub(ev) {
+    const cv = $('plot'), rect = cv.getBoundingClientRect(), x = ev.clientX - rect.left, C = S.curves;
+    let bi = 0, bd = Infinity; C.offs.forEach((o, i) => { const d = Math.abs(cv._X(o) - x); if (d < bd) { bd = d; bi = i; } });
+    S.off = C.offs[bi]; $('offset').value = S.off;
+    const yF = cv._Y(C.F[bi].rms), yB = cv._Y(C.B[bi].rms), y = ev.clientY - rect.top; setDir(Math.abs(y - yF) <= Math.abs(y - yB) ? 1 : -1);
+  }
+  let dragging = false; $('plot').style.touchAction = 'none';
+  $('plot').addEventListener('pointerdown', ev => { dragging = true; try { $('plot').setPointerCapture(ev.pointerId); } catch (e) {} scrub(ev); });
+  $('plot').addEventListener('pointermove', ev => { if (dragging) scrub(ev); });
+  ['pointerup', 'pointercancel'].forEach(t => $('plot').addEventListener(t, () => { dragging = false; }));
+  $('check').onclick = runCheck;
+  $('refineAll').onclick = refineAll;
+  $('replay').onclick = () => { S.refSel = null; render3list(); animate4(); };
+  $('prog').oninput = e => { if (anim4) { clearInterval(anim4); anim4 = null; } $('replay').disabled = false; const v = +e.target.value; S.anim4t = v >= S.anim4n ? null : v; draw4(); };
+  $('showOut').onchange = () => { render2(); };
+  $('lmStep').onclick = lmStep;
+  $('lmRun').onclick = () => { if (LMS.timer || !LMS.c) return; LMS.timer = setInterval(() => { if (LMS.finished) { clearInterval(LMS.timer); LMS.timer = null; return; } lmStep(); }, reduce ? 0 : 240); };
+  $('lmReset').onclick = () => { if (LMS.c) startLM(LMS.c); };
+  // ---------- start ----------
+  $('noiseV').textContent = S.noise.toFixed(1) + ' mm';
+  makeScene(); renderSegBtns(); toStart(); draw3(); makeScene4();
+  let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => { drawScene(); drawPlot(); render2(); draw3(); draw4(); draw5(); }, 120); });
+  try { window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { drawScene(); drawPlot(); render2(); draw3(); }); } catch (e) {}
+  new MutationObserver(() => { drawScene(); drawPlot(); render2(); draw3(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
+<script>
+// embedded: tell the poster page the height of this page, so its frame shows the whole demo without a scroll bar
+(function () {
+  if (!document.documentElement.classList.contains('embed') || window.parent === window) return;
+  var last = 0;
+  function send() {
+    var h = Math.ceil(document.body.getBoundingClientRect().height);
+    if (h && h !== last) { last = h; window.parent.postMessage({ type: 'pf-theory-height', h: h }, '*'); }
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(send).observe(document.body);
+  window.addEventListener('load', send);
+  setTimeout(send, 300);
+})();
+</script>
+</body>
+</html>

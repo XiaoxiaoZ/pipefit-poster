@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WARA Robotics Challenge Event Team HVäst</title>
+<meta name="description" content="A camera on a robot arm looks into a bin of mixed tubes. pipeFit works out which tube is which, its exact shape and where it lies, so the robot can pick it up.">
+<meta property="og:title" content="WARA Robotics Challenge Event Team HVäst">
+<meta property="og:description" content="Robotics research at University West, Sweden: seeing, rebuilding and picking tangled tubes from a bin.">
+<meta property="og:image" content="../assets/poster-1.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23A8481A'/%3E%3Cpath d='M5 17 C9 17 9 7 13 7 C16 7 17 11 19 11' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"></script>
+<style>
+model-viewer{display:block;width:100%;height:min(92vw,460px);background:#eef1f4;border-radius:14px;--poster-color:transparent;--progress-bar-color:#4C78A8}
+.mvwrap{position:relative}
+.badge3d{position:absolute;left:10px;top:10px;display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;background:var(--accent);color:#fff;font-weight:700;font-size:14px;line-height:1.2;box-shadow:0 2px 8px rgba(168,72,26,.35);pointer-events:none;z-index:2}
+.hint3d{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink3);margin-top:6px}
+.legend3d{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--ink3);margin-top:4px}
+.gseg{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.gbtn{display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:10px 18px;border-radius:12px;border:1px solid #CFD3D9;background:#fff;color:var(--ink);font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 2px 0 #CFD3D9,0 3px 8px rgba(26,28,32,.08);transition:transform .05s,box-shadow .05s,background .15s}
+.gbtn:hover{background:#F7F7F5}
+.gbtn:active{transform:translateY(2px);box-shadow:0 0 0 #CFD3D9,0 1px 3px rgba(26,28,32,.1)}
+.gbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent-dark);color:#fff;box-shadow:0 2px 0 var(--accent-dark),0 3px 8px rgba(168,72,26,.3)}
+.gbtn svg{flex:none}
+.gbtn[data-v="plain"][aria-pressed="true"]{background:#EEF0F2;border-color:#CFD3D9;color:var(--ink);box-shadow:inset 0 2px 3px rgba(26,28,32,.12)}
+.gbtn.cta{position:relative;font-size:16px;padding:11px 20px;background:linear-gradient(180deg,#C65A22,#A8481A);border-color:#7E3511;color:#fff;box-shadow:0 3px 0 #7E3511,0 6px 16px rgba(168,72,26,.35)}
+.gbtn.cta:hover{background:linear-gradient(180deg,#D0652B,#B04C1C)}
+.gbtn.cta:active{transform:translateY(3px);box-shadow:0 0 0 #7E3511,0 2px 6px rgba(168,72,26,.3)}
+.gbtn.cta.fresh{animation:ctapulse 1.8s ease-out infinite}
+.gbtn.cta .tap{position:absolute;top:-10px;right:-10px;padding:2px 8px;border-radius:999px;background:#1A1C20;color:#fff;font-size:11px;font-weight:700;letter-spacing:.3px;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.gbtn.cta:not(.fresh) .tap{display:none}
+.gbtn.cta[aria-pressed="true"]{background:#7E3511;box-shadow:inset 0 2px 4px rgba(0,0,0,.25)}
+@keyframes ctapulse{0%{box-shadow:0 3px 0 #7E3511,0 0 0 0 rgba(198,90,34,.6)}70%{box-shadow:0 3px 0 #7E3511,0 0 0 14px rgba(198,90,34,0)}100%{box-shadow:0 3px 0 #7E3511,0 0 0 0 rgba(198,90,34,0)}}
+@media (prefers-reduced-motion:reduce){.gbtn.cta.fresh{animation:none}}
+.gnote{display:none;font-size:13px;color:var(--ink3);margin-top:6px}
+.gnote.on{display:block}
+.legend3d i{display:inline-block;width:10px;height:10px;border-radius:5px;margin-right:5px;vertical-align:-1px}
+:root{
+  --bg:#FAFAF7; --card:#FFFFFF; --line:#E3E5E8; --ink:#1A1C20; --ink2:#3D4249; --ink3:#5B6068; --mute:#8A9098;
+  --accent:#A8481A; --accent-dark:#7E3511; --tint:#FBEADF; --blue:#1F5FA8; --blue-tint:#F1F5FA; --blue-icon:#E6EEF8; --img:#EEF0F2;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.5}
+a{color:var(--accent)} a:hover{color:var(--accent-dark)}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:780px;margin:0 auto;padding:28px 16px 40px}
+.display{font-family:"Space Grotesk",Inter,sans-serif}
+.uwlogo{display:block;height:60px;width:auto;margin:0 0 18px}
+header .eyebrow{font-size:14px;font-weight:700;letter-spacing:2px;color:var(--accent)}
+h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(32px,8vw,48px);line-height:1.06;letter-spacing:-.4px;margin:8px 0 14px}
+h1 span{color:var(--accent)}
+.intro{font-size:19px;color:var(--ink2);margin:0 0 16px}
+.authors{font-size:16px;color:var(--ink3);margin:0}
+.authors b{color:var(--ink);font-weight:600}
+.authors a,footer a{color:var(--ink3);text-decoration:underline;text-underline-offset:2px}
+section{margin-top:34px}
+.label{font-size:13px;font-weight:700;letter-spacing:2px;color:var(--ink3);margin:0 0 12px;text-transform:uppercase}
+.label.accent{color:var(--accent)} .label.blue{color:var(--blue)}
+h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(25px,6vw,32px);line-height:1.12;margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.steps{display:grid;gap:22px}
+.step .pic{background:var(--img);border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:6px}
+.step .pic img{max-height:340px;width:auto}
+.stephead{display:flex;align-items:center;gap:10px;margin:12px 0 4px}
+.num{flex:none;width:30px;height:30px;border-radius:15px;background:var(--ink);color:#fff;font-weight:700;font-size:16px;display:flex;align-items:center;justify-content:center}
+.num.accent{background:var(--accent)}
+.stephead .t{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;font-weight:600}
+p{margin:0}
+.muted{color:var(--ink2)}
+.small{font-size:14px;color:var(--ink3)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}
+.chip{padding:5px 11px;border-radius:999px;background:var(--tint);color:var(--accent-dark);font-size:15px;font-weight:600}
+.recipe{display:flex;justify-content:center;padding:6px 0}
+.recipe img{max-height:190px;width:auto}
+.grid2{display:grid;gap:18px}
+.item .h{display:flex;align-items:center;gap:9px;font-size:18px;font-weight:700;margin-bottom:4px}
+.item .h svg{flex:none}
+.item p{font-size:16px;color:var(--ink2)}
+.row{display:flex;gap:13px;align-items:flex-start}
+.ico{flex:none;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.ico.blue{background:var(--blue-icon)} .ico.tint{background:var(--tint)}
+.row .h{font-size:18px;font-weight:700}
+.row p{font-size:16px;color:var(--ink2)}
+.stack{display:grid;gap:16px}
+.box{border-radius:14px;padding:16px}
+.box.blue{background:var(--blue-tint)} .box.tint{background:var(--tint)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 26px;margin:6px 0 8px}
+.stat .v{font-family:"Space Grotesk",Inter,sans-serif;font-size:28px;font-weight:700;line-height:1.15}
+.stat .k{font-size:14px;color:var(--ink3)}
+.v.blue{color:var(--blue)} .v.accent{color:var(--accent)}
+.gstep{display:flex;gap:14px;align-items:flex-start}
+.gstep .gi{flex:none;width:56px;height:56px;border-radius:14px;background:var(--tint);display:flex;align-items:center;justify-content:center}
+.gstep .t{font-family:"Space Grotesk",Inter,sans-serif;font-size:20px;font-weight:600;display:flex;align-items:center;gap:8px}
+.gstep .t .num{width:26px;height:26px;font-size:14px}
+.sensorsline{font-size:15px;color:var(--ink2)}
+.sensorsline b{font-size:12px;letter-spacing:2px;color:var(--blue);margin-right:8px}
+.arms{display:grid;gap:10px}
+.arm{display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:14px;background:var(--blue-tint)}
+.arm.sim{background:#FAFAFA;border:2px dashed #B9BEC5;padding:12px}
+.arm .h{font-size:18px;font-weight:700}
+.arm p{font-size:15px;color:var(--ink2)}
+.arm p.ph{color:var(--mute)}
+.api{margin:12px 0;border-radius:16px;background:var(--accent);color:#fff;padding:16px 18px}
+.api .h{font-family:"Space Grotesk",Inter,sans-serif;font-size:26px;font-weight:700}
+.api .sub{font-size:15px;opacity:.95;margin-bottom:10px}
+.api .chips{margin:0}
+.api .chip{background:#fff;color:var(--ink)}
+.shared{display:grid;gap:10px}
+.shared .s{padding:13px 14px;border-radius:14px;border:1px solid var(--line);background:#fff}
+.shared .s b{display:block;font-size:17px}
+.shared .s span{font-size:15px;color:var(--ink2)}
+.quote{margin-top:6px;padding:14px 18px;border-radius:14px;background:var(--tint);font-family:"Space Grotesk",Inter,sans-serif;font-size:24px;font-weight:700;color:var(--accent-dark)}
+.posters{display:grid;gap:14px}
+.posters{gap:22px}
+.pp{margin:0}
+.posters a.pimg{display:block;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:11px 18px;border-radius:12px;font-weight:700;font-size:16px;line-height:1.2;text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--accent);color:#fff;border:0} .btn.primary:hover{background:var(--accent-dark);color:#fff}
+.btn.ghost{background:#fff;color:var(--accent-dark);border:1.5px solid var(--accent)} .btn.ghost:hover{background:var(--tint);color:var(--accent-dark)}
+.pp .btn{width:100%;margin-top:8px}
+.getposter{margin-top:18px}
+.savebar{margin-top:14px}
+.savebar .btn{width:100%}
+.theory{display:block;width:100%;height:3200px;border:0;margin:16px 0 0;background:transparent}
+footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
+@media (min-width:640px){
+  .wrap{padding:44px 24px 56px}
+  .grid2{grid-template-columns:1fr 1fr;gap:20px 26px}
+  .arms{grid-template-columns:repeat(3,1fr)}
+  .shared{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+
+<header>
+<img class="uwlogo" src="../assets/university-west-logo.png" width="700" height="380" alt="University West">
+<div class="eyebrow">PIPEFIT</div>
+<h1>WARA Robotics Challenge Event <span>Team HVäst</span></h1>
+<p class="intro">A camera on a robot arm looks into a bin of mixed tubes. pipeFit works out which tube is which, its exact shape and where it lies, so the robot can pick it up.</p>
+<p class="authors"><b>Xiaoxiao Zhang</b> · <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a><br><b>Shiva Tutunchi</b> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026</p>
+<p class="authors" style="margin-top:6px;font-size:0.9em;opacity:0.85">The work was carried out with support from <b>Vinnova</b> (Sweden's Innovation Agency) within the Advanced Digitalization program under the project named <b>AIKIDO</b> (Dnr: 2025-01009).</p>
+<p class="authors" style="margin-top:6px;font-size:0.9em;opacity:0.85">Thanks to <b>David Coronado Ecos</b> and <b>Vivek Dani Issac</b> for contributing features and tests.</p>
+<a class="btn primary getposter" href="#poster"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save the poster to your phone</a>
+</header>
+
+<section id="copy3d">
+<div class="label accent">The 3&#8209;D copy &middot; drag to turn</div>
+<div class="mvwrap">
+<model-viewer id="bin3d" src="../assets/bin3d.glb?v=4" poster="../assets/copy3d_ui.jpg" alt="A 3‑D model of the bin with all seven reconstructed tubes inside; drag to turn it" camera-controls auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" interaction-prompt="none" touch-action="pan-y" camera-orbit="-25deg 52deg 88%" shadow-intensity="0.7" exposure="1.05" environment-image="neutral"><div slot="progress-bar"></div></model-viewer>
+<div class="badge3d"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 A8 8 0 1 1 8 19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M4 15 L4 11 L8 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Live 3&#8209;D: drag to turn, pinch to zoom</div>
+</div>
+<div class="hint3d">Real reconstruction of our lab bin, 7 tubes.</div>
+<div class="legend3d"><span><i style="background:#4C78A8"></i>type AB</span><span><i style="background:#F58518"></i>type X</span><span><i style="background:#54A24B"></i>type Y</span><span><i style="background:#9A9A9A"></i>fittings</span></div>
+<div class="gseg" role="group" aria-label="What the 3-D view shows">
+<button type="button" class="gbtn" data-v="plain" aria-pressed="true"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17 C8 17 8 7 13 7 C17 7 18 11 21 11" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Tubes only</button>
+<button type="button" class="gbtn cta fresh" data-v="ok" aria-pressed="false"><span class="tap">Tap me</span><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 L12 8 M6 8 L18 8 M6 8 L6 15 M18 8 L18 15" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19 L20 19" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>Show grasp candidates</button>
+</div>
+<div class="gnote" id="gnote">Grasp candidates from pipeFit's pick rules on this 3&#8209;D copy: two-finger gripper, colour = rank (dark green is the best), thin stem = the direction the hand comes from.</div>
+</section>
+
+<section>
+<div class="label">How it works</div>
+<div class="steps">
+<div class="step">
+<div class="pic"><img src="../assets/look.jpg" width="1200" height="860" alt="Photo from the robot's camera: a blue bin with seven black tubes"></div>
+<div class="stephead"><span class="num">1</span><span class="t">Look</span></div>
+<p class="muted">The robot moves its camera around the bin and takes colour and depth pictures from several sides.</p>
+</div>
+<div class="step">
+<div class="pic"><img src="../assets/pieces.jpg" width="1200" height="860" alt="The same photo with every tube piece outlined in a pale colour" loading="lazy"></div>
+<div class="stephead"><span class="num">2</span><span class="t">Find the pieces</span></div>
+<p class="muted">An AI image tool outlines every piece of tube it can see. It does not know the shapes yet.</p>
+</div>
+<div class="step">
+<div class="pic"><img src="../assets/fit.jpg" width="1200" height="860" alt="The photo with the fitted tube models drawn on top, each tagged with its type AB, X or Y" loading="lazy"></div>
+<div class="stephead"><span class="num accent">3</span><span class="t">Fit the recipe</span></div>
+<p class="muted">Each tube's recipe is tuned until it matches every picture. Its type (AB, X or Y) comes out too.</p>
+</div>
+<div class="step">
+<div class="pic"><a href="#copy3d"><img src="../assets/copy3d_ui.jpg" width="1200" height="860" alt="The 3-D copy of the bin: seven reconstructed tubes in the measured bin" loading="lazy"></a></div>
+<div class="stephead"><span class="num">4</span><span class="t">A 3‑D copy for the robot</span></div>
+<p class="muted">Every tube's shape and position, ready for safe motion planning. After each pick the robot looks again. <a href="#copy3d">Turn it yourself at the top of the page.</a></p>
+</div>
+</div>
+</section>
+
+<section class="card">
+<div class="label accent">The big idea</div>
+<h2>A tube is a recipe, not a cloud of dots</h2>
+<div class="recipe"><img src="../assets/recipe.png" width="1200" height="653" alt="Model of one real tube: orange straight pieces joined by bends, grey fittings at the ends" loading="lazy"></div>
+<div class="chips">
+<span class="chip">4 mm straight</span><span class="chip">bend 37°</span><span class="chip">108 mm straight</span><span class="chip">turn 17°</span><span class="chip">bend 77°</span><span class="chip">…</span>
+</div>
+<p class="muted">We do not store a tube as millions of 3‑D points. We describe it with a short recipe of straight pieces, bends and turns: <b style="color:var(--ink)">12 to 24 numbers per tube</b>, plus where it lies. The computer tunes these numbers until the drawn tube matches what the camera sees.</p>
+<p class="small" style="margin-top:10px">Recipe of a real type-X tube from our lab bin.</p>
+</section>
+
+<section class="card">
+<div class="label accent">Why a recipe works better</div>
+<div class="grid2">
+<div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12 C5 6 9 4 12 4 C15 4 19 6 22 12 C19 18 15 20 12 20 C9 20 5 18 2 12 Z" fill="none" stroke="#A8481A" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3.2" fill="none" stroke="#A8481A" stroke-width="2"/></svg>Sees what is hidden</div><p>The recipe carries on under other tubes, so the whole tube is known even when half of it is covered.</p></div>
+<div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12 L5 9 L7 15 L10 7 L12 16 L14 9 L16 14 L18 10 L22 12" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Calm with noisy data</div><p>A few numbers cannot follow every speck of noise, so depth errors average out over the whole tube.</p></div>
+<div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12 L12 3 L21 3 L21 12 L12 21 Z" fill="none" stroke="#A8481A" stroke-width="2" stroke-linejoin="round"/><circle cx="16.5" cy="7.5" r="1.6" fill="#A8481A"/></svg>Knows the type</div><p>Each recipe belongs to a tube type. In our real-bin tests: <b style="color:var(--ink)">0 type mix-ups</b>.</p></div>
+<div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 C7 18 7 6 12 6 C17 6 17 18 21 18" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/><path d="M3 15 C7 15 8 9 12 9 C16 9 17 15 21 15" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 3"/></svg>Fits the real tube</div><p>Bendy tubes never match their drawing exactly. Small corrections to the recipe follow the real one.</p></div>
+<div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L12 21 M8 3 L16 3 M8 21 L16 21" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#A8481A"/></svg>Knows how sure it is</div><p>Every number comes with an error bar, so the robot can skip a pick it is unsure about.</p></div>
+<div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#A8481A" stroke-width="2"/><circle cx="12" cy="12" r="3.5" fill="none" stroke="#A8481A" stroke-width="2"/><path d="M12 1 L12 5 M12 19 L12 23 M1 12 L5 12 M19 12 L23 12" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/></svg>Ready for the robot</div><p>An exact shape gives safe paths around the other tubes, grasp points and the centre of gravity.</p></div>
+</div>
+</section>
+
+<section id="theory">
+<div class="label accent">The theory &middot; try it yourself</div>
+<h2>From a few visible pieces to the whole tube</h2>
+<p class="muted">The camera only ever sees pieces of a tube. This interactive demo, simplified to a flat world with made-up data, shows how the recipe is fitted: slide a piece along the recipe to collect candidates, check each candidate against the other pieces, refine the survivors with the Levenberg&ndash;Marquardt method, and finally refine crossing tubes together.</p>
+<iframe class="theory" id="theoryframe" src="../theory/?embed=1" title="Interactive demo: fitting a tube from a few visible pieces" loading="lazy" scrolling="no"></iframe>
+<p class="small" style="margin-top:8px"><a href="../theory/">Open the demo on its own page</a> (more room on a computer).</p>
+</section>
+
+<section class="card">
+<div class="label blue">The sensors</div>
+<div class="stack">
+<div class="row"><div class="ico blue"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8 L7 8 L9 5 L15 5 L17 8 L21 8 L21 19 L3 19 Z" fill="none" stroke="#1F5FA8" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="13" r="3.5" fill="none" stroke="#1F5FA8" stroke-width="2"/></svg></div><div><div class="h">Colour camera</div><p>Sees colours and edges: where one tube ends and the next begins.</p></div></div>
+<div class="row"><div class="ico blue"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="2" fill="#1F5FA8"/><path d="M10 7 C12 9 12 15 10 17 M14 4 C17.5 8 17.5 16 14 20 M18 2 C22.5 7 22.5 17 18 22" fill="none" stroke="#1F5FA8" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="h">Depth camera</div><p>Two infrared cameras and a dot projector measure the distance to every pixel. Black and shiny tubes make it noisy, so we model the noise instead of trusting every pixel.</p></div></div>
+<div class="row"><div class="ico blue"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.5" fill="none" stroke="#1F5FA8" stroke-width="2"/><circle cx="12" cy="8" r="2.5" fill="none" stroke="#1F5FA8" stroke-width="2"/><path d="M7.3 15.8 L10.7 10.2 M14.3 8.6 L20 11" fill="none" stroke="#1F5FA8" stroke-width="2" stroke-linecap="round"/><path d="M3 22 L9 22" stroke="#1F5FA8" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="h">Robot joint sensors</div><p>Angle sensors in the arm's 7 joints tell where the camera was for each picture, so all views fit together.</p></div></div>
+<div class="box blue">
+<div style="font-weight:700">Calibration makes them agree</div>
+<div class="stats">
+<div class="stat"><div class="v blue">6.8 → 1.1 mm</div><div class="k">depth error</div></div>
+<div class="stat"><div class="v blue">3.6 → 0.4 mm</div><div class="k">camera position error</div></div>
+</div>
+<p class="small">Real lab tests against a printed target. Hardware: Intel RealSense D435 on a Franka Panda arm.</p>
+</div>
+</div>
+</section>
+
+<section class="card">
+<div class="label accent">Grasping</div>
+<h2>From the 3‑D copy to a safe pick</h2>
+<div class="stack">
+<div class="gstep"><div class="gi"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><path d="M6 37 C13 37 16 15 26 15" fill="none" stroke="#A8481A" stroke-width="3" stroke-linecap="round"/><path d="M26 15 C34 15 37 25 43 25" fill="none" stroke="#A8481A" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 4"/><circle cx="9" cy="33" r="1.7" fill="#1A1C20"/><circle cx="13" cy="26" r="1.7" fill="#1A1C20"/><circle cx="17" cy="19" r="1.7" fill="#1A1C20"/><circle cx="23" cy="12" r="1.7" fill="#1A1C20"/><circle cx="28" cy="31" r="4" fill="none" stroke="#1A1C20" stroke-width="2"/><path d="M28 25 L28 37 M22 31 L34 31" stroke="#1A1C20" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><div class="t"><span class="num">1</span>The 3‑D copy</div><p class="muted">Each tube's points, the parts hidden under other tubes, its centre of gravity and which tube lies on top.</p></div></div>
+<div class="gstep"><div class="gi"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><path d="M4 30 L44 30" stroke="#5B6068" stroke-width="4" stroke-linecap="round"/><g transform="translate(12 30) rotate(-30)"><path d="M-6 3 L-6 -12 L6 -12 L6 3 M0 -12 L0 -19" fill="none" stroke="#B9BEC5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(36 30) rotate(30)"><path d="M-6 3 L-6 -12 L6 -12 L6 3 M0 -12 L0 -19" fill="none" stroke="#B9BEC5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g><g transform="translate(24 30)"><path d="M-6 3 L-6 -12 L6 -12 L6 3 M0 -12 L0 -19" fill="none" stroke="#A8481A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g></svg></div><div><div class="t"><span class="num">2</span>AI grasp finder</div><p class="muted">Proposes many gripper poses on these points and gives each one a score.</p></div></div>
+<div class="gstep"><div class="gi"><svg width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><path d="M5 26 L10 43 L38 43 L43 26" fill="none" stroke="#5B6068" stroke-width="2.5" stroke-linejoin="round"/><path d="M13 38 L23 36" stroke="#1A1C20" stroke-width="3.5" stroke-linecap="round"/><path d="M18 33 C18 18 29 10 40 10" fill="none" stroke="#A8481A" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="4 3"/><path d="M35 5.5 L40 10 L35 14.5" fill="none" stroke="#A8481A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="t"><span class="num accent">3</span>Safe pick</div><p class="muted">The arm takes a tube that is free on top, on a path clear of the bin and the other tubes. Then it looks again.</p></div></div>
+<p class="sensorsline"><b>SENSORS</b>The wrist depth camera, through the 3‑D copy, and the gripper's finger-width reading.</p>
+<div class="box tint">
+<div style="font-weight:700">First pick on the real robot</div>
+<div class="stats">
+<div class="stat"><div class="v accent">15.4 mm</div><div class="k">gripper closed at</div></div>
+<div class="stat"><div class="v accent">15.8 mm</div><div class="k">tube in the 3‑D copy</div></div>
+</div>
+<p class="small">Grasp point from the 3‑D copy. The tube was held at the first try and lifted out of the bin without slipping.</p>
+</div>
+</div>
+</section>
+
+<section class="card">
+<div class="label accent">One robot API, two robot arm systems</div>
+<p class="muted" style="margin-bottom:14px">Both of our robot arm systems speak the same language: one set of commands to move the arm, read where it is, take pictures and update its 3‑D scene. Everything built on top is shared.</p>
+<div class="arms">
+<div class="arm"><div class="ico blue" style="width:40px;height:40px"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 56 L36 56 M24 56 L24 47" fill="none" stroke="#1F5FA8" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="43" r="4.5" fill="none" stroke="#1F5FA8" stroke-width="4"/><path d="M27 39.5 L37 25" fill="none" stroke="#1F5FA8" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="21" r="4.5" fill="none" stroke="#1F5FA8" stroke-width="4"/><path d="M44 23 L53 30 M53 30 L58 25 M53 30 L57 36" fill="none" stroke="#1F5FA8" stroke-width="4" stroke-linecap="round"/></svg></div><div><div class="h">Arm system A</div><p>Franka Panda arm, Intel RealSense D435 camera.</p></div></div>
+<div class="arm"><div class="ico blue" style="width:40px;height:40px"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 56 L36 56 M24 56 L24 47" fill="none" stroke="#1F5FA8" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="43" r="4.5" fill="none" stroke="#1F5FA8" stroke-width="4"/><path d="M27 39.5 L37 25" fill="none" stroke="#1F5FA8" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="21" r="4.5" fill="none" stroke="#1F5FA8" stroke-width="4"/><path d="M44 23 L53 30 M53 30 L58 25 M53 30 L57 36" fill="none" stroke="#1F5FA8" stroke-width="4" stroke-linecap="round"/></svg></div><div><div class="h">Arm system B</div><p>Universal Robots UR10e arm, OnRobot RG6 gripper.</p></div></div>
+<div class="arm sim"><div class="ico" style="width:40px;height:40px;background:#EEF0F2"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="#5B6068" stroke-width="2"/><path d="M8 20 L16 20 M12 16 L12 20" fill="none" stroke="#5B6068" stroke-width="2" stroke-linecap="round"/><path d="M8 11 L10.5 8.5 L13 11 L16 8" fill="none" stroke="#5B6068" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="h">Simulated robot</div><p>A software stand-in that answers like a real arm.</p></div></div>
+</div>
+<div class="api">
+<div class="h">One robot API</div>
+<div class="sub">the same commands on every arm</div>
+<div class="chips"><span class="chip">move the arm</span><span class="chip">read joint angles</span><span class="chip">take colour + depth pictures</span><span class="chip">update the 3‑D scene</span><span class="chip">check a path first</span></div>
+</div>
+<div class="label" style="margin-top:6px">Shared software, written once</div>
+<div class="shared">
+<div class="s"><b>Rebuild the bin</b><span>pipeFit: tube types, shapes and positions.</span></div>
+<div class="s"><b>Calibration</b><span>Camera, depth and where the camera sits.</span></div>
+<div class="s"><b>Safe motion</b><span>Keeps the arm clear of the bin and the tubes.</span></div>
+<div class="s"><b>Grasping</b><span>AI grasp finder on the 3‑D copy.</span></div>
+</div>
+<div class="label accent" style="margin-top:22px">Why one API helps</div>
+<div class="stack">
+<div class="row"><div class="ico tint" style="width:40px;height:40px"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="7" height="14" rx="1.5" fill="none" stroke="#A8481A" stroke-width="2"/><rect x="14" y="5" width="7" height="14" rx="1.5" fill="none" stroke="#A8481A" stroke-width="2"/><path d="M10 12 L14 12" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="h">Write once, run on both</div><p>The same pipeFit software drives either arm. There is no second version to keep in step.</p></div></div>
+<div class="row"><div class="ico tint" style="width:40px;height:40px"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9 L10 9 L10 4 M20 15 L14 15 L14 20" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 9 C10 13 14 11 14 15" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="h">Seeing and grasping fit together</div><p>The 3‑D copy and the grasp choice reach the robot through the same commands, so the two parts combine directly.</p></div></div>
+<div class="row"><div class="ico tint" style="width:40px;height:40px"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L20 6 L20 12 C20 16.5 16.5 19.5 12 21 C7.5 19.5 4 16.5 4 12 L4 6 Z" fill="none" stroke="#A8481A" stroke-width="2" stroke-linejoin="round"/><path d="M8.5 12 L11 14.5 L15.5 9.5" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="h">Test before the arm moves</div><p>A simulated robot speaks the same API, so new software is checked on a computer before it moves a real arm.</p></div></div>
+<div class="row"><div class="ico tint" style="width:40px;height:40px"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20 L4 10 M10 20 L10 4 M16 20 L16 13 M2 20 L22 20" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/><path d="M19 13 L19 20" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 2.5"/></svg></div><div><div class="h">Fair comparisons</div><p>Calibration, the 3‑D safety scene and path checks work the same way on both arms, so their results can be compared.</p></div></div>
+<div class="row"><div class="ico tint" style="width:40px;height:40px"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#A8481A" stroke-width="2"/><path d="M12 8 L12 16 M8 12 L16 12" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="h">Ready for the next robot</div><p>A new arm only has to speak the API. The seeing, calibration and planning on top stay the same.</p></div></div>
+<div class="quote">Change the robot, keep the software.</div>
+</div>
+</section>
+
+<section id="poster">
+<div class="label">The full poster</div>
+<p class="muted" style="margin-bottom:12px">Take the poster with you: save both pages to your phone.</p>
+<div class="posters">
+<figure class="pp">
+<a class="pimg" href="../assets/poster-1.png?v=6"><img src="../assets/poster-1.png?v=6" width="1920" height="1080" alt="Poster page 1: how pipeFit sees and rebuilds tangled tubes" loading="lazy"></a>
+<a class="btn primary save" href="../assets/pipefit-poster-page1.png?v=3" download="pipefit-poster-page1.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 1</a>
+</figure>
+<figure class="pp">
+<a class="pimg" href="../assets/poster-2.png?v=9"><img src="../assets/poster-2.png?v=9" width="1920" height="1080" alt="Poster page 2: grasping, and one robot API for two robot arm systems" loading="lazy"></a>
+<a class="btn primary save" href="../assets/pipefit-poster-page2.png?v=6" download="pipefit-poster-page2.png"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 L12 15 M7 10 L12 15 L17 10 M5 20 L19 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Save page 2</a>
+</figure>
+</div>
+<div class="savebar"><a class="btn ghost" href="../assets/pipefit-poster.pdf?v=6" download="pipefit-poster.pdf"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3 L14 3 L19 8 L19 21 L6 21 Z M14 3 L14 8 L19 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12.5 11 L12.5 17.5 M9.8 15 L12.5 17.5 L15.2 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Both pages as one PDF</a></div>
+<p class="small" id="savehint" style="margin-top:10px">Saved images are high resolution (3840 × 2160). Tap a page to open it full size.</p>
+</section>
+
+<footer>Questions? <a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a> · <a href="mailto:shiva.tutunchi@hv.se">shiva.tutunchi@hv.se</a><br>Division of Industrial Automation · Department of Engineering Science<br>University West, Sweden · 2026<br>The work was carried out with support from Vinnova (Sweden's Innovation Agency) within the Advanced Digitalization program under the project named AIKIDO (Dnr: 2025-01009).<br>Thanks to David Coronado Ecos and Vivek Dani Issac for contributing features and tests.</footer>
+
+</main>
+<script>
+(function () {
+  var mv = document.getElementById('bin3d'), n = document.getElementById('gnote');
+  var btns = document.querySelectorAll('.gseg .gbtn');
+  if (!mv || !btns.length) return;
+  var src = { plain: '../assets/bin3d.glb?v=4', ok: '../assets/bin3d_grasp.glb?v=1' };
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function (ev) {
+      var v = ev.currentTarget.getAttribute('data-v');
+      var cta = document.querySelector('.gbtn.cta');
+      if (cta && v === 'ok') cta.classList.remove('fresh');
+      for (var k = 0; k < btns.length; k++) btns[k].setAttribute('aria-pressed', btns[k] === ev.currentTarget ? 'true' : 'false');
+      if (n) n.className = v === 'plain' ? 'gnote' : 'gnote on';
+      var orbit = mv.getCameraOrbit ? mv.getCameraOrbit().toString() : null;
+      if (mv.src !== src[v]) {
+        mv.src = src[v];
+        if (orbit) mv.addEventListener('load', function keep() { mv.cameraOrbit = orbit; mv.removeEventListener('load', keep); });
+      }
+    });
+  }
+})();
+</script>
+<script>
+(function () {
+  var ua = navigator.userAgent || '';
+  var iOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  var hint = document.getElementById('savehint');
+  if (hint) {
+    hint.textContent = iOS
+      ? 'Tap Save, then choose “Save Image” to put the page in Photos. Images are high resolution (3840 × 2160).'
+      : 'Save puts the image in your Downloads. Images are high resolution (3840 × 2160).';
+  }
+  // iPhone / iPad: the share sheet has "Save Image" (goes to Photos); a plain download would go to Files.
+  if (!iOS || !navigator.canShare || !window.fetch) return;
+  var files = {};
+  var btns = document.querySelectorAll('a.save');
+  function load(a) {
+    var url = a.getAttribute('href');
+    if (files[url] !== undefined) return;
+    files[url] = null;
+    fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.blob(); })
+      .then(function (b) { files[url] = new File([b], a.getAttribute('download'), { type: 'image/png' }); })
+      .catch(function () { delete files[url]; });
+  }
+  function preload() { for (var i = 0; i < btns.length; i++) load(btns[i]); }
+  var sec = document.getElementById('poster');
+  if ('IntersectionObserver' in window && sec) {
+    var io = new IntersectionObserver(function (es) {
+      for (var i = 0; i < es.length; i++) if (es[i].isIntersecting) { preload(); io.disconnect(); return; }
+    }, { rootMargin: '800px' });
+    io.observe(sec);
+  } else { preload(); }
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].addEventListener('click', function (ev) {
+      var a = ev.currentTarget, url = a.getAttribute('href'), f = files[url];
+      if (!f || !navigator.canShare({ files: [f] })) { load(a); return; }  // not ready: normal download
+      ev.preventDefault();
+      navigator.share({ files: [f] }).catch(function (e) {
+        if (e && e.name === 'AbortError') return;
+        window.location.href = url;
+      });
+    });
+  }
+})();
+</script>
+<script>
+(function () {
+  // the theory demo reports its height, so the frame shows all of it without a scroll bar
+  var f = document.getElementById('theoryframe');
+  if (!f) return;
+  window.addEventListener('message', function (ev) {
+    if (ev.source !== f.contentWindow || !ev.data || ev.data.type !== 'pf-theory-height') return;
+    var h = +ev.data.h;
+    if (h > 200 && h < 30000) f.style.height = h + 'px';
+  });
+})();
+</script>
+</body>
+</html>

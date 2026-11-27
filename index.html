@@ -125,6 +125,7 @@ p{margin:0}
 .getposter{margin-top:18px}
 .savebar{margin-top:14px}
 .savebar .btn{width:100%}
+.theory{display:block;width:100%;height:3200px;border:0;margin:16px 0 0;background:transparent}
 footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 @media (min-width:640px){
   .wrap{padding:44px 24px 56px}
@@ -210,6 +211,14 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 L12 21 M8 3 L16 3 M8 21 L16 21" fill="none" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="3" fill="#A8481A"/></svg>Knows how sure it is</div><p>Every number comes with an error bar, so the robot can skip a pick it is unsure about.</p></div>
 <div class="item"><div class="h"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="#A8481A" stroke-width="2"/><circle cx="12" cy="12" r="3.5" fill="none" stroke="#A8481A" stroke-width="2"/><path d="M12 1 L12 5 M12 19 L12 23 M1 12 L5 12 M19 12 L23 12" stroke="#A8481A" stroke-width="2" stroke-linecap="round"/></svg>Ready for the robot</div><p>An exact shape gives safe paths around the other tubes, grasp points and the centre of gravity.</p></div>
 </div>
+</section>
+
+<section id="theory">
+<div class="label accent">The theory &middot; try it yourself</div>
+<h2>From a few visible pieces to the whole tube</h2>
+<p class="muted">The camera only ever sees pieces of a tube. This interactive demo, simplified to a flat world with made-up data, shows how the recipe is fitted: slide a piece along the recipe to collect candidates, check each candidate against the other pieces, refine the survivors with the Levenberg&ndash;Marquardt method, and finally refine crossing tubes together.</p>
+<iframe class="theory" id="theoryframe" src="theory/?embed=1" title="Interactive demo: fitting a tube from a few visible pieces" loading="lazy" scrolling="no"></iframe>
+<p class="small" style="margin-top:8px"><a href="theory/">Open the demo on its own page</a> (more room on a computer).</p>
 </section>
 
 <section class="card">
@@ -362,6 +371,18 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
       });
     });
   }
+})();
+</script>
+<script>
+(function () {
+  // the theory demo reports its height, so the frame shows all of it without a scroll bar
+  var f = document.getElementById('theoryframe');
+  if (!f) return;
+  window.addEventListener('message', function (ev) {
+    if (ev.source !== f.contentWindow || !ev.data || ev.data.type !== 'pf-theory-height') return;
+    var h = +ev.data.h;
+    if (h > 200 && h < 30000) f.style.height = h + 'px';
+  });
 })();
 </script>
 </body>
