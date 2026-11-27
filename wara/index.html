@@ -461,7 +461,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="spdh">Already faster</div>
 <div class="spdlist">
 <div class="spd"><span class="n done" aria-hidden="true">&#10003;</span><p>The AI segmentation models stay loaded between scans instead of starting again for every scan; the masks are the same.</p></div>
-<div class="spd"><span class="n done" aria-hidden="true">&#10003;</span><p>Faster inner calculations in the fitting step; the same tubes are found on our reference scenes.</p></div>
+<div class="spd"><span class="n done" aria-hidden="true">&#10003;</span><p><b>Faster core calculations, rewritten by two students.</b> We gave them the two calculations used most while collecting candidate tube pieces, as a small task with its own tests and timing: building a tube's shape from its recipe numbers, and lining up many candidate pieces with the measured points at once. Their versions make that step clearly faster. The shape comes out exactly the same as before, the lining-up differs only far behind the decimal point, and the same tubes are found on our reference scenes.</p></div>
 </div>
 <div class="spdh">Next steps</div>
 <div class="spdlist">
