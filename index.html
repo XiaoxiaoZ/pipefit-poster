@@ -167,6 +167,14 @@ p{margin:0}
 .pmadv summary::before{content:"";width:8px;height:8px;border-right:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(-45deg);flex:none;margin:0 4px 0 2px;transition:transform .15s}
 .pmadv[open] summary::before{transform:rotate(45deg) translate(-2px,-2px)}
 .pmadv div{padding:0 16px 13px 38px;font-size:15.5px;color:var(--ink2)}
+.pmgroup{margin:22px 0 0}
+.pmgroup>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:10px;padding:10px 18px;border-radius:999px;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font-weight:700;font-size:15.5px}
+.pmgroup>summary::-webkit-details-marker{display:none}
+.pmgroup>summary::before{content:"";width:8px;height:8px;border-right:2.5px solid var(--accent);border-bottom:2.5px solid var(--accent);transform:rotate(-45deg);flex:none;margin:0 2px;transition:transform .15s}
+.pmgroup[open]>summary::before{transform:rotate(45deg) translate(-2px,-2px)}
+.pmgroup>summary:hover{background:#FBEADF}
+.pmgroup .pmgn{font-weight:500;color:var(--ink3);font-size:13.5px}
+.pmgroupbody{margin-top:12px}
 @media (min-width:640px){.pmband.u .pmgrid{grid-template-columns:repeat(3,minmax(0,1fr))}.pmband.k .pmgrid,.pmband.o .pmgrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 /* team:css */
 .teamgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
@@ -340,7 +348,8 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="pmbox"><b>Grasp choice</b><span>uses confidence and error bars</span></div>
 <div class="pmbox"><b>Next view</b><span>where two explanations differ most</span></div>
 </div></div>
-<div class="label accent" style="margin:22px 0 10px">Why it helps (tap to open)</div>
+<details class="pmgroup"><summary>Why it helps <span class="pmgn">8 points &middot; tap to open</span></summary>
+<div class="pmgroupbody">
 <details class="pmadv"><summary>One scale for all the evidence</summary><div>Outline edges are measured in pixels, depth in millimetres, and there are several views and prior knowledge. Each is expressed as "how far off, compared with its expected noise" before they are added up, so the weights come from the calibrated noise, not from hand tuning.</div></details>
 <details class="pmadv"><summary>Data and prior knowledge balance themselves</summary><div>Where the camera sees clearly, the measurements decide. Where it cannot, for example under another tube or where depth is noisy, prior knowledge holds: how far a piece may differ from its type's recipe, learned from scanning a few pieces of each type, and that tubes cannot pass through each other.</div></details>
 <details class="pmadv"><summary>The same error is not counted twice</summary><div>Neighbouring points along a tube tend to err together, so a stretch of tube counts as one piece of evidence rather than hundreds. An offset that a whole view shares cannot be averaged away, so it is estimated on its own.</div></details>
@@ -349,6 +358,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <details class="pmadv"><summary>Knowing where to look next</summary><div>For each alternative, the program finds the view in which the two explanations differ most: that is the most useful next picture.</div></details>
 <details class="pmadv"><summary>Spotting outliers</summary><div>Knowing what normal noise looks like, the fit gives less weight to points far outside it, so a few bad points cannot pull the result away.</div></details>
 <details class="pmadv"><summary>The model can check itself</summary><div>An error bar can be checked against the truth. On real bins our error bars are still a little optimistic, which tells us where the noise model is not complete yet.</div></details>
+</div></details>
 <p class="muted" style="margin:18px 0 0">For more details about the probabilistic method, contact Xiaoxiao (<a href="mailto:xiaoxiao.zhang@hv.se">xiaoxiao.zhang@hv.se</a>).</p>
 </section>
 
