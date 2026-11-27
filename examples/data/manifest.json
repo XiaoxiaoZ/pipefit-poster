@@ -1,0 +1,4064 @@
+{
+ "examples": [
+  {
+   "id": "lab-s01-single",
+   "kind": "real",
+   "title": "One tube alone",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "1 tube: 1 AB",
+   "date": "2026-09-30",
+   "views": 6,
+   "what": "Stage s01 of the lab sequence: tube A (type AB) alone in the lab's blue bin. Six pictures from the wrist camera of the robot arm.",
+   "result": "Found 1 of 1 tube, with the right type and no extra tube. Mean distance to the reference fit: 1.2 mm.",
+   "card_check": "Checked against a reference fit from the same pictures (5 mm rule)",
+   "check": "Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 1,
+    "n_ref": 1,
+    "tp": 1,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "1.2",
+    "types": "1 AB"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 1.19
+    }
+   ],
+   "glb": "data/lab-s01-single/scene.glb",
+   "glb_bytes": 266540,
+   "thumb": "data/lab-s01-single/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-s01-single/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v01 (overview)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.0391,
+      0.1213,
+      -0.0419
+     ],
+     "text": "AB 1.2 mm",
+     "colour": "#4C78A8"
+    }
+   ],
+   "orbit": "-89.5deg 40deg 100%",
+   "triangles": 9612,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin1/s01_A",
+     "reference": "bin1 ref2",
+     "tp": 1,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "A",
+       "type": "AB",
+       "tube": 0,
+       "d_mm": 1.19
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 249,
+     "text": "1-2 mm median, 3-6 mm worst, mostly vertical"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin1/s01_A/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "fd9b53f5d17764f2a85fb7670d6780bad92daba6ac0d683d408b9693c0c4130e"
+    },
+    {
+     "file": "pipeFit/data/bin1/eval/ref2/s01_A.json",
+     "role": "reference fit",
+     "sha256": "a4c821050c6214b9ddb9f6ae45e92585f158e5b965c799b6d81bc6d8bbf3183e"
+    },
+    {
+     "file": "pipeFit/data/bin1/s01_A/v01/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "1decf5783dd80eb828d4f0079228aead581ca5eeac9aa39d9f811a20df03419e"
+    }
+   ]
+  },
+  {
+   "id": "lab-s04-crossing",
+   "kind": "real",
+   "title": "Four tubes lying across each other",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "4 tubes: 2 AB, 2 X",
+   "date": "2026-09-30",
+   "views": 2,
+   "what": "Stage s04: tubes A, B, X1 and X2 were put in one by one and lie across each other. Two pictures: a high overview and a close view from above.",
+   "result": "Found 4 of 4 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.8-2.8 mm.",
+   "card_check": "Checked against a reference fit from the same pictures (5 mm rule)",
+   "check": "Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "2 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 4,
+    "n_ref": 4,
+    "tp": 4,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "0.8-2.8",
+    "types": "2 AB, 2 X"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB",
+     "ref": "B",
+     "d_mm": 1.34
+    },
+    {
+     "tube": 1,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 0.83
+    },
+    {
+     "tube": 2,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 1.55
+    },
+    {
+     "tube": 3,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 2.76
+    }
+   ],
+   "glb": "data/lab-s04-crossing/scene.glb",
+   "glb_bytes": 740628,
+   "thumb": "data/lab-s04-crossing/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-s04-crossing/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0373,
+      0.1108,
+      0.0004
+     ],
+     "text": "AB 1.3 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      -0.0884,
+      0.0352,
+      0.0627
+     ],
+     "text": "X 0.8 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.043,
+      0.1176,
+      -0.0442
+     ],
+     "text": "AB 1.6 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      -0.0454,
+      0.025,
+      -0.0742
+     ],
+     "text": "X 2.8 mm",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-89.2deg 40deg 100%",
+   "triangles": 31476,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin1/s04_addX2",
+     "reference": "bin1 ref2",
+     "tp": 4,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "A",
+       "type": "AB",
+       "tube": 2,
+       "d_mm": 1.55
+      },
+      {
+       "ref": "B",
+       "type": "AB",
+       "tube": 0,
+       "d_mm": 1.34
+      },
+      {
+       "ref": "X1",
+       "type": "X",
+       "tube": 3,
+       "d_mm": 2.76
+      },
+      {
+       "ref": "X2",
+       "type": "X",
+       "tube": 1,
+       "d_mm": 0.83
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 249,
+     "text": "1-2 mm median, 3-6 mm worst, mostly vertical"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin1/s04_addX2/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "0bc34963182439d42b40b42d728d0b84f1ad377d44aed75f26a622340ed3799d"
+    },
+    {
+     "file": "pipeFit/data/bin1/eval/ref2/s04_addX2.json",
+     "role": "reference fit",
+     "sha256": "77d5ae6e4817ed1e84d56771b639fafeb4c74646588b2c2cdb909acdd1e6e469"
+    },
+    {
+     "file": "pipeFit/data/bin1/s04_addX2/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "9e95ddbf978bdc2e5297300bce547d891a91d7cf33aa9b373a2f0bfe36d3b4bb"
+    }
+   ]
+  },
+  {
+   "id": "lab-s08-full",
+   "kind": "real",
+   "title": "Full pile of seven tubes",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "7 tubes: 2 AB, 2 X, 3 Y",
+   "date": "2026-09-30",
+   "views": 6,
+   "what": "Stage s08: all seven lab tubes piled in the lab bin, crossing and stacked. Six pictures.",
+   "result": "Found 7 of 7 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 1.4-3.7 mm.",
+   "card_check": "Checked against a reference fit from the same pictures (5 mm rule)",
+   "check": "Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 7,
+    "n_ref": 7,
+    "tp": 7,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "1.4-3.7",
+    "types": "2 AB, 2 X, 3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 2.12
+    },
+    {
+     "tube": 1,
+     "type": "AB",
+     "ref": "B",
+     "d_mm": 1.4
+    },
+    {
+     "tube": 2,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 2.92
+    },
+    {
+     "tube": 3,
+     "type": "Y",
+     "ref": "Y2",
+     "d_mm": 3.66
+    },
+    {
+     "tube": 4,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 2.9
+    },
+    {
+     "tube": 5,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 1.39
+    },
+    {
+     "tube": 6,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 2.86
+    }
+   ],
+   "glb": "data/lab-s08-full/scene.glb",
+   "glb_bytes": 1157360,
+   "thumb": "data/lab-s08-full/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-s08-full/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v01 (overview)",
+     "simulated": false
+    },
+    {
+     "src": "data/lab-s08-full/photo2.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.045,
+      0.1194,
+      -0.0488
+     ],
+     "text": "AB 2.1 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0383,
+      0.1077,
+      -0.0003
+     ],
+     "text": "AB 1.4 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      -0.0854,
+      0.041,
+      0.066
+     ],
+     "text": "X 2.9 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.1014,
+      0.0961,
+      0.0326
+     ],
+     "text": "Y 3.7 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.0465,
+      0.0595,
+      -0.0668
+     ],
+     "text": "Y 2.9 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0246,
+      0.142,
+      -0.008
+     ],
+     "text": "Y 1.4 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.0553,
+      0.0275,
+      -0.0122
+     ],
+     "text": "X 2.9 mm",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-89.2deg 40deg 100%",
+   "triangles": 51876,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin1/s08_full",
+     "reference": "bin1 ref2",
+     "tp": 7,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "A",
+       "type": "AB",
+       "tube": 0,
+       "d_mm": 2.12
+      },
+      {
+       "ref": "B",
+       "type": "AB",
+       "tube": 1,
+       "d_mm": 1.4
+      },
+      {
+       "ref": "X1",
+       "type": "X",
+       "tube": 6,
+       "d_mm": 2.86
+      },
+      {
+       "ref": "X2",
+       "type": "X",
+       "tube": 2,
+       "d_mm": 2.92
+      },
+      {
+       "ref": "Y1",
+       "type": "Y",
+       "tube": 4,
+       "d_mm": 2.9
+      },
+      {
+       "ref": "Y2",
+       "type": "Y",
+       "tube": 3,
+       "d_mm": 3.66
+      },
+      {
+       "ref": "Y3",
+       "type": "Y",
+       "tube": 5,
+       "d_mm": 1.39
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 249,
+     "text": "1-2 mm median, 3-6 mm worst, mostly vertical"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin1/s08_full/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "c68657f6afa1de23e58502d21f539a542f14a4a9d24b3b29b0bc532775acc2cd"
+    },
+    {
+     "file": "pipeFit/data/bin1/eval/ref2/s08_full.json",
+     "role": "reference fit",
+     "sha256": "c48cd638c2d2badbdb8b807404a2ee362bde20896e2d891acf0a2fffdeec1271"
+    },
+    {
+     "file": "pipeFit/data/bin1/s08_full/v01/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "ce23e70d61d5ba9d7792d0836cda5f3473aaed1ce7cd3aac9c49b965270a9246"
+    },
+    {
+     "file": "pipeFit/data/bin1/s08_full/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "543936d98794908f8b269bab5a81a0d8d2b85de85c3d144ea08ac8f3f525eaf2"
+    }
+   ]
+  },
+  {
+   "id": "lab-rm2-picking",
+   "kind": "real",
+   "title": "Five tubes left after two were taken out",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "5 tubes: 2 AB, 2 X, 1 Y",
+   "date": "2026-09-30",
+   "views": 2,
+   "what": "Stage rm2 of the removal sequence: two Y tubes were taken out of the full pile by hand; the other five still lie across each other. Two pictures: a high overview and a close view from above.",
+   "result": "Found 5 of 5 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 1.3-2.8 mm.",
+   "card_check": "Checked against a reference fit from the same pictures (5 mm rule)",
+   "check": "Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "2 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 5,
+    "n_ref": 5,
+    "tp": 5,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "1.3-2.8",
+    "types": "2 AB, 2 X, 1 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB",
+     "ref": "B",
+     "d_mm": 2.52
+    },
+    {
+     "tube": 1,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 2.16
+    },
+    {
+     "tube": 2,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 2.78
+    },
+    {
+     "tube": 3,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 1.27
+    },
+    {
+     "tube": 4,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 2.13
+    }
+   ],
+   "glb": "data/lab-rm2-picking/scene.glb",
+   "glb_bytes": 880444,
+   "thumb": "data/lab-rm2-picking/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-rm2-picking/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0363,
+      0.1096,
+      -0.0009
+     ],
+     "text": "AB 2.5 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      -0.0444,
+      0.1175,
+      -0.0476
+     ],
+     "text": "AB 2.2 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      -0.0843,
+      0.0402,
+      0.0709
+     ],
+     "text": "X 2.8 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.056,
+      0.0251,
+      -0.0243
+     ],
+     "text": "X 1.3 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.0931,
+      0.0529,
+      -0.0223
+     ],
+     "text": "Y 2.1 mm",
+     "colour": "#54A24B"
+    }
+   ],
+   "orbit": "-89.5deg 40deg 100%",
+   "triangles": 38308,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin1/s09_rm2",
+     "reference": "bin1 ref2",
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "A",
+       "type": "AB",
+       "tube": 1,
+       "d_mm": 2.16
+      },
+      {
+       "ref": "B",
+       "type": "AB",
+       "tube": 0,
+       "d_mm": 2.52
+      },
+      {
+       "ref": "X1",
+       "type": "X",
+       "tube": 3,
+       "d_mm": 1.27
+      },
+      {
+       "ref": "X2",
+       "type": "X",
+       "tube": 2,
+       "d_mm": 2.78
+      },
+      {
+       "ref": "Y1",
+       "type": "Y",
+       "tube": 4,
+       "d_mm": 2.13
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 249,
+     "text": "1-2 mm median, 3-6 mm worst, mostly vertical"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin1/s09_rm2/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "d53fa5c6934921c5f84262f05287b845f37b50ec3f0f549a9147762e4bf00b18"
+    },
+    {
+     "file": "pipeFit/data/bin1/eval/ref2/s09_rm2.json",
+     "role": "reference fit",
+     "sha256": "9e54c13ef972909736d261347ce502cc26fb926a962b8d92b3365abdf6fd67b6"
+    },
+    {
+     "file": "pipeFit/data/bin1/s09_rm2/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "99628e29857406f0f6e2fdda6db02e91c6f22b9004c8d3d0b12e7724a3bf9d20"
+    }
+   ]
+  },
+  {
+   "id": "lab-rm4-moved",
+   "kind": "real",
+   "title": "Three tubes left; one was dragged 47 mm",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "3 tubes: 1 AB, 2 X",
+   "date": "2026-09-30",
+   "views": 2,
+   "what": "Stage rm4: tubes B, X1 and X2 are left. Taking out tube A dragged tube B about 47 mm into A's old place. Each scene is reconstructed on its own, so B is simply found where it now lies. Two pictures.",
+   "result": "Found 3 of 3 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 2.5-3.3 mm.",
+   "card_check": "Checked against a reference fit from the same pictures (5 mm rule)",
+   "check": "Compared with a reference fit made from the same pictures: the scanned tube models fitted, stage by stage, to the mask edges and depth of every view, and checked by eye. Its own error is about 1-2 mm (median), mostly vertical, so it is not independent ground truth. A tube counts as correct when it has the right type and its centreline lies on average within 5 mm of the reference, over the part of the reference the cameras saw. Each reference tube can be matched to only one found tube; a found tube without a match counts as extra.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "2 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 3,
+    "n_ref": 3,
+    "tp": 3,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "2.5-3.3",
+    "types": "1 AB, 2 X"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 2.46
+    },
+    {
+     "tube": 1,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 3.29
+    },
+    {
+     "tube": 2,
+     "type": "AB",
+     "ref": "B",
+     "d_mm": 2.69
+    }
+   ],
+   "glb": "data/lab-rm4-moved/scene.glb",
+   "glb_bytes": 550412,
+   "thumb": "data/lab-rm4-moved/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-rm4-moved/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#fbcea3",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.0371,
+      0.0272,
+      -0.082
+     ],
+     "text": "X 2.5 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.0871,
+      0.038,
+      0.0674
+     ],
+     "text": "X 3.3 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.003,
+      0.0896,
+      0.007
+     ],
+     "text": "AB 2.7 mm",
+     "colour": "#4C78A8"
+    }
+   ],
+   "orbit": "-89.5deg 40deg 100%",
+   "triangles": 22772,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin1/s09_rm4",
+     "reference": "bin1 ref2",
+     "tp": 3,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "B",
+       "type": "AB",
+       "tube": 2,
+       "d_mm": 2.69
+      },
+      {
+       "ref": "X1",
+       "type": "X",
+       "tube": 0,
+       "d_mm": 2.46
+      },
+      {
+       "ref": "X2",
+       "type": "X",
+       "tube": 1,
+       "d_mm": 3.29
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 249,
+     "text": "1-2 mm median, 3-6 mm worst, mostly vertical"
+    },
+    {
+     "file": "pipeFit/docs/scene_recon_report.md",
+     "line": 565,
+     "text": "B dragged 47 mm into the place of the"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin1/s09_rm4/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "2356d9d7b4662e85dd61b1bb8ae0b27117379a662f55e0473b14cc485be70c86"
+    },
+    {
+     "file": "pipeFit/data/bin1/eval/ref2/s09_rm4.json",
+     "role": "reference fit",
+     "sha256": "0533215a32601a69d83fd25a9a96ee5d7743ccec45d109e182f2aea5d392838a"
+    },
+    {
+     "file": "pipeFit/data/bin1/s09_rm4/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "7943cdd28f371f1a85542d0c2a43d2f1f970692f5e224210969ee5d49709e41b"
+    }
+   ]
+  },
+  {
+   "id": "lab-r02-moved-bin",
+   "kind": "real",
+   "title": "Bin moved and turned, three Y tubes",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "3 tubes: 3 Y",
+   "date": "2026-09-30",
+   "views": 6,
+   "what": "A separate random scene in the same lab bin: Y1, Y2 and Y3 placed at random, crossing. The bin had been moved about 1-2.4 cm and turned slightly. Six pictures: an overview, four at an angle from the sides and a close view from above.",
+   "result": "Found 3 of 3 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.4-1.3 mm.",
+   "card_check": "Checked against a reference fit from the same pictures (5 mm rule)",
+   "check": "Compared with a reference fit made from the same six pictures: the scanned tube models fitted to every mask edge and the depth of all views, with the pieces identified by eye. That reference is good to about 2-5 mm. Same rule as for the stages: right type and within 5 mm on average over the seen part, one to one, no extra tubes.",
+   "caveat": "One reference tube (Y1) was started by hand, and two different reference methods differ by 4.9-8.7 mm on it.",
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 3,
+    "n_ref": 3,
+    "tp": 3,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "0.4-1.3",
+    "types": "3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 0.51
+    },
+    {
+     "tube": 1,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 0.4
+    },
+    {
+     "tube": 2,
+     "type": "Y",
+     "ref": "Y2",
+     "d_mm": 1.29
+    }
+   ],
+   "glb": "data/lab-r02-moved-bin/scene.glb",
+   "glb_bytes": 492248,
+   "thumb": "data/lab-r02-moved-bin/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-r02-moved-bin/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v01 (overview)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#bbdab7",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.0812,
+      0.0642,
+      -0.0438
+     ],
+     "text": "Y 0.5 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0796,
+      0.0241,
+      -0.0762
+     ],
+     "text": "Y 0.4 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.0728,
+      0.0232,
+      0.0664
+     ],
+     "text": "Y 1.3 mm",
+     "colour": "#54A24B"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 21364,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin2/r02",
+     "reference": "bin2 mref",
+     "tp": 3,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "Y2",
+       "type": "Y",
+       "tube": 2,
+       "d_mm": 1.29
+      },
+      {
+       "ref": "Y3",
+       "type": "Y",
+       "tube": 1,
+       "d_mm": 0.4
+      },
+      {
+       "ref": "Y1",
+       "type": "Y",
+       "tube": 0,
+       "d_mm": 0.51
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 250,
+     "text": "About 2-5 mm"
+    },
+    {
+     "file": "pipeFit/data/bin2/README.md",
+     "line": 15,
+     "text": "bin moved ~1-2.4 cm in -x"
+    },
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 250,
+     "text": "4.9-8.7 mm on r02 Y1, r04 A, r04 X2"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin2/r02/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "afe373a48a2d90dda6f6887f7720f0a8cf1b0d222b7ab47a99988e8b2a1c7b43"
+    },
+    {
+     "file": "pipeFit/data/bin2/eval/refs/r02_mref.json",
+     "role": "reference fit",
+     "sha256": "fba68fb48c1b0a0b076c13008e1472f17063eaa0f09d0df7ec98178ec7491ced"
+    },
+    {
+     "file": "pipeFit/data/bin2/r02/v01/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "837f3fb566ed3a81949597118f1320754be34a3ef8c972db56665c1a25f1bfd6"
+    }
+   ]
+  },
+  {
+   "id": "lab-r04-over-rim",
+   "kind": "real",
+   "title": "Two tubes hanging over the rim",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "5 tubes: 1 AB, 2 X, 2 Y",
+   "date": "2026-09-30",
+   "views": 6,
+   "what": "A random scene in the lab bin: A, X1, X2, Y1 and Y3 placed at random; two tubes hang over the near rim. Six pictures.",
+   "result": "Found 5 of 5 tubes, all with the right type, no extra tubes. Mean distance to the reference fit: 0.3-2.2 mm.",
+   "card_check": "Checked against a reference fit; weak reference for 3 of 5 tubes",
+   "check": "Compared with a reference fit made from the same six pictures: the scanned tube models fitted to every mask edge and the depth of all views, with the pieces identified by eye. That reference is good to about 2-5 mm. Same rule as for the stages: right type and within 5 mm on average over the seen part, one to one, no extra tubes.",
+   "caveat": "Weak check: two different reference methods disagree here by 24 mm on X1 and by 4.9-8.7 mm on A and X2, so the reference itself is uncertain for three of the five tubes.",
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    },
+    {
+     "text": "Weak reference",
+     "cls": "warn"
+    }
+   ],
+   "numbers": {
+    "found": 5,
+    "n_ref": 5,
+    "tp": 5,
+    "fp": 0,
+    "fn": 0,
+    "d_range": "0.3-2.2",
+    "types": "1 AB, 2 X, 2 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 2.21
+    },
+    {
+     "tube": 1,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 0.64
+    },
+    {
+     "tube": 2,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 0.67
+    },
+    {
+     "tube": 3,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 0.35
+    },
+    {
+     "tube": 4,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 0.75
+    }
+   ],
+   "glb": "data/lab-r04-over-rim/scene.glb",
+   "glb_bytes": 829868,
+   "thumb": "data/lab-r04-over-rim/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-r04-over-rim/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v01 (overview)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "Reference fit centreline"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the reference fit",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.0562,
+      0.1366,
+      0.0824
+     ],
+     "text": "AB 2.2 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0777,
+      0.1014,
+      -0.0233
+     ],
+     "text": "X 0.6 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.0737,
+      0.0246,
+      -0.0735
+     ],
+     "text": "Y 0.7 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0144,
+      0.1252,
+      0.0076
+     ],
+     "text": "Y 0.3 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0521,
+      0.0432,
+      0.0217
+     ],
+     "text": "X 0.8 mm",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 36436,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "rescore": {
+     "function": "tools/recon/scene.py eval_state_scene",
+     "scene": "bin2/r04",
+     "reference": "bin2 mref",
+     "tp": 5,
+     "fp": 0,
+     "fn": 0,
+     "matched": [
+      {
+       "ref": "Y1",
+       "type": "Y",
+       "tube": 3,
+       "d_mm": 0.35
+      },
+      {
+       "ref": "A",
+       "type": "AB",
+       "tube": 0,
+       "d_mm": 2.21
+      },
+      {
+       "ref": "Y3",
+       "type": "Y",
+       "tube": 2,
+       "d_mm": 0.67
+      },
+      {
+       "ref": "X2",
+       "type": "X",
+       "tube": 4,
+       "d_mm": 0.75
+      },
+      {
+       "ref": "X1",
+       "type": "X",
+       "tube": 1,
+       "d_mm": 0.64
+      }
+     ]
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 250,
+     "text": "About 2-5 mm"
+    },
+    {
+     "file": "pipeFit/data/bin2/README.md",
+     "line": 17,
+     "text": "two tubes over the near rim"
+    },
+    {
+     "file": "pipeFit/docs/M3c_real_report.md",
+     "line": 250,
+     "text": "24 / 170 mm on r04 X1 / r03 Y2"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/bin2/r04/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "89d0257ddaa7f80a508b3e66732debb01a21edd267b892052f2fa25e1ec816bc"
+    },
+    {
+     "file": "pipeFit/data/bin2/eval/refs/r04_mref.json",
+     "role": "reference fit",
+     "sha256": "a40aa8287a35855c869dce5f44c332eeabfbd608b263198de8fcd044bc45e217"
+    },
+    {
+     "file": "pipeFit/data/bin2/r04/v01/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "ca68cd902d469096b1e79fa4438241a8b22d59120ca1656d74ca135ec93f9c02"
+    }
+   ]
+  },
+  {
+   "id": "emb-pile2",
+   "kind": "real",
+   "title": "Large bin, tangled pile of seven",
+   "bin": "EMB 780 bin (blue, industrial, inner size at the rim 54.0 x 36.7 cm)",
+   "bin_short": "EMB 780 bin",
+   "contents": "7 tubes (operator's count)",
+   "date": "2026-11-09",
+   "views": 12,
+   "what": "The operator put 7 tubes in a tangled pile in the EMB 780 bin. Twelve pictures from the wrist camera (overviews from several sides and one close view from above).",
+   "result": "Found 7: 2 AB, 2 X, 3 Y. The runs on 2, 3 and 5 views of the same pictures also found 7 with the same types, placed 0.5-4.2 mm from this result.",
+   "card_check": "Checked: number and types only (positions not checked)",
+   "check": "Only the number of tubes and how many of each type. The operator put 7 tubes in the bin; the split into 2 AB, 2 X and 3 Y is assumed (it is the lab set), it was not written down for this pile. Positions were not checked: there is no reference fit for this bin. The runs with fewer pictures of the same capture show that the result is stable, not that it is accurate.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "12 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 7,
+    "types": "2 AB, 2 X, 3 Y",
+    "d_range": "0.5-4.2"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB"
+    },
+    {
+     "tube": 1,
+     "type": "AB"
+    },
+    {
+     "tube": 2,
+     "type": "X"
+    },
+    {
+     "tube": 3,
+     "type": "Y"
+    },
+    {
+     "tube": 4,
+     "type": "X"
+    },
+    {
+     "tube": 5,
+     "type": "Y"
+    },
+    {
+     "tube": 6,
+     "type": "Y"
+    }
+   ],
+   "glb": "data/emb-pile2/scene.glb",
+   "glb_bytes": 1061004,
+   "thumb": "data/emb-pile2/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/emb-pile2/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v01m (overview from the middle)",
+     "simulated": false
+    },
+    {
+     "src": "data/emb-pile2/photo2.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0349,
+      0.0444,
+      0.0661
+     ],
+     "text": "AB",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0768,
+      0.1251,
+      -0.0541
+     ],
+     "text": "AB",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0272,
+      0.0731,
+      -0.0459
+     ],
+     "text": "X",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.1237,
+      0.0778,
+      0.1017
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0277,
+      0.037,
+      0.0426
+     ],
+     "text": "X",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.1393,
+      0.0298,
+      -0.0608
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.162,
+      0.0505,
+      -0.0722
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    }
+   ],
+   "orbit": "-89.9deg 40deg 100%",
+   "triangles": 46704,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "subruns": [
+     {
+      "run": "emb_t_pile_2_v2",
+      "views": "2 views",
+      "n": 7,
+      "types": {
+       "AB": 2,
+       "X": 2,
+       "Y": 3
+      },
+      "same_types": true,
+      "d_mm": [
+       1.35,
+       2.12,
+       0.58,
+       0.8,
+       1.79,
+       4.19,
+       1.55
+      ]
+     },
+     {
+      "run": "emb_t_pile_2_v3",
+      "views": "3 views",
+      "n": 7,
+      "types": {
+       "AB": 2,
+       "X": 2,
+       "Y": 3
+      },
+      "same_types": true,
+      "d_mm": [
+       1.51,
+       0.59,
+       0.6,
+       0.93,
+       1.63,
+       0.8,
+       0.94
+      ]
+     },
+     {
+      "run": "emb_t_pile_2_v5",
+      "views": "5 views",
+      "n": 7,
+      "types": {
+       "AB": 2,
+       "X": 2,
+       "Y": 3
+      },
+      "same_types": true,
+      "d_mm": [
+       0.85,
+       0.49,
+       0.79,
+       0.5,
+       1.06,
+       0.67,
+       1.76
+      ]
+     }
+    ],
+    "limit_runs": [],
+    "closest_pair_mm": 28.0
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/paper/tables/TB14a_view_subsets_close_view.md",
+     "line": 45,
+     "text": "count-only truth (operator: 7 per pile)"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_2/recon/ubin/emb_t_pile_2/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "95b36c344f8c4e0131d81e8801f55e7ed52bea78e18576cf3fd81df1a07b90fe"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_2_v2/recon/ubin/emb_t_pile_2_v2/state.json",
+     "role": "result state of the run on 2 views",
+     "sha256": "a52d0a3ac8bb686717cde724afa68f08a22cad13fe2349c070e4d983464b34e2"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_2_v3/recon/ubin/emb_t_pile_2_v3/state.json",
+     "role": "result state of the run on 3 views",
+     "sha256": "fca5cdbabe3f043ad939a54ebc1ce8885ab65b7236e27b7df29884ff3d0bb845"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_2_v5/recon/ubin/emb_t_pile_2_v5/state.json",
+     "role": "result state of the run on 5 views",
+     "sha256": "e5218931c19dfc1e1d09288fb0d69c354534325c23669cfdb137f0cb666bfb5a"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_2/cap/ubin/emb_t_pile_2/v01m/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "6b627305d974bd162179f746c4d5e744c38ab7c1aa38a3281782b50b11826750"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_2/cap/ubin/emb_t_pile_2/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "98deb3bcae8d06dddf10edcceead0b8ebf863e1ec28282a55ead0dae9079e63a"
+    }
+   ]
+  },
+  {
+   "id": "emb-pile1b-close3",
+   "kind": "real",
+   "title": "Large bin, seven tubes seen from three close views",
+   "bin": "EMB 780 bin (blue, industrial, inner size at the rim 54.0 x 36.7 cm)",
+   "bin_short": "EMB 780 bin",
+   "contents": "7 tubes (operator's count)",
+   "date": "2026-11-09",
+   "views": 3,
+   "what": "Pile 1 laid out again (the same seven tubes, so not an independent pile), reconstructed from three close pictures from above only.",
+   "result": "Found 7: 2 AB, 2 X, 3 Y. A run on the same 3 views plus one overview also found 7 with the same types, placed 0.3-1.5 mm from this result.",
+   "card_check": "Checked: number and types only (positions not checked)",
+   "check": "Only the number of tubes and how many of each type. The operator put 7 tubes in the bin; the split into 2 AB, 2 X and 3 Y is assumed (it is the lab set), it was not written down for this pile. Positions were not checked: there is no reference fit for this bin. The runs with fewer pictures of the same capture show that the result is stable, not that it is accurate.",
+   "caveat": null,
+   "limit": "Not every route works: with 12 views and 14 views of this pile pipeFit found only 6 (it missed one AB tube).",
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "3 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 7,
+    "types": "2 AB, 2 X, 3 Y",
+    "d_range": "0.3-1.5"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB"
+    },
+    {
+     "tube": 1,
+     "type": "AB"
+    },
+    {
+     "tube": 2,
+     "type": "X"
+    },
+    {
+     "tube": 3,
+     "type": "Y"
+    },
+    {
+     "tube": 4,
+     "type": "Y"
+    },
+    {
+     "tube": 5,
+     "type": "Y"
+    },
+    {
+     "tube": 6,
+     "type": "X"
+    }
+   ],
+   "glb": "data/emb-pile1b-close3/scene.glb",
+   "glb_bytes": 1063364,
+   "thumb": "data/emb-pile1b-close3/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/emb-pile1b-close3/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above; the pile is larger than this picture)",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0285,
+      0.0366,
+      0.0155
+     ],
+     "text": "AB",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      -0.0875,
+      0.07,
+      -0.052
+     ],
+     "text": "AB",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0704,
+      0.0481,
+      0.0041
+     ],
+     "text": "X",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.0183,
+      0.0947,
+      0.0509
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.165,
+      0.0351,
+      -0.0151
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0028,
+      0.106,
+      0.0109
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.1074,
+      0.0536,
+      -0.1529
+     ],
+     "text": "X",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-90.1deg 40deg 100%",
+   "triangles": 46760,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "subruns": [
+     {
+      "run": "emb_t_pile_1b_m4",
+      "views": "the same 3 views plus one overview",
+      "n": 7,
+      "types": {
+       "AB": 2,
+       "X": 2,
+       "Y": 3
+      },
+      "same_types": true,
+      "d_mm": [
+       0.47,
+       1.49,
+       0.43,
+       0.84,
+       0.26,
+       0.92,
+       0.44
+      ]
+     }
+    ],
+    "limit_runs": [
+     {
+      "run": "emb_t_pile_1b_old12",
+      "views": "12 views",
+      "n": 6,
+      "types": {
+       "AB": 1,
+       "X": 2,
+       "Y": 3
+      }
+     },
+     {
+      "run": "emb_t_pile_1b",
+      "views": "14 views",
+      "n": 6,
+      "types": {
+       "AB": 1,
+       "X": 2,
+       "Y": 3
+      }
+     }
+    ],
+    "closest_pair_mm": 40.5,
+    "limit_text": "Not every route works: with 12 views and 14 views of this pile pipeFit found only 6 (it missed one AB tube)."
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/paper/tables/TB14a_view_subsets_close_view.md",
+     "line": 45,
+     "text": "count-only truth (operator: 7 per pile)"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_1b_close3/recon/ubin/emb_t_pile_1b_close3/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "258a3e35ea74c4ce092a4b028a5f6394a2979ebe17f2341cb38e821d83a24c7c"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_1b_m4/recon/ubin/emb_t_pile_1b_m4/state.json",
+     "role": "result state of the run on the same 3 views plus one overview",
+     "sha256": "90362f3985c4252f64b8c4ff05a4b6bbe4a3f34e745d567ffcc5aa3a44d65f21"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_1b_old12/recon/ubin/emb_t_pile_1b_old12/state.json",
+     "role": "result state of the run on 12 views",
+     "sha256": "81c3f0d4cccc88d23a51611d725e18869cb3a28c6e4abd47b5d84ddc7f27766d"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_1b/recon/ubin/emb_t_pile_1b/state.json",
+     "role": "result state of the run on 14 views",
+     "sha256": "20c37bf73bea7c761d805f517d76548536b47cf6124d98ed636367848478d79e"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_pile_1b_close3/cap/ubin/emb_t_pile_1b_close3/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "99ecf06b7f1da5d0fdb6f8d62899d9dbf87e3c8ddaada34a177b09447f3ee7f6"
+    }
+   ]
+  },
+  {
+   "id": "emb-old3-grasp",
+   "kind": "real",
+   "title": "Large bin, three tubes; the robot picked one",
+   "bin": "EMB 780 bin (blue, industrial, inner size at the rim 54.0 x 36.7 cm)",
+   "bin_short": "EMB 780 bin",
+   "contents": "3 tubes (operator's count)",
+   "date": "2026-11-09",
+   "views": 11,
+   "what": "Three older tubes, scattered and crossing, in the EMB 780 bin; eleven pictures. After the scan the Franka robot arm picked tube 1 (found as type X) at the grasp point pipeFit computed for it.",
+   "result": "Found 3: 1 AB, 2 X. The robot closed its fingers to 14.72 mm on a tube of model diameter 14.6 mm, held it, lifted it 50 mm and put it back.",
+   "card_check": "Checked: number of tubes, and a real pick",
+   "check": "Number of tubes only: the operator put 3 tubes in the bin and did not note their types. Positions were not compared with a reference fit. Instead the real arm went to the computed grasp point, closed its fingers and held the tube.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": "The grasp point lies on tube 1's centreline in this result (0.1 mm away). A run on 2 views of the same scene found the same 3 tubes, 1.5-2.5 mm from this result.",
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "Picked by the robot",
+     "cls": "pick"
+    },
+    {
+     "text": "11 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 3,
+    "types": "1 AB, 2 X"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "AB"
+    },
+    {
+     "tube": 1,
+     "type": "X"
+    },
+    {
+     "tube": 2,
+     "type": "X"
+    }
+   ],
+   "glb": "data/emb-old3-grasp/scene.glb",
+   "glb_bytes": 510900,
+   "thumb": "data/emb-old3-grasp/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/emb-old3-grasp/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v06 (close view from above)",
+     "simulated": false
+    },
+    {
+     "src": "data/emb-old3-grasp/photo2.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "The planned grasp drawn on the overview picture before the arm moved: fingertips at the red mark, fingers closing along the yellow line, hand outline in magenta",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#b7c9dc",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0068,
+      0.0498,
+      0.0334
+     ],
+     "text": "AB",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0413,
+      0.0334,
+      -0.004
+     ],
+     "text": "X - picked",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.1483,
+      0.0442,
+      -0.1453
+     ],
+     "text": "X",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-90.0deg 40deg 100%",
+   "triangles": 20648,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "subruns": [
+     {
+      "run": "emb_t_old_1_v2",
+      "views": "2 views",
+      "n": 3,
+      "types": {
+       "AB": 1,
+       "X": 2,
+       "Y": 0
+      },
+      "same_types": true,
+      "d_mm": [
+       1.49,
+       2.06,
+       2.49
+      ]
+     }
+    ],
+    "limit_runs": [],
+    "closest_pair_mm": 75.2,
+    "grasp_extra": "The grasp point lies on tube 1's centreline in this result (0.1 mm away). A run on 2 views of the same scene found the same 3 tubes, 1.5-2.5 mm from this result.",
+    "grasp": {
+     "tube": 1,
+     "type": "X",
+     "point_mm": [
+      339.66,
+      273.17,
+      37.8
+     ],
+     "point_to_centreline_mm": 0.07,
+     "model_width_mm": 14.6,
+     "width_mm": 14.72,
+     "expected_mm": 14.6,
+     "verdict": "HELD",
+     "state_equals_archived": true
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/discussions_zh.md",
+     "line": 1257,
+     "text": "箱里就 3 根，3 根全认出"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_old_1/recon/ubin/emb_t_old_1/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "163da680236c47292de8f70f071baf505f626376e72a06c4d540b712b21a7e31"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_old_1_v2/recon/ubin/emb_t_old_1_v2/state.json",
+     "role": "result state of the run on 2 views",
+     "sha256": "07caacd47de5de669a8d52d9a12be277be6697e5e0a28f9048b242b54c5ec506"
+    },
+    {
+     "file": "archive/tests/calib_wt3_2026-11-09/pipeFit/data/ui_cache/robot/plans/emb_t_old_1-20261109-114915.json",
+     "role": "grasp plan (tube, grasp point)",
+     "sha256": "995f1110ab1d8964a76f47f978d8652daf8697e43d9c79abd4bf91b20d70c81b"
+    },
+    {
+     "file": "archive/tests/calib_wt3_2026-11-09/pipeFit/data/ui_cache/robot/jobs/20261109-115702-grasp-3604-10/job.json",
+     "role": "robot job: close fingers (width, verdict)",
+     "sha256": "e85e6a961bd7432792d75326c6e588d9483a870c661397b10b1405d0169238ee"
+    },
+    {
+     "file": "archive/tests/calib_wt3_2026-11-09/pipeFit/data/ui_cache/robot/jobs/20261109-115711-grasp-3604-11/log.txt",
+     "role": "robot job log: lift 50 mm",
+     "sha256": "5de0a49558bd10a0cd3240a52fd543989da7de41e7a4cdfbfa7d6bcb62121532"
+    },
+    {
+     "file": "archive/tests/calib_wt3_2026-11-09/pipeFit/data/ui_cache/robot/jobs/20261109-115819-grasp-3604-14/log.txt",
+     "role": "robot job log: put back and open",
+     "sha256": "e1562a81bff76969bf8d3fb507388cd9c719d70646f6bdb0c9416c7231e9e8ea"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/emb_t_old_1/cap/ubin/emb_t_old_1/v06/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "ff93c0626337a53b9501744753877de6a3352b3737a6d9d9b61c76d4f2df8fe9"
+    },
+    {
+     "file": "archive/tests/calib_wt3_2026-11-09/pipeFit/data/ui_cache/robot/plans/emb_t_old_1-20261109-114915_target_v01.jpg",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "24bce3038589d8cb67eb5b3be445d1f53d58f3b97cdd3b288b7f946601234675"
+    }
+   ]
+  },
+  {
+   "id": "lab-3y-grasp",
+   "kind": "real",
+   "title": "Lab bin, three Y tubes; the robot picked one",
+   "bin": "Lab bin (blue, inner size at the rim 34.7 x 26.6 cm)",
+   "bin_short": "Lab bin",
+   "contents": "3 tubes: 3 Y",
+   "date": "2026-10-19",
+   "views": 2,
+   "what": "Three Y tubes crossing in the lab bin, two pictures (overview and close view from above). The Franka robot arm then picked tube 1 at the grasp point pipeFit computed for it.",
+   "result": "Found 3, all Y. The robot closed its fingers to 15.4 mm (model diameter 15.8 mm) and lifted the tube out of the bin.",
+   "card_check": "Checked: number and type by eye, and a real pick",
+   "check": "Number and type checked by eye on the photo: three tubes, each with a hex nut at one end and a green-tagged eye fitting at the other, which is how the Y type looks. Positions were not compared with a reference fit. Instead the real arm went to the computed grasp point, closed its fingers and lifted the tube out. Grip width and lift are from the project log of that day.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": "The grasp point lies on tube 1's centreline in this result (0.1 mm away), so the target came from this result.",
+   "badges": [
+    {
+     "text": "Real scan",
+     "cls": "real"
+    },
+    {
+     "text": "Picked by the robot",
+     "cls": "pick"
+    },
+    {
+     "text": "2 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 3,
+    "types": "3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "Y"
+    },
+    {
+     "tube": 1,
+     "type": "Y"
+    },
+    {
+     "tube": 2,
+     "type": "Y"
+    }
+   ],
+   "glb": "data/lab-3y-grasp/scene.glb",
+   "glb_bytes": 453252,
+   "thumb": "data/lab-3y-grasp/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/lab-3y-grasp/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Camera picture, view v01 (overview)",
+     "simulated": false
+    },
+    {
+     "src": "data/lab-3y-grasp/photo2.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "The planned grasp drawn on the overview picture before the arm moved: fingers closing along the yellow line, hand outline in magenta",
+     "simulated": false
+    },
+    {
+     "src": "data/lab-3y-grasp/photo3.webp",
+     "w": 848,
+     "h": 480,
+     "caption": "Wrist camera at the grasp point, just before the fingers closed",
+     "simulated": false
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#bbdab7",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.0561,
+      0.0406,
+      0.0882
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0562,
+      0.0883,
+      0.0397
+     ],
+     "text": "Y - picked",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0739,
+      0.048,
+      0.0485
+     ],
+     "text": "Y",
+     "colour": "#54A24B"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 19144,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "subruns": [],
+    "limit_runs": [],
+    "closest_pair_mm": 28.4,
+    "grasp_extra": "The grasp point lies on tube 1's centreline in this result (0.1 mm away), so the target came from this result.",
+    "grasp": {
+     "tube": 1,
+     "type": "Y",
+     "point_mm": [
+      343.79,
+      306.48,
+      78.98
+     ],
+     "point_to_centreline_mm": 0.06,
+     "model_width_mm": 15.82,
+     "width_mm": 15.4,
+     "width_source": "project log (docs/discussions_zh.md line 787)"
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/discussions_zh.md",
+     "line": 787,
+     "text": "夹住后宽度 15.4 mm，提起出箱"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/ui_runs/t20261019b/recon/ubin/t20261019b/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "0b8fca6bbee019f9c3fb262e2fcc77e7569312a2c90b2050761fa3a1b0168b23"
+    },
+    {
+     "file": "pipeFit/data/live/t20261019b/grasp_try/plan.json",
+     "role": "grasp plan (tube, grasp point)",
+     "sha256": "a083d50b7e6cb7aa86deb712057c07d37e7c02566720f0f94c1969a940df526d"
+    },
+    {
+     "file": "pipeFit/data/ui_runs/t20261019b/cap/ubin/t20261019b/v01/color.png",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "10eb95d853e3e1bf51a88da48dfdbd5dca44c3ebc9df19cc2b3461d24343b692"
+    },
+    {
+     "file": "pipeFit/data/live/t20261019b/grasp_try/grasp_target_v01.jpg",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "e31ff89d088f52ce6982767642f3e880bfce5e6ea026318959e71f9cc51d0e57"
+    },
+    {
+     "file": "pipeFit/data/live/t20261019b/grasp_try/at_grasp_wrist.jpg",
+     "role": "picture (looked at before publishing: no people, no screens)",
+     "sha256": "2805c513f8c94e7b2d4140e2311befd98628de4f7e50419161877a87c700a44b"
+    }
+   ]
+  },
+  {
+   "id": "sim-tubes-p000-6v",
+   "kind": "simulation",
+   "title": "Simulated pile of six tubes",
+   "bin": "Simulated lab bin",
+   "bin_short": "Simulated lab bin",
+   "contents": "6 tubes: 1 AB, 2 X, 3 Y",
+   "date": null,
+   "views": 6,
+   "what": "Six of the seven scanned lab tubes dropped into the measured lab bin by a physics simulation (pile p000): stacked up to 3 levels, two partly over the rim, 6 tube-tube contacts. Rendered depth and colour pictures with the camera's measured noise, six views; the pictures are segmented by SAM, as real ones.",
+   "result": "Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.4-1.4 mm.",
+   "card_check": "Checked against the simulation truth (5 mm rule)",
+   "check": "Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Simulation",
+     "cls": "sim"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 6,
+    "n_vis": 6,
+    "tp": 6,
+    "fp": 0,
+    "d_range": "0.4-1.4",
+    "d_median": "0.72",
+    "types": "1 AB, 2 X, 3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 0.82
+    },
+    {
+     "tube": 1,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 0.76
+    },
+    {
+     "tube": 2,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 0.68
+    },
+    {
+     "tube": 3,
+     "type": "Y",
+     "ref": "Y2",
+     "d_mm": 1.37
+    },
+    {
+     "tube": 4,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 0.49
+    },
+    {
+     "tube": 5,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 0.44
+    }
+   ],
+   "glb": "data/sim-tubes-p000-6v/scene.glb",
+   "glb_bytes": 919920,
+   "thumb": "data/sim-tubes-p000-6v/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/sim-tubes-p000-6v/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Simulated camera picture, view v01 (overview)",
+     "simulated": true
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#bbdab7",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "True centreline (simulation)"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the simulation truth",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.019,
+      0.1163,
+      0.0025
+     ],
+     "text": "Y 0.8 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.014,
+      0.1453,
+      0.062
+     ],
+     "text": "AB 0.8 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.1002,
+      0.0231,
+      -0.0421
+     ],
+     "text": "Y 0.7 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0579,
+      0.02,
+      -0.0563
+     ],
+     "text": "Y 1.4 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0508,
+      0.1048,
+      -0.0575
+     ],
+     "text": "X 0.5 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.044,
+      0.0952,
+      -0.0022
+     ],
+     "text": "X 0.4 mm",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 40524,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "sim_scene": {
+     "levels": 3,
+     "over_rim": 2,
+     "contacts_true": 6,
+     "pieces": [
+      "Y2",
+      "X1",
+      "Y3",
+      "A",
+      "X2",
+      "Y1"
+     ]
+    },
+    "truth_curves_check": "the stored truth centrelines give the stored per-tube distances (within 0.2 mm)",
+    "bin_from_lab_mm": [
+     0.0,
+     0.0
+    ],
+    "bin_turn_deg": 0.0,
+    "bin_drawn_at": "the true simulated pose (the located bin differs by under 1 mm)"
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/m3_v2_sim.md",
+     "line": 124,
+     "text": "tube-sim (rapier3d)"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/sim_eval/sam/piles/p000/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "611e0ad443a94f17f74231265de78a95f0402f79a0cc025068438ae6f9bd26b1"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam/eval/piles_stored/p000.pkl",
+     "role": "stored evaluation against the simulation truth (paper-run archive BP5)",
+     "sha256": "2c62915eba61d7011a887a4785d9e4780b7585d948d0e927a3cb23c341f76fed"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam/piles/p000/state_stored.json",
+     "role": "the evaluated state (byte-identical to the shown one)",
+     "sha256": "611e0ad443a94f17f74231265de78a95f0402f79a0cc025068438ae6f9bd26b1"
+    },
+    {
+     "file": "pipeFit/tools/ui/fixtures/scene_sim_piles_p000_sam.json",
+     "role": "simulation truth centrelines (UI scene payload of 2026-10-03)",
+     "sha256": "cf40ce8f6658c45ddd2b7b50c4525ef1b94224b6cfe922987050d2c97cd8b3dc"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p000/container.json",
+     "role": "simulated bin pose",
+     "sha256": "fa6ddd0c9c872942fa64a2a3975021a7db7391ed96d50694c0fcd81dce866618"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p000/v01/color.png",
+     "role": "simulated picture",
+     "sha256": "bfc14ac51017b64c5996a820331c764a2f035954bc5640d90bafb90ede5b84aa"
+    }
+   ]
+  },
+  {
+   "id": "sim-tubes-p000-2v",
+   "kind": "simulation",
+   "title": "The same pile from only two views",
+   "bin": "Simulated lab bin",
+   "bin_short": "Simulated lab bin",
+   "contents": "6 tubes: 1 AB, 2 X, 3 Y",
+   "date": null,
+   "views": 2,
+   "what": "Pile p000 again, reconstructed from only two of its pictures: the overview v01 and the close view from above v06.",
+   "result": "Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.7-3.7 mm.",
+   "card_check": "Checked against the simulation truth (5 mm rule)",
+   "check": "Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Simulation",
+     "cls": "sim"
+    },
+    {
+     "text": "2 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 6,
+    "n_vis": 6,
+    "tp": 6,
+    "fp": 0,
+    "d_range": "0.7-3.7",
+    "d_median": "1.59",
+    "types": "1 AB, 2 X, 3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 1.44
+    },
+    {
+     "tube": 1,
+     "type": "AB",
+     "ref": "A",
+     "d_mm": 3.72
+    },
+    {
+     "tube": 2,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 1.73
+    },
+    {
+     "tube": 3,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 0.95
+    },
+    {
+     "tube": 4,
+     "type": "Y",
+     "ref": "Y2",
+     "d_mm": 0.74
+    },
+    {
+     "tube": 5,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 1.93
+    }
+   ],
+   "glb": "data/sim-tubes-p000-2v/scene.glb",
+   "glb_bytes": 918236,
+   "thumb": "data/sim-tubes-p000-2v/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/sim-tubes-p000-2v/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Simulated camera picture, view v06 (close view from above)",
+     "simulated": true
+    },
+    {
+     "src": "data/sim-tubes-p000-2v/photo2.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Simulated camera picture, view v01 (overview)",
+     "simulated": true
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#bbdab7",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    },
+    {
+     "colour": "#2B323C",
+     "line": true,
+     "optional": true,
+     "label": "True centreline (simulation)"
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    },
+    {
+     "key": "ref",
+     "label": "Show the simulation truth",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      -0.0193,
+      0.1191,
+      0.0045
+     ],
+     "text": "Y 1.4 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.0519,
+      0.198,
+      0.1474
+     ],
+     "text": "AB 3.7 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.1113,
+      0.0589,
+      0.0225
+     ],
+     "text": "Y 1.7 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0522,
+      0.1033,
+      -0.0549
+     ],
+     "text": "X 1.0 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.0905,
+      0.0451,
+      0.0503
+     ],
+     "text": "Y 0.7 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0383,
+      0.1254,
+      0.0819
+     ],
+     "text": "X 1.9 mm",
+     "colour": "#F58518"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 40580,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "sim_scene": {
+     "levels": 3,
+     "over_rim": 2,
+     "contacts_true": 6,
+     "pieces": [
+      "Y2",
+      "X1",
+      "Y3",
+      "A",
+      "X2",
+      "Y1"
+     ]
+    },
+    "bin_from_lab_mm": [
+     0.0,
+     0.0
+    ],
+    "bin_turn_deg": 0.0,
+    "bin_drawn_at": "the true simulated pose (the located bin differs by under 1 mm)"
+   },
+   "docs": [],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/sim_eval/sam_2v/piles/p000/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "fb76928d599a1a7c786e618bce031f234d2acac78d872e1a7f9aac64039c0b65"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam_2v/eval/piles_stored/p000.pkl",
+     "role": "stored evaluation against the simulation truth (paper-run archive BP5)",
+     "sha256": "6e406fca8d9e66c3d6584567b0388a8fdd3ea38f78efc7c31b4a410f0067f2b0"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam_2v/piles/p000/state_stored.json",
+     "role": "the evaluated state (byte-identical to the shown one)",
+     "sha256": "fb76928d599a1a7c786e618bce031f234d2acac78d872e1a7f9aac64039c0b65"
+    },
+    {
+     "file": "pipeFit/tools/ui/fixtures/scene_sim_piles_p000_sam.json",
+     "role": "simulation truth centrelines (UI scene payload of 2026-10-03)",
+     "sha256": "cf40ce8f6658c45ddd2b7b50c4525ef1b94224b6cfe922987050d2c97cd8b3dc"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p000/container.json",
+     "role": "simulated bin pose",
+     "sha256": "fa6ddd0c9c872942fa64a2a3975021a7db7391ed96d50694c0fcd81dce866618"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p000/v06/color.png",
+     "role": "simulated picture",
+     "sha256": "6ee43779f0e61e34058b96f9459ff6b7fc388ca610076c3cb898455b74c324e3"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p000/v01/color.png",
+     "role": "simulated picture",
+     "sha256": "bfc14ac51017b64c5996a820331c764a2f035954bc5640d90bafb90ede5b84aa"
+    }
+   ]
+  },
+  {
+   "id": "sim-tubes-p007-6v",
+   "kind": "simulation",
+   "title": "Simulated pile, two tubes over the rim",
+   "bin": "Simulated lab bin, moved",
+   "bin_short": "Simulated lab bin, moved",
+   "contents": "6 tubes: 1 AB, 2 X, 3 Y",
+   "date": null,
+   "views": 6,
+   "what": "Pile p007: six tubes stacked up to 3 levels, two partly over the rim, 7 tube-tube contacts. The bin stands 2.5 cm away from the lab position and is turned by 3.8 degrees. Six views, SAM segmentation.",
+   "result": "Found 6 of 6 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.5-1.2 mm.",
+   "card_check": "Checked against the simulation truth (5 mm rule)",
+   "check": "Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Simulation",
+     "cls": "sim"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 6,
+    "n_vis": 6,
+    "tp": 6,
+    "fp": 0,
+    "d_range": "0.5-1.2",
+    "d_median": "0.72",
+    "types": "1 AB, 2 X, 3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "X",
+     "ref": "X1",
+     "d_mm": 0.69
+    },
+    {
+     "tube": 1,
+     "type": "Y",
+     "ref": "Y2",
+     "d_mm": 0.55
+    },
+    {
+     "tube": 2,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 0.66
+    },
+    {
+     "tube": 3,
+     "type": "X",
+     "ref": "X2",
+     "d_mm": 0.97
+    },
+    {
+     "tube": 4,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 0.76
+    },
+    {
+     "tube": 5,
+     "type": "AB",
+     "ref": "B",
+     "d_mm": 1.19
+    }
+   ],
+   "glb": "data/sim-tubes-p007-6v/scene.glb",
+   "glb_bytes": 887596,
+   "thumb": "data/sim-tubes-p007-6v/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/sim-tubes-p007-6v/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Simulated camera picture, view v01 (overview)",
+     "simulated": true
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#F58518",
+     "label": "X tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#fbcea3",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0701,
+      0.11,
+      0.0452
+     ],
+     "text": "X 0.7 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      0.1008,
+      0.1185,
+      0.1342
+     ],
+     "text": "Y 0.5 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0596,
+      0.0902,
+      0.0504
+     ],
+     "text": "Y 0.7 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.1117,
+      0.0341,
+      0.0125
+     ],
+     "text": "X 1.0 mm",
+     "colour": "#F58518"
+    },
+    {
+     "pos": [
+      -0.1151,
+      0.1363,
+      0.0075
+     ],
+     "text": "Y 0.8 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      -0.0084,
+      0.1039,
+      -0.0398
+     ],
+     "text": "AB 1.2 mm",
+     "colour": "#4C78A8"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 38800,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "sim_scene": {
+     "levels": 3,
+     "over_rim": 2,
+     "contacts_true": 7,
+     "pieces": [
+      "Y2",
+      "X2",
+      "B",
+      "Y1",
+      "Y3",
+      "X1"
+     ]
+    },
+    "bin_from_lab_mm": [
+     -20.9,
+     13.3
+    ],
+    "bin_turn_deg": 3.8,
+    "bin_drawn_at": "the true simulated pose (the located bin differs by under 1 mm)"
+   },
+   "docs": [],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/sim_eval/sam/piles/p007/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "0709991975d2f8bf1335cf76798d0a55adede408e47764e6d3be2f8017647d81"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam/eval/piles_stored/p007.pkl",
+     "role": "stored evaluation against the simulation truth (paper-run archive BP5)",
+     "sha256": "2fbb6b99a2f310ad0a36fc300ada7e70383c8409d2442c25e0c56c2205a18370"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam/piles/p007/state_stored.json",
+     "role": "the evaluated state (byte-identical to the shown one)",
+     "sha256": "0709991975d2f8bf1335cf76798d0a55adede408e47764e6d3be2f8017647d81"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p007/container.json",
+     "role": "simulated bin pose",
+     "sha256": "542424ac31e3402e79893dcf1bbb4c24294ee7a33d96842519b71af91f832f20"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p007/v01/color.png",
+     "role": "simulated picture",
+     "sha256": "d5e06c4716c28a2d00380cf0ab8f3797dd86f305266f42b045533e6501297eec"
+    }
+   ]
+  },
+  {
+   "id": "sim-tubes-p015-6v",
+   "kind": "simulation",
+   "title": "Simulated: three Y tubes on one long AB",
+   "bin": "Simulated lab bin, moved",
+   "bin_short": "Simulated lab bin, moved",
+   "contents": "4 tubes: 1 AB, 3 Y",
+   "date": null,
+   "views": 6,
+   "what": "Pile p015: two Y tubes lie on one long AB tube and the third Y lies on one of them (3 levels); the AB hangs partly over the rim. Six views, SAM segmentation.",
+   "result": "Found 4 of 4 tubes, all with the right type, no extra tubes. Mean distance to the true centreline: 0.6-1.3 mm.",
+   "card_check": "Checked against the simulation truth (5 mm rule)",
+   "check": "Compared with the simulation truth. Every visible true tube must be matched, one to one, by a found tube of the same type whose centreline lies on average within 5 mm of the true centreline (over the visible part), and there must be no extra tubes. Which piece of a type it is (A or B, X1 or X2) is not scored.",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Simulation",
+     "cls": "sim"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "found": 4,
+    "n_vis": 4,
+    "tp": 4,
+    "fp": 0,
+    "d_range": "0.6-1.3",
+    "d_median": "0.97",
+    "types": "1 AB, 3 Y"
+   },
+   "rows": [
+    {
+     "tube": 0,
+     "type": "Y",
+     "ref": "Y2",
+     "d_mm": 0.61
+    },
+    {
+     "tube": 1,
+     "type": "AB",
+     "ref": "B",
+     "d_mm": 1.3
+    },
+    {
+     "tube": 2,
+     "type": "Y",
+     "ref": "Y1",
+     "d_mm": 0.8
+    },
+    {
+     "tube": 3,
+     "type": "Y",
+     "ref": "Y3",
+     "d_mm": 1.14
+    }
+   ],
+   "glb": "data/sim-tubes-p015-6v/scene.glb",
+   "glb_bytes": 629260,
+   "thumb": "data/sim-tubes-p015-6v/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/sim-tubes-p015-6v/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Simulated camera picture, view v01 (overview)",
+     "simulated": true
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#4C78A8",
+     "label": "AB tube"
+    },
+    {
+     "colour": "#54A24B",
+     "label": "Y tube"
+    },
+    {
+     "colour": "#bbdab7",
+     "label": "Lighter: no camera saw it"
+    },
+    {
+     "colour": "#9A9A9A",
+     "label": "Fittings and connectors"
+    },
+    {
+     "colour": "#B9A3D6",
+     "label": "Loose parts (clips, tape)"
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [
+    {
+     "key": "labels",
+     "label": "Labels",
+     "on": true
+    },
+    {
+     "key": "unobs",
+     "label": "Hide parts no camera saw",
+     "on": false
+    }
+   ],
+   "hotspots": [
+    {
+     "pos": [
+      0.0984,
+      0.0984,
+      0.0142
+     ],
+     "text": "Y 0.6 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0381,
+      0.0989,
+      -0.001
+     ],
+     "text": "AB 1.3 mm",
+     "colour": "#4C78A8"
+    },
+    {
+     "pos": [
+      0.0769,
+      0.0883,
+      0.0255
+     ],
+     "text": "Y 0.8 mm",
+     "colour": "#54A24B"
+    },
+    {
+     "pos": [
+      0.0936,
+      0.0211,
+      0.0522
+     ],
+     "text": "Y 1.1 mm",
+     "colour": "#54A24B"
+    }
+   ],
+   "orbit": "-89.4deg 40deg 100%",
+   "triangles": 27088,
+   "version": "pipeFit v2, each scene on its own (single frame)",
+   "checked": {
+    "sim_scene": {
+     "levels": 3,
+     "over_rim": 1,
+     "contacts_true": 3,
+     "pieces": [
+      "B",
+      "Y3",
+      "Y1",
+      "Y2"
+     ]
+    },
+    "bin_from_lab_mm": [
+     -17.6,
+     4.2
+    ],
+    "bin_turn_deg": 2.2,
+    "bin_drawn_at": "the true simulated pose (the located bin differs by under 1 mm)"
+   },
+   "docs": [],
+   "sources": [
+    {
+     "file": "pipeFit/data/recon_v2/sim_eval/sam/piles/p015/state.json",
+     "role": "result state (recon-state/1, pipeFit v2 single frame)",
+     "sha256": "8b1211d8bf0431d5d9db7f9bc384ff980225bf86f4444842ab6e6b165b1401f8"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam/eval/piles_stored/p015.pkl",
+     "role": "stored evaluation against the simulation truth (paper-run archive BP5)",
+     "sha256": "1f40a06d589b0bdf810c912d759de828a35399d71c53269105f9423fb591055d"
+    },
+    {
+     "file": "archive/paper_runs/BP5/l34/sam/piles/p015/state_stored.json",
+     "role": "the evaluated state (byte-identical to the shown one)",
+     "sha256": "8b1211d8bf0431d5d9db7f9bc384ff980225bf86f4444842ab6e6b165b1401f8"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p015/container.json",
+     "role": "simulated bin pose",
+     "sha256": "3855a738710dbfc924da58971fc32e28c2229a816051738dff00ac9140a002c9"
+    },
+    {
+     "file": "pipeFit/data/sim/m3_v2/piles/p015/v01/color.png",
+     "role": "simulated picture",
+     "sha256": "da823b1e02a60dbd5bef3754a4e49c0e04b85a3e38fc808eede7b09a1f8518ce"
+    }
+   ]
+  },
+  {
+   "id": "sim-parts-dev-c000",
+   "kind": "simulation",
+   "title": "Simulated rigid parts: seven listed parts and a stranger",
+   "bin": "Simulated lab bin",
+   "bin_short": "Simulated lab bin",
+   "contents": "7 listed parts, 1 part not on the list, 1 small washer",
+   "date": null,
+   "views": 6,
+   "what": "A simulated bin with rigid parts made from part drawings (synthetic test parts): L block with holes, L block with holes (mirror), L sheet bracket, mouse (freeform), pocket block B, stepped shaft, tube with sleeves. A T-profile that is not on the job list lies among them, and a small M8 washer. The job list also named a part that was not in the bin: S rod (solid). Six views, SAM segmentation.",
+   "result": "All 7 listed parts found with the right type and pose (MSSD 0.9-2.0 mm, limit 5.0 mm here). The T-profile was not reported as a listed part, the absent part was not reported, and the washer was counted (1 of 1).",
+   "card_check": "Checked against the simulation truth",
+   "check": "Compared with the simulation truth. A listed part counts as correct when its type is right and its surface error MSSD (the largest distance between matching surface points of the found and the true part, taking the part's symmetry into account) is at most max(min(10 % of the part's size, 5 mm), 2 mm). A part that is not on the list must not be reported as a listed part. Small flat parts such as the washer are only counted. Development scene: the segmentation settings were tuned on it. Shown is the run of 2026-10-11; a later version of the code gives the same poses (checked: largest difference 0.00 mm, 0.000 degrees).",
+   "caveat": null,
+   "limit": null,
+   "grasp_note": null,
+   "badges": [
+    {
+     "text": "Simulation",
+     "cls": "sim"
+    },
+    {
+     "text": "6 views",
+     "cls": "plain"
+    }
+   ],
+   "numbers": {
+    "listed": 7,
+    "correct": 7,
+    "mssd_range": "0.9-2.0",
+    "threshold": "5.0"
+   },
+   "rows": [
+    {
+     "object": 0,
+     "type": "g2_pocket_b",
+     "name": "Pocket block B",
+     "mssd_mm": 1.15,
+     "threshold_mm": 5.0
+    },
+    {
+     "object": 1,
+     "type": "g2_sheet_L",
+     "name": "L sheet bracket",
+     "mssd_mm": 1.55,
+     "threshold_mm": 5.0
+    },
+    {
+     "object": 2,
+     "type": "g2_Lblock_m",
+     "name": "L block with holes (mirror)",
+     "mssd_mm": 1.2,
+     "threshold_mm": 5.0
+    },
+    {
+     "object": 3,
+     "type": "g2_Lblock",
+     "name": "L block with holes",
+     "mssd_mm": 1.57,
+     "threshold_mm": 5.0
+    },
+    {
+     "object": 4,
+     "type": "g2_mouse",
+     "name": "Mouse (freeform)",
+     "mssd_mm": 1.39,
+     "threshold_mm": 5.0
+    },
+    {
+     "object": 5,
+     "type": "g2_tube_fittings",
+     "name": "Tube with sleeves",
+     "mssd_mm": 0.95,
+     "threshold_mm": 5.0
+    },
+    {
+     "object": 6,
+     "type": "g2_shaft",
+     "name": "Stepped shaft",
+     "mssd_mm": 2.05,
+     "threshold_mm": 5.0
+    }
+   ],
+   "glb": "data/sim-parts-dev-c000/scene.glb",
+   "glb_bytes": 918476,
+   "thumb": "data/sim-parts-dev-c000/thumb.webp",
+   "thumb_w": 640,
+   "thumb_h": 360,
+   "photos": [
+    {
+     "src": "data/sim-parts-dev-c000/photo1.webp",
+     "w": 1280,
+     "h": 720,
+     "caption": "Simulated camera picture, view v01 (overview)",
+     "simulated": true
+    }
+   ],
+   "legend": [
+    {
+     "colour": "#bcbd22",
+     "label": "Pocket block B"
+    },
+    {
+     "colour": "#d62728",
+     "label": "L sheet bracket"
+    },
+    {
+     "colour": "#e377c2",
+     "label": "L block with holes (mirror)"
+    },
+    {
+     "colour": "#008080",
+     "label": "L block with holes"
+    },
+    {
+     "colour": "#17becf",
+     "label": "Mouse (freeform)"
+    },
+    {
+     "colour": "#7b4173",
+     "label": "Tube with sleeves"
+    },
+    {
+     "colour": "#8c6d31",
+     "label": "Stepped shaft"
+    },
+    {
+     "colour": "#4A5568",
+     "label": "Simulation truth (grey lines)",
+     "line": true
+    },
+    {
+     "colour": "#5b8fd6",
+     "label": "Bin",
+     "alpha": true
+    }
+   ],
+   "layers": [],
+   "hotspots": [
+    {
+     "pos": [
+      0.0698,
+      0.0262,
+      -0.0201
+     ],
+     "text": "Pocket block B 1.1 mm",
+     "colour": "#bcbd22"
+    },
+    {
+     "pos": [
+      -0.0836,
+      0.0319,
+      0.0975
+     ],
+     "text": "L sheet bracket 1.6 mm",
+     "colour": "#d62728"
+    },
+    {
+     "pos": [
+      0.0168,
+      0.0322,
+      -0.1028
+     ],
+     "text": "L block with holes (mirror) 1.2 mm",
+     "colour": "#e377c2"
+    },
+    {
+     "pos": [
+      -0.0313,
+      0.0304,
+      0.1139
+     ],
+     "text": "L block with holes 1.6 mm",
+     "colour": "#008080"
+    },
+    {
+     "pos": [
+      0.0727,
+      0.025,
+      -0.0876
+     ],
+     "text": "Mouse (freeform) 1.4 mm",
+     "colour": "#17becf"
+    },
+    {
+     "pos": [
+      -0.0439,
+      0.0446,
+      -0.051
+     ],
+     "text": "Tube with sleeves 0.9 mm",
+     "colour": "#7b4173"
+    },
+    {
+     "pos": [
+      0.0527,
+      0.0245,
+      0.0998
+     ],
+     "text": "Stepped shaft 2.0 mm",
+     "colour": "#8c6d31"
+    },
+    {
+     "pos": [
+      -0.0072,
+      0.0416,
+      0.0479
+     ],
+     "text": "T profile: not on the list, not reported",
+     "colour": "#4A5568",
+     "ghost": true
+    },
+    {
+     "pos": [
+      -0.1127,
+      0.0098,
+      0.1186
+     ],
+     "text": "Washer M8: counted only",
+     "colour": "#4A5568",
+     "ghost": true
+    }
+   ],
+   "orbit": "-89.2deg 40deg 100%",
+   "triangles": 36338,
+   "version": "pipeFit generic reconstruction (mesh plug-in), SAM masks",
+   "checked": {
+    "rigid": {
+     "counts": {
+      "gated": 7,
+      "gated_correct": 7,
+      "gated_matched": 7,
+      "isolated": 7,
+      "isolated_correct": 7,
+      "confusion_matched": 7,
+      "confusion_wrong_type": 0,
+      "distractors": 1,
+      "off_manifest_false_objects": 0,
+      "false_positives_unmatched": 0,
+      "below_floor_abs_error": 0
+     },
+     "absent_listed_type": "g2_tube_S",
+     "rejected": "g2x_profile_T",
+     "below_floor": [
+      {
+       "type": "g2_washer_m8",
+       "true": 1,
+       "counted": 1,
+       "error": 0
+      }
+     ],
+     "newer_run_max_diff": {
+      "mm": 0.001,
+      "deg": 0.0
+     },
+     "criterion": "Correct = type correct and MSSD <= max(min(0.1 d, 5 mm), 2 mm) (modulo symmetry; screw + spring also the spring's axial position <= 2 mm)"
+    },
+    "lod_check_mm": {
+     "g2_pocket_b": 0.005,
+     "g2_sheet_L": 0.005,
+     "g2_Lblock_m": 0.005,
+     "g2_Lblock": 0.005,
+     "g2_mouse": 0.005,
+     "g2_tube_fittings": 0.005,
+     "g2_shaft": 0.005
+    }
+   },
+   "docs": [
+    {
+     "file": "pipeFit/docs/s2_dev_report_zh.md",
+     "line": 36,
+     "text": "dev_c000/c004/c008/c012/p000/p003"
+    },
+    {
+     "file": "pipeFit/docs/generic_sim.md",
+     "line": 5,
+     "text": "dropped with physics and rendered with the same calibrated D435 model"
+    }
+   ],
+   "sources": [
+    {
+     "file": "pipeFit/tools/ui/fixtures/generic_g2/scene_generic_g2_dev_c000.json",
+     "role": "UI scene payload of the evaluated run (objects, evaluation, truth)",
+     "sha256": "3af1ed65b354a3ab2662d2db78687962bef03402dc406f918172dc928b430bc0"
+    },
+    {
+     "file": "pipeFit/data/recon_g/s2d_u2_dev_sam/generic_v2_dev/dev_c000/state.json",
+     "role": "result state of a newer code version (same poses)",
+     "sha256": "74357cf3fb47006f97c81c4004e6a05fdb5047457363b9bf70fa282d30c5db96"
+    },
+    {
+     "file": "pipeFit/data/sim/generic_v2/dev/dev_c000/job.json",
+     "role": "job list (the listed part types)",
+     "sha256": "0095960595ea8b848defc01c89ffba4363030b41567b7387acea53257720372e"
+    },
+    {
+     "file": "pipeFit/data/sim/generic_v2/dev/dev_c000/v01/color.png",
+     "role": "simulated picture",
+     "sha256": "34cf7baf15600f9df6bcd08d5fe325a06cea20ea58a03b898aa4f4930748f6ac"
+    }
+   ]
+  }
+ ],
+ "context": {
+  "bin1": {
+   "stages": 16,
+   "tp": 51,
+   "fp": 3,
+   "fn": 5,
+   "n_ref": 56
+  },
+  "bin2": {
+   "scenes": 3,
+   "tp": 12,
+   "fp": 1,
+   "fn": 1,
+   "n_ref": 13
+  },
+  "emb_12_views": [
+   {
+    "pile": "pile 1",
+    "run": "emb_t_pile_1",
+    "found": 5,
+    "placed": 7,
+    "views": [
+     "v01",
+     "v06",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "h1",
+     "h2",
+     "v01b",
+     "v01c",
+     "v01d",
+     "v01m"
+    ],
+    "types": {
+     "AB": 1,
+     "X": 1,
+     "Y": 3
+    }
+   },
+   {
+    "pile": "pile 2",
+    "run": "emb_t_pile_2",
+    "found": 7,
+    "placed": 7,
+    "views": [
+     "v01",
+     "v06",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "h1",
+     "h2",
+     "v01b",
+     "v01c",
+     "v01d",
+     "v01m"
+    ],
+    "types": {
+     "AB": 2,
+     "X": 2,
+     "Y": 3
+    }
+   },
+   {
+    "pile": "pile 3",
+    "run": "emb_t_pile_3",
+    "found": 5,
+    "placed": 7,
+    "views": [
+     "v01",
+     "v06",
+     "c1",
+     "c2",
+     "c3",
+     "c4",
+     "h1",
+     "h2",
+     "v01b",
+     "v01c",
+     "v01d",
+     "v01m"
+    ],
+    "types": {
+     "AB": 0,
+     "X": 2,
+     "Y": 3
+    }
+   }
+  ],
+  "emb_3_views": [
+   {
+    "pile": "pile 1",
+    "run": "emb_t_pile_1_v3",
+    "found": 7,
+    "placed": 7,
+    "views": [
+     "v01",
+     "v06",
+     "v01m"
+    ],
+    "types": {
+     "AB": 2,
+     "X": 2,
+     "Y": 3
+    }
+   },
+   {
+    "pile": "pile 2",
+    "run": "emb_t_pile_2_v3",
+    "found": 7,
+    "placed": 7,
+    "views": [
+     "v01",
+     "v06",
+     "v01m"
+    ],
+    "types": {
+     "AB": 2,
+     "X": 2,
+     "Y": 3
+    }
+   },
+   {
+    "pile": "pile 3",
+    "run": "emb_t_pile_3_v3",
+    "found": 7,
+    "placed": 7,
+    "views": [
+     "v01",
+     "v06",
+     "v01m"
+    ],
+    "types": {
+     "AB": 2,
+     "X": 2,
+     "Y": 3
+    }
+   }
+  ],
+  "sim_piles": {
+   "sam": {
+    "piles": 24,
+    "tubes": 116,
+    "correct": 116,
+    "extra": 0,
+    "complete_piles": 24
+   },
+   "sam_2v": {
+    "piles": 24,
+    "tubes": 116,
+    "correct": 109,
+    "extra": 0,
+    "complete_piles": 18
+   }
+  }
+ },
+ "note": "Built from the pipeFit result files as of 2026-11-27."
+}
