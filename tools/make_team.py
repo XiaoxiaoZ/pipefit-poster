@@ -147,7 +147,9 @@ CSS = """/* team:css */
 .pmail{font-size:15px;margin-top:6px;overflow-wrap:anywhere}
 .contactbox{margin-top:26px;padding-top:18px;border-top:1px solid #E4E6EA}
 .pnamerow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px}
-.pnote{flex:1 1 240px;font-size:13.5px;line-height:1.45;color:var(--ink2);background:#FBEADF;border-radius:10px;padding:7px 12px}
+.pnote{position:relative;flex:1 1 240px;margin-left:8px;font-size:13.5px;line-height:1.45;font-style:italic;color:var(--ink);background:#FBEADF;border-radius:12px;padding:8px 13px}
+.pnote::before{content:"";position:absolute;left:-9px;top:50%;margin-top:-8px;border-style:solid;border-width:8px 9px 8px 0;border-color:transparent #FBEADF transparent transparent}
+@media (max-width:560px){.pnote{flex-basis:100%;margin:9px 0 2px}.pnote::before{left:22px;top:-9px;margin-top:0;border-width:0 8px 9px 8px;border-color:transparent transparent #FBEADF transparent}}
 @media (max-width:420px){.pphoto,.pcard.lead .pphoto{width:92px;height:92px}.pname{font-size:18px}.pcard{gap:12px;padding:12px}}
 /* team:css-end */"""
 
