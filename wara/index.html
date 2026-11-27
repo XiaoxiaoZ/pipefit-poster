@@ -293,7 +293,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 <div class="pmbox"><b>Camera position</b><span>how uncertain each view's camera pose is</span></div>
 <div class="pmbox"><b>Depth noise</b><span>offset, spread, and how errors move together</span></div>
 <div class="pmbox"><b>Edge noise</b><span>spread along the outlines</span></div>
-<div class="pmbox"><b>Prior knowledge</b><span>how much tubes bend; no tube passes through another</span></div>
+<div class="pmbox"><b>Prior knowledge</b><span>how far a piece may differ from its type's recipe (from scans of a few pieces of each type); no tube passes through another</span></div>
 </div></div>
 <div class="pmarrow" aria-hidden="true">&darr;</div>
 <div class="pmband u"><div class="bl">Where the fit uses it</div><div class="pmgrid">
@@ -312,7 +312,7 @@ footer{margin-top:40px;font-size:14px;color:var(--ink3);text-align:center}
 </div></div>
 <div class="label accent" style="margin:22px 0 10px">Why it helps (tap to open)</div>
 <details class="pmadv"><summary>One scale for all the evidence</summary><div>Outline edges are measured in pixels, depth in millimetres, and there are several views and prior knowledge. Each is expressed as "how far off, compared with its expected noise" before they are added up, so the weights come from the calibrated noise, not from hand tuning.</div></details>
-<details class="pmadv"><summary>Data and prior knowledge balance themselves</summary><div>Where the camera sees clearly, the measurements decide. Where it cannot, for example under another tube or where depth is noisy, prior knowledge holds: how much a tube may bend, and that tubes cannot pass through each other.</div></details>
+<details class="pmadv"><summary>Data and prior knowledge balance themselves</summary><div>Where the camera sees clearly, the measurements decide. Where it cannot, for example under another tube or where depth is noisy, prior knowledge holds: how far a piece may differ from its type's recipe, learned from scanning a few pieces of each type, and that tubes cannot pass through each other.</div></details>
 <details class="pmadv"><summary>The same error is not counted twice</summary><div>Neighbouring points along a tube tend to err together, so a stretch of tube counts as one piece of evidence rather than hundreds. An offset that a whole view shares cannot be averaged away, so it is estimated on its own.</div></details>
 <details class="pmadv"><summary>Results come with error bars</summary><div>Every tube's position comes with an uncertainty along its whole length, including the camera's own position errors. The grasp choice uses it, so the robot can prefer the places it is sure about.</div></details>
 <details class="pmadv"><summary>Choosing between explanations</summary><div>Two tubes or three? Type X or type Y? Explanations are compared by how well they explain the pictures, with a penalty for needless complexity, and each alternative gets a chance of being the better one. This score is an approximation with weights we set ourselves.</div></details>
